@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Study COMPASS α</title>
+<style>
+:root {
+  --bg:#f5f7fb; --card:#fff; --ink:#18202a; --muted:#6b7280;
+  --accent:#276ef1; --accent2:#eaf1ff; --good:#0a8f5b; --bad:#c0392b;
+  --line:#e6eaf0; --shadow:0 10px 28px rgba(20,35,60,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink)}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding:18px 16px 90px}
+.brand{font-weight:800;letter-spacing:.03em;font-size:22px}
+.sub{color:var(--muted);margin-top:4px}
+.hero{background:linear-gradient(135deg,#fff,#edf4ff);border:1px solid var(--line);border-radius:24px;padding:22px;margin-top:18px;box-shadow:var(--shadow)}
+h1{font-size:26px;margin:0 0 6px} h2{font-size:20px;margin:0 0 12px}
+.btn{width:100%;border:0;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
+.primary{background:var(--accent);color:#fff}
+.secondary{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:14px;box-shadow:var(--shadow)}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-size:20px}
+.tag{display:inline-block;background:var(--accent2);color:var(--accent);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
+.progress{height:8px;background:#e8edf5;border-radius:999px;overflow:hidden;margin:14px 0}
+.progress>div{height:100%;background:var(--accent);width:0}
+.qtext{font-size:23px;line-height:1.55;font-weight:800;margin:22px 0}
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.answer-grid button{font-size:32px;padding:22px 10px}
+.input{width:100%;border:1px solid var(--line);border-radius:14px;padding:15px;font-size:18px}
+.feedback{border-radius:16px;padding:16px;margin-top:18px}
+.good{background:#eaf8f1;color:#086b45} .bad{background:#fff0ee;color:#962d22}
+.tip{margin-top:10px;padding:12px;border-radius:12px;background:#fff9df}
+.word{font-size:36px;font-weight:900;letter-spacing:.02em;text-align:center;margin:20px 0}
+.speak{display:block;margin:0 auto 16px;border:0;background:var(--accent2);color:var(--accent);padding:12px 16px;border-radius:999px;font-weight:800}
+.meaning{font-size:24px;font-weight:800;text-align:center;margin:14px 0}
+.example{background:#f8fafc;border-radius:14px;padding:14px;line-height:1.6}
+.hidden{display:none !important}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+.bottom .inner{max-width:560px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.navbtn{border:0;background:transparent;padding:10px 4px;color:#5f6874;font-size:12px;font-weight:700}
+.navbtn.active{color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+.center{text-align:center}
+.result-big{font-size:54px;font-weight:900;margin:10px 0}
+.notice{font-size:12px;color:var(--muted);margin-top:12px}
+</style>
+</head>
+<body>
+<div id="app" class="app">
+  <section id="home">
+    <div class="brand">Study COMPASS</div>
+    <div class="sub">迷ったら、ここから。</div>
+    <div class="hero">
+      <span class="tag">今日のおすすめ</span>
+      <h1>今日、何する？</h1>
+      <p class="sub">まずは10問。短く始めて、間違いだけ復習。</p>
+      <button class="btn primary" onclick="startQuiz()">今日の10問 START</button>
+      <div class="grid">
+        <button class="btn secondary" onclick="startReview()">🔥 復習だけ</button>
+        <button class="btn secondary" onclick="openWords()">🎧 英単語</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>学習記録</h2>
+      <div class="statrow">
+        <div class="stat"><b id="todayCount">0</b><span class="small">今日</span></div>
+        <div class="stat"><b id="totalCount">0</b><span class="small">累計</span></div>
+        <div class="stat"><b id="reviewCount">0</b><span class="small">復習候補</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>教科から選ぶ</h2>
+      <div class="grid">
+        <button class="btn secondary" disabled>国語</button>
+        <button class="btn secondary" disabled>数学</button>
+        <button class="btn secondary" onclick="openWords()">英語</button>
+        <button class="btn secondary" disabled>理科</button>
+      </div>
+      <button style="margin-top:12px" class="btn secondary" onclick="startQuiz()">社会</button>
+      <div class="notice">α版デモ：現在は社会＋英単語を実装しています。</div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="brand">Study COMPASS</div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="small" id="qnum">1 / 10</div>
+    <div class="card">
+      <span class="tag" id="qtag">社会</span>
+      <div class="qtext" id="qtext"></div>
+      <div id="tfArea" class="answer-grid hidden">
+        <button class="btn secondary" onclick="answerTF('○')">○</button>
+        <button class="btn secondary" onclick="answerTF('×')">×</button>
+      </div>
+      <div id="shortArea" class="hidden">
+        <input id="shortInput" class="input" placeholder="答えを入力">
+        <button class="btn primary" style="margin-top:12px" onclick="answerShort()">答える</button>
+      </div>
+      <div id="feedback" class="hidden"></div>
+      <button id="nextBtn" class="btn primary hidden" style="margin-top:14px" onclick="nextQuestion()">次の問題</button>
+    </div>
+    <button class="btn secondary" style="margin-top:14px" onclick="goHome()">やめてHOMEへ</button>
+  </section>
+
+  <section id="result" class="hidden center">
+    <div class="brand">Study COMPASS</div>
+    <div class="card">
+      <span class="tag">おつかれさま</span>
+      <h1>今日の結果</h1>
+      <div class="result-big"><span id="score">0</span>/10</div>
+      <p id="resultText" class="sub"></p>
+      <button class="btn primary" onclick="startReviewFromResult()">間違いだけ復習</button>
+      <button class="btn secondary" style="margin-top:12px" onclick="startQuiz()">もう10問</button>
+      <button class="btn secondary" style="margin-top:12px" onclick="goHome()">HOME</button>
+    </div>
+  </section>
+
+  <section id="words" class="hidden">
+    <div class="brand">Study COMPASS</div>
+    <div class="progress"><div id="wordBar"></div></div>
+    <div class="small" id="wordNum"></div>
+    <div class="card">
+      <span class="tag">英単語</span>
+      <div class="word" id="word"></div>
+      <button class="speak" onclick="speakWord()">🔊 発音を聞く</button>
+      <button id="revealBtn" class="btn primary" onclick="revealWord()">意味を見る</button>
+      <div id="wordDetail" class="hidden">
+        <div class="meaning" id="meaning"></div>
+        <div class="center small" id="pos"></div>
+        <div class="example" style="margin-top:14px">
+          <b id="example"></b><br><span class="small" id="exampleJa"></span>
+        </div>
+        <div class="grid" style="margin-top:14px">
+          <button class="btn secondary" onclick="rateWord(false)">まだ</button>
+          <button class="btn primary" onclick="rateWord(true)">覚えた</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn secondary" style="margin-top:14px" onclick="goHome()">HOME</button>
+  </section>
+</div>
+
+<div class="bottom">
+  <div class="inner">
+    <button class="navbtn active" onclick="goHome()">⌂<br>HOME</button>
+    <button class="navbtn" onclick="startQuiz()">✎<br>学習</button>
+    <button class="navbtn" onclick="startReview()">↻<br>復習</button>
+    <button class="navbtn" onclick="openWords()">A<br>英単語</button>
+  </div>
+</div>
+
+<script>
+const SOCIAL = [{"id": "SC-SOC-HIS-000001", "subject": "社会", "unit": "歴史・古代", "type": "tf", "q": "聖徳太子は推古天皇のもとで政治を助けた。", "answer": "○", "explanation": "聖徳太子は推古天皇のもとで政治を助けたとされます。"}, {"id": "SC-SOC-HIS-000002", "subject": "社会", "unit": "歴史・古代", "type": "short", "q": "710年に都が置かれた都市はどこ？", "answer": "平城京", "explanation": "710年に平城京へ都が移されました。", "tip": "なんと(710)きれいな平城京"}, {"id": "SC-SOC-HIS-000003", "subject": "社会", "unit": "歴史・古代", "type": "tf", "q": "平安京への遷都は794年である。", "answer": "○", "explanation": "794年、桓武天皇が都を平安京へ移しました。", "tip": "鳴くよ(794)うぐいす平安京"}, {"id": "SC-SOC-HIS-000004", "subject": "社会", "unit": "歴史・中世", "type": "short", "q": "鎌倉幕府を開いた人物は誰？", "answer": "源頼朝", "explanation": "源頼朝が鎌倉に武家政権を築きました。"}, {"id": "SC-SOC-HIS-000006", "subject": "社会", "unit": "歴史・近世", "type": "short", "q": "江戸幕府を開いた人物は誰？", "answer": "徳川家康", "explanation": "徳川家康は1603年に征夷大将軍となり、江戸幕府を開きました。"}, {"id": "SC-SOC-HIS-000009", "subject": "社会", "unit": "歴史・近現代", "type": "tf", "q": "大日本帝国憲法は1889年に発布された。", "answer": "○", "explanation": "大日本帝国憲法は1889年に発布されました。"}, {"id": "SC-SOC-CIV-000011", "subject": "社会", "unit": "公民・政治", "type": "tf", "q": "日本の国会は衆議院と参議院の二院制である。", "answer": "○", "explanation": "国会は衆議院と参議院から成ります。"}, {"id": "SC-SOC-CIV-000012", "subject": "社会", "unit": "公民・政治", "type": "short", "q": "法律を制定する国の機関はどこ？", "answer": "国会", "explanation": "国会は唯一の立法機関です。"}, {"id": "SC-SOC-GEO-000015", "subject": "社会", "unit": "地理・世界", "type": "tf", "q": "赤道は緯度0度の線である。", "answer": "○", "explanation": "赤道は緯度0度を示します。"}, {"id": "SC-SOC-GEO-000016", "subject": "社会", "unit": "地理・日本", "type": "short", "q": "日本の標準時の基準となる経線は東経何度？", "answer": "東経135度", "explanation": "日本標準時は東経135度の経線を基準にしています。"}, {"id": "SC-SOC-GEO-000017", "subject": "社会", "unit": "地理・日本", "type": "tf", "q": "日本は47の都道府県からなる。", "answer": "○", "explanation": "日本には47都道府県があります。"}, {"id": "SC-SOC-GEO-000020", "subject": "社会", "unit": "地理・日本", "type": "short", "q": "日本で最も面積が大きい都道府県はどこ？", "answer": "北海道", "explanation": "都道府県の中で最も面積が大きいのは北海道です。"}];
+const WORDS = [{"id": "SC-ENG-VOC-000001", "word": "book", "meaning": "本", "pos": "名詞", "example": "I have a book.", "ja": "私は本を1冊持っています。"}, {"id": "SC-ENG-VOC-000002", "word": "school", "meaning": "学校", "pos": "名詞", "example": "I go to school every day.", "ja": "私は毎日学校へ行きます。"}, {"id": "SC-ENG-VOC-000003", "word": "friend", "meaning": "友だち", "pos": "名詞", "example": "She is my friend.", "ja": "彼女は私の友だちです。"}, {"id": "SC-ENG-VOC-000006", "word": "study", "meaning": "勉強する", "pos": "動詞", "example": "I study English after dinner.", "ja": "私は夕食後に英語を勉強します。"}, {"id": "SC-ENG-VOC-000011", "word": "different", "meaning": "異なる", "pos": "形容詞", "example": "These two pictures are different.", "ja": "この2枚の絵は異なります。"}, {"id": "SC-ENG-VOC-000012", "word": "important", "meaning": "重要な", "pos": "形容詞", "example": "English is important for me.", "ja": "英語は私にとって重要です。"}, {"id": "SC-ENG-VOC-000019", "word": "environment", "meaning": "環境", "pos": "名詞", "example": "We should protect the environment.", "ja": "私たちは環境を守るべきです。"}, {"id": "SC-ENG-VOC-000041", "word": "necessary", "meaning": "必要な", "pos": "形容詞", "example": "Water is necessary for life.", "ja": "水は生命に必要です。"}, {"id": "SC-ENG-VOC-000047", "word": "communicate", "meaning": "意思を伝え合う", "pos": "動詞", "example": "We communicate with people in English.", "ja": "私たちは英語で人々と意思を伝え合います。"}, {"id": "SC-ENG-VOC-000050", "word": "improve", "meaning": "改善する・上達する", "pos": "動詞", "example": "I want to improve my English.", "ja": "私は英語を上達させたいです。"}];
+const KEY='studyCompassAlphaV1';
+let state = JSON.parse(localStorage.getItem(KEY) || '{"answers":{},"today":{},"words":{}}');
+let quiz=[], idx=0, score=0, wrong=[], currentAnswered=false;
+let wordIdx=0, wordOrder=[];
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); updateStats(); }
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function updateStats(){
+  const t=todayKey(), today=state.today[t]||0;
+  const all=Object.values(state.answers).reduce((s,x)=>s+(x.count||0),0);
+  const reviews=Object.values(state.answers).filter(x=>x.last===false || (x.wrong||0)>=2).length;
+  document.getElementById('todayCount').textContent=today;
+  document.getElementById('totalCount').textContent=all;
+  document.getElementById('reviewCount').textContent=reviews;
+}
+function show(id){
+  ['home','quiz','result','words'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function goHome(){ show('home'); updateStats(); }
+function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
+function startQuiz(){
+  const missed = SOCIAL.filter(q=>state.answers[q.id]?.last===false);
+  const unseen = SOCIAL.filter(q=>!state.answers[q.id]);
+  const seen = SOCIAL.filter(q=>state.answers[q.id] && state.answers[q.id].last!==false);
+  let pool=[...shuffle(unseen).slice(0,5),...shuffle(missed).slice(0,3),...shuffle(seen).slice(0,2)];
+  const ids=new Set(pool.map(x=>x.id));
+  pool=[...pool,...shuffle(SOCIAL.filter(x=>!ids.has(x.id)))].slice(0,10);
+  quiz=pool; idx=0; score=0; wrong=[]; show('quiz'); renderQ();
+}
+function startReview(){
+  const missed=SOCIAL.filter(q=>state.answers[q.id]?.last===false || (state.answers[q.id]?.wrong||0)>=2);
+  quiz=(missed.length?shuffle(missed):shuffle(SOCIAL)).slice(0,10);
+  idx=0;score=0;wrong=[];show('quiz');renderQ();
+}
+function renderQ(){
+  currentAnswered=false;
+  const q=quiz[idx];
+  document.getElementById('qnum').textContent=`${idx+1} / ${quiz.length}`;
+  document.getElementById('bar').style.width=`${(idx/quiz.length)*100}%`;
+  document.getElementById('qtag').textContent=`${q.subject}｜${q.unit}`;
+  document.getElementById('qtext').textContent=q.q;
+  document.getElementById('feedback').className='hidden';
+  document.getElementById('nextBtn').classList.add('hidden');
+  document.getElementById('tfArea').classList.toggle('hidden',q.type!=='tf');
+  document.getElementById('shortArea').classList.toggle('hidden',q.type!=='short');
+  document.getElementById('shortInput').value='';
+}
+function norm(s){return (s||'').trim().replace(/\s+/g,'').replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-65248));}
+function answerTF(v){ if(currentAnswered)return; grade(v===quiz[idx].answer,v); }
+function answerShort(){ if(currentAnswered)return; const v=document.getElementById('shortInput').value; grade(norm(v)===norm(quiz[idx].answer),v); }
+function grade(ok,user){
+  currentAnswered=true; const q=quiz[idx];
+  const rec=state.answers[q.id]||{count:0,wrong:0,streak:0};
+  rec.count++; rec.last=ok; if(ok) rec.streak=(rec.streak||0)+1; else{rec.wrong=(rec.wrong||0)+1;rec.streak=0;}
+  state.answers[q.id]=rec;
+  const t=todayKey(); state.today[t]=(state.today[t]||0)+1;
+  if(ok) score++; else wrong.push(q);
+  save();
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(ok?'good':'bad');
+  fb.innerHTML=`<b>${ok?'✓ 正解！':'× もう一度チェック'}</b><div style="margin-top:8px">${!ok?`正解：<b>${q.answer}</b><br>`:''}${q.explanation}</div>${q.tip?`<div class="tip">🧠 ${q.tip}</div>`:''}`;
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+function nextQuestion(){
+  idx++;
+  if(idx>=quiz.length) finishQuiz(); else renderQ();
+}
+function finishQuiz(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('resultText').textContent=wrong.length?`${wrong.length}問だけ、もう一度やればOK。`:'全問正解！今日はここまででも十分。';
+  show('result');
+}
+function startReviewFromResult(){
+  quiz=(wrong.length?wrong:shuffle(SOCIAL)).slice(0,10);
+  idx=0;score=0;wrong=[];show('quiz');renderQ();
+}
+function openWords(){
+  wordOrder=shuffle(WORDS);wordIdx=0;show('words');renderWord();
+}
+function renderWord(){
+  const w=wordOrder[wordIdx];
+  document.getElementById('wordNum').textContent=`${wordIdx+1} / ${wordOrder.length}`;
+  document.getElementById('wordBar').style.width=`${(wordIdx/wordOrder.length)*100}%`;
+  document.getElementById('word').textContent=w.word;
+  document.getElementById('meaning').textContent=w.meaning;
+  document.getElementById('pos').textContent=w.pos;
+  document.getElementById('example').textContent=w.example;
+  document.getElementById('exampleJa').textContent=w.ja;
+  document.getElementById('wordDetail').classList.add('hidden');
+  document.getElementById('revealBtn').classList.remove('hidden');
+}
+function revealWord(){ document.getElementById('wordDetail').classList.remove('hidden'); document.getElementById('revealBtn').classList.add('hidden'); }
+function speakWord(){
+  const w=wordOrder[wordIdx].word;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(w); u.lang='en-US'; u.rate=.82; speechSynthesis.speak(u);
+}
+function rateWord(known){
+  const w=wordOrder[wordIdx];
+  const rec=state.words[w.id]||{known:0,review:0};
+  if(known)rec.known++; else rec.review++;
+  state.words[w.id]=rec; save();
+  wordIdx++;
+  if(wordIdx>=wordOrder.length){ alert('英単語10語、おつかれさま！'); goHome(); } else renderWord();
+}
+updateStats();
+</script>
+</body>
+</html>
