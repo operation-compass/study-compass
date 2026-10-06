@@ -1,271 +1,50 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
-<title>Study COMPASS α</title>
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Study COMPASS α v0.2</title>
 <style>
-:root {
-  --bg:#f5f7fb; --card:#fff; --ink:#18202a; --muted:#6b7280;
-  --accent:#276ef1; --accent2:#eaf1ff; --good:#0a8f5b; --bad:#c0392b;
-  --line:#e6eaf0; --shadow:0 10px 28px rgba(20,35,60,.08);
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink)}
-.app{max-width:560px;margin:0 auto;min-height:100vh;padding:18px 16px 90px}
-.brand{font-weight:800;letter-spacing:.03em;font-size:22px}
-.sub{color:var(--muted);margin-top:4px}
-.hero{background:linear-gradient(135deg,#fff,#edf4ff);border:1px solid var(--line);border-radius:24px;padding:22px;margin-top:18px;box-shadow:var(--shadow)}
-h1{font-size:26px;margin:0 0 6px} h2{font-size:20px;margin:0 0 12px}
-.btn{width:100%;border:0;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
-.primary{background:var(--accent);color:#fff}
-.secondary{background:var(--card);border:1px solid var(--line);color:var(--ink)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:14px;box-shadow:var(--shadow)}
-.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
-.stat b{display:block;font-size:20px}
-.tag{display:inline-block;background:var(--accent2);color:var(--accent);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700}
-.progress{height:8px;background:#e8edf5;border-radius:999px;overflow:hidden;margin:14px 0}
-.progress>div{height:100%;background:var(--accent);width:0}
-.qtext{font-size:23px;line-height:1.55;font-weight:800;margin:22px 0}
-.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.answer-grid button{font-size:32px;padding:22px 10px}
-.input{width:100%;border:1px solid var(--line);border-radius:14px;padding:15px;font-size:18px}
-.feedback{border-radius:16px;padding:16px;margin-top:18px}
-.good{background:#eaf8f1;color:#086b45} .bad{background:#fff0ee;color:#962d22}
-.tip{margin-top:10px;padding:12px;border-radius:12px;background:#fff9df}
-.word{font-size:36px;font-weight:900;letter-spacing:.02em;text-align:center;margin:20px 0}
-.speak{display:block;margin:0 auto 16px;border:0;background:var(--accent2);color:var(--accent);padding:12px 16px;border-radius:999px;font-weight:800}
-.meaning{font-size:24px;font-weight:800;text-align:center;margin:14px 0}
-.example{background:#f8fafc;border-radius:14px;padding:14px;line-height:1.6}
-.hidden{display:none !important}
-.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
-.bottom .inner{max-width:560px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
-.navbtn{border:0;background:transparent;padding:10px 4px;color:#5f6874;font-size:12px;font-weight:700}
-.navbtn.active{color:var(--accent)}
-.small{font-size:13px;color:var(--muted)}
-.center{text-align:center}
-.result-big{font-size:54px;font-weight:900;margin:10px 0}
-.notice{font-size:12px;color:var(--muted);margin-top:12px}
-</style>
-</head>
-<body>
-<div id="app" class="app">
-  <section id="home">
-    <div class="brand">Study COMPASS</div>
-    <div class="sub">迷ったら、ここから。</div>
-    <div class="hero">
-      <span class="tag">今日のおすすめ</span>
-      <h1>今日、何する？</h1>
-      <p class="sub">まずは10問。短く始めて、間違いだけ復習。</p>
-      <button class="btn primary" onclick="startQuiz()">今日の10問 START</button>
-      <div class="grid">
-        <button class="btn secondary" onclick="startReview()">🔥 復習だけ</button>
-        <button class="btn secondary" onclick="openWords()">🎧 英単語</button>
-      </div>
-    </div>
-    <div class="card">
-      <h2>学習記録</h2>
-      <div class="statrow">
-        <div class="stat"><b id="todayCount">0</b><span class="small">今日</span></div>
-        <div class="stat"><b id="totalCount">0</b><span class="small">累計</span></div>
-        <div class="stat"><b id="reviewCount">0</b><span class="small">復習候補</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>教科から選ぶ</h2>
-      <div class="grid">
-        <button class="btn secondary" disabled>国語</button>
-        <button class="btn secondary" disabled>数学</button>
-        <button class="btn secondary" onclick="openWords()">英語</button>
-        <button class="btn secondary" disabled>理科</button>
-      </div>
-      <button style="margin-top:12px" class="btn secondary" onclick="startQuiz()">社会</button>
-      <div class="notice">α版デモ：現在は社会＋英単語を実装しています。</div>
-    </div>
-  </section>
-
-  <section id="quiz" class="hidden">
-    <div class="brand">Study COMPASS</div>
-    <div class="progress"><div id="bar"></div></div>
-    <div class="small" id="qnum">1 / 10</div>
-    <div class="card">
-      <span class="tag" id="qtag">社会</span>
-      <div class="qtext" id="qtext"></div>
-      <div id="tfArea" class="answer-grid hidden">
-        <button class="btn secondary" onclick="answerTF('○')">○</button>
-        <button class="btn secondary" onclick="answerTF('×')">×</button>
-      </div>
-      <div id="shortArea" class="hidden">
-        <input id="shortInput" class="input" placeholder="答えを入力">
-        <button class="btn primary" style="margin-top:12px" onclick="answerShort()">答える</button>
-      </div>
-      <div id="feedback" class="hidden"></div>
-      <button id="nextBtn" class="btn primary hidden" style="margin-top:14px" onclick="nextQuestion()">次の問題</button>
-    </div>
-    <button class="btn secondary" style="margin-top:14px" onclick="goHome()">やめてHOMEへ</button>
-  </section>
-
-  <section id="result" class="hidden center">
-    <div class="brand">Study COMPASS</div>
-    <div class="card">
-      <span class="tag">おつかれさま</span>
-      <h1>今日の結果</h1>
-      <div class="result-big"><span id="score">0</span>/10</div>
-      <p id="resultText" class="sub"></p>
-      <button class="btn primary" onclick="startReviewFromResult()">間違いだけ復習</button>
-      <button class="btn secondary" style="margin-top:12px" onclick="startQuiz()">もう10問</button>
-      <button class="btn secondary" style="margin-top:12px" onclick="goHome()">HOME</button>
-    </div>
-  </section>
-
-  <section id="words" class="hidden">
-    <div class="brand">Study COMPASS</div>
-    <div class="progress"><div id="wordBar"></div></div>
-    <div class="small" id="wordNum"></div>
-    <div class="card">
-      <span class="tag">英単語</span>
-      <div class="word" id="word"></div>
-      <button class="speak" onclick="speakWord()">🔊 発音を聞く</button>
-      <button id="revealBtn" class="btn primary" onclick="revealWord()">意味を見る</button>
-      <div id="wordDetail" class="hidden">
-        <div class="meaning" id="meaning"></div>
-        <div class="center small" id="pos"></div>
-        <div class="example" style="margin-top:14px">
-          <b id="example"></b><br><span class="small" id="exampleJa"></span>
-        </div>
-        <div class="grid" style="margin-top:14px">
-          <button class="btn secondary" onclick="rateWord(false)">まだ</button>
-          <button class="btn primary" onclick="rateWord(true)">覚えた</button>
-        </div>
-      </div>
-    </div>
-    <button class="btn secondary" style="margin-top:14px" onclick="goHome()">HOME</button>
-  </section>
-</div>
-
-<div class="bottom">
-  <div class="inner">
-    <button class="navbtn active" onclick="goHome()">⌂<br>HOME</button>
-    <button class="navbtn" onclick="startQuiz()">✎<br>学習</button>
-    <button class="navbtn" onclick="startReview()">↻<br>復習</button>
-    <button class="navbtn" onclick="openWords()">A<br>英単語</button>
-  </div>
-</div>
-
+:root{font-family:system-ui,'Noto Sans JP',sans-serif;color:#142544;background:#f4f7fc;font-size:16px}*{box-sizing:border-box}body{margin:0}main{max-width:640px;margin:auto;padding:24px 16px 100px}header{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.04em}.logo{background:#142544;color:white;border-radius:14px;padding:10px;font-size:24px}.muted,small{color:#60708b}small{font-size:13px}.notice{padding:12px;background:#fff3db;border-radius:12px;font-size:13px;line-height:1.6;margin:18px 0}.hero{background:linear-gradient(130deg,#142544,#264f99);color:white;padding:26px;border-radius:20px;margin:20px 0}.hero p{color:#dce7fc}h1{font-size:28px;line-height:1.4}h2{font-size:20px;margin:0 0 14px}h3{font-size:17px}p{line-height:1.7}.card{background:white;padding:20px;border:1px solid #e2e8f2;border-radius:16px;margin:16px 0}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}button,select,input{font:inherit;border-radius:12px;border:1px solid #dce3ef;min-height:48px;padding:12px;background:white;color:#142544}button{cursor:pointer;font-weight:700}button:focus-visible,a:focus-visible{outline:3px solid #245fe5;outline-offset:3px}button:disabled{opacity:.5;cursor:default}.primary{background:#245fe5;color:white;border:0;width:100%}.hero .primary{background:white;color:#142544}.pill{display:inline-block;border-radius:8px;background:#eaf1ff;padding:5px 9px;color:#245fe5;font-size:13px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpis strong{display:block;font-size:28px}.q{font-size:24px;font-weight:700;line-height:1.65;margin:24px 0}.choices{display:grid;gap:12px}.good{background:#e7f6ee;padding:16px;border-radius:12px}.bad{background:#fff0eb;padding:16px;border-radius:12px}nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dce3ef;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}nav>div{max-width:640px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}nav button{border:0;font-size:14px}.track{height:10px;background:#edf1f8;border-radius:8px;overflow:hidden;margin:8px 0}.track i{display:block;background:#245fe5;height:100%}.unit{border-top:1px solid #e2e8f2;padding:16px 0}.bars{height:130px;display:flex;align-items:end;gap:8px}.day{flex:1;text-align:center;font-size:12px}.day i{display:block;background:#245fe5;border-radius:5px 5px 0 0;min-height:0}.table{overflow-wrap:anywhere}details{margin:12px 0}summary{min-height:48px;padding:12px 0;cursor:pointer}svg{width:100%;height:auto}label{display:block;margin-bottom:8px}.hidden{display:none}.error{color:#a32e22}#message{min-height:20px}input{width:100%;font-size:22px}.mode{width:100%}a{color:#245fe5}
+</style><main><header><span class="logo">✧</span><div>STUDY COMPASS<br><small>高校受験 · α v0.2</small></div></header><div class="notice">α版：社会・英単語のデモ教材で学習できます。教材は確認中です。記録はこのブラウザに保存され、入試の成績判定には使いません。</div><div id="message" role="status"></div><div id="view"></div></main><nav id="nav"><div><button onclick="home()">⌂ ホーム</button><button onclick="setup()">✎ 学習</button><button onclick="reviewSetup()">↻ 復習</button><button onclick="dashboard()">▥ 記録</button></div></nav>
 <script>
 const SOCIAL = [{"id": "SC-SOC-HIS-000001", "subject": "社会", "unit": "歴史・古代", "type": "tf", "q": "聖徳太子は推古天皇のもとで政治を助けた。", "answer": "○", "explanation": "聖徳太子は推古天皇のもとで政治を助けたとされます。"}, {"id": "SC-SOC-HIS-000002", "subject": "社会", "unit": "歴史・古代", "type": "short", "q": "710年に都が置かれた都市はどこ？", "answer": "平城京", "explanation": "710年に平城京へ都が移されました。", "tip": "なんと(710)きれいな平城京"}, {"id": "SC-SOC-HIS-000003", "subject": "社会", "unit": "歴史・古代", "type": "tf", "q": "平安京への遷都は794年である。", "answer": "○", "explanation": "794年、桓武天皇が都を平安京へ移しました。", "tip": "鳴くよ(794)うぐいす平安京"}, {"id": "SC-SOC-HIS-000004", "subject": "社会", "unit": "歴史・中世", "type": "short", "q": "鎌倉幕府を開いた人物は誰？", "answer": "源頼朝", "explanation": "源頼朝が鎌倉に武家政権を築きました。"}, {"id": "SC-SOC-HIS-000006", "subject": "社会", "unit": "歴史・近世", "type": "short", "q": "江戸幕府を開いた人物は誰？", "answer": "徳川家康", "explanation": "徳川家康は1603年に征夷大将軍となり、江戸幕府を開きました。"}, {"id": "SC-SOC-HIS-000009", "subject": "社会", "unit": "歴史・近現代", "type": "tf", "q": "大日本帝国憲法は1889年に発布された。", "answer": "○", "explanation": "大日本帝国憲法は1889年に発布されました。"}, {"id": "SC-SOC-CIV-000011", "subject": "社会", "unit": "公民・政治", "type": "tf", "q": "日本の国会は衆議院と参議院の二院制である。", "answer": "○", "explanation": "国会は衆議院と参議院から成ります。"}, {"id": "SC-SOC-CIV-000012", "subject": "社会", "unit": "公民・政治", "type": "short", "q": "法律を制定する国の機関はどこ？", "answer": "国会", "explanation": "国会は唯一の立法機関です。"}, {"id": "SC-SOC-GEO-000015", "subject": "社会", "unit": "地理・世界", "type": "tf", "q": "赤道は緯度0度の線である。", "answer": "○", "explanation": "赤道は緯度0度を示します。"}, {"id": "SC-SOC-GEO-000016", "subject": "社会", "unit": "地理・日本", "type": "short", "q": "日本の標準時の基準となる経線は東経何度？", "answer": "東経135度", "explanation": "日本標準時は東経135度の経線を基準にしています。"}, {"id": "SC-SOC-GEO-000017", "subject": "社会", "unit": "地理・日本", "type": "tf", "q": "日本は47の都道府県からなる。", "answer": "○", "explanation": "日本には47都道府県があります。"}, {"id": "SC-SOC-GEO-000020", "subject": "社会", "unit": "地理・日本", "type": "short", "q": "日本で最も面積が大きい都道府県はどこ？", "answer": "北海道", "explanation": "都道府県の中で最も面積が大きいのは北海道です。"}];
 const WORDS = [{"id": "SC-ENG-VOC-000001", "word": "book", "meaning": "本", "pos": "名詞", "example": "I have a book.", "ja": "私は本を1冊持っています。"}, {"id": "SC-ENG-VOC-000002", "word": "school", "meaning": "学校", "pos": "名詞", "example": "I go to school every day.", "ja": "私は毎日学校へ行きます。"}, {"id": "SC-ENG-VOC-000003", "word": "friend", "meaning": "友だち", "pos": "名詞", "example": "She is my friend.", "ja": "彼女は私の友だちです。"}, {"id": "SC-ENG-VOC-000006", "word": "study", "meaning": "勉強する", "pos": "動詞", "example": "I study English after dinner.", "ja": "私は夕食後に英語を勉強します。"}, {"id": "SC-ENG-VOC-000011", "word": "different", "meaning": "異なる", "pos": "形容詞", "example": "These two pictures are different.", "ja": "この2枚の絵は異なります。"}, {"id": "SC-ENG-VOC-000012", "word": "important", "meaning": "重要な", "pos": "形容詞", "example": "English is important for me.", "ja": "英語は私にとって重要です。"}, {"id": "SC-ENG-VOC-000019", "word": "environment", "meaning": "環境", "pos": "名詞", "example": "We should protect the environment.", "ja": "私たちは環境を守るべきです。"}, {"id": "SC-ENG-VOC-000041", "word": "necessary", "meaning": "必要な", "pos": "形容詞", "example": "Water is necessary for life.", "ja": "水は生命に必要です。"}, {"id": "SC-ENG-VOC-000047", "word": "communicate", "meaning": "意思を伝え合う", "pos": "動詞", "example": "We communicate with people in English.", "ja": "私たちは英語で人々と意思を伝え合います。"}, {"id": "SC-ENG-VOC-000050", "word": "improve", "meaning": "改善する・上達する", "pos": "動詞", "example": "I want to improve my English.", "ja": "私は英語を上達させたいです。"}];
-const KEY='studyCompassAlphaV1';
-let state = JSON.parse(localStorage.getItem(KEY) || '{"answers":{},"today":{},"words":{}}');
-let quiz=[], idx=0, score=0, wrong=[], currentAnswered=false;
-let wordIdx=0, wordOrder=[];
-
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); updateStats(); }
-function todayKey(){ return new Date().toISOString().slice(0,10); }
-function updateStats(){
-  const t=todayKey(), today=state.today[t]||0;
-  const all=Object.values(state.answers).reduce((s,x)=>s+(x.count||0),0);
-  const reviews=Object.values(state.answers).filter(x=>x.last===false || (x.wrong||0)>=2).length;
-  document.getElementById('todayCount').textContent=today;
-  document.getElementById('totalCount').textContent=all;
-  document.getElementById('reviewCount').textContent=reviews;
-}
-function show(id){
-  ['home','quiz','result','words'].forEach(x=>document.getElementById(x).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  window.scrollTo(0,0);
-}
-function goHome(){ show('home'); updateStats(); }
-function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
-function startQuiz(){
-  const missed = SOCIAL.filter(q=>state.answers[q.id]?.last===false);
-  const unseen = SOCIAL.filter(q=>!state.answers[q.id]);
-  const seen = SOCIAL.filter(q=>state.answers[q.id] && state.answers[q.id].last!==false);
-  let pool=[...shuffle(unseen).slice(0,5),...shuffle(missed).slice(0,3),...shuffle(seen).slice(0,2)];
-  const ids=new Set(pool.map(x=>x.id));
-  pool=[...pool,...shuffle(SOCIAL.filter(x=>!ids.has(x.id)))].slice(0,10);
-  quiz=pool; idx=0; score=0; wrong=[]; show('quiz'); renderQ();
-}
-function startReview(){
-  const missed=SOCIAL.filter(q=>state.answers[q.id]?.last===false || (state.answers[q.id]?.wrong||0)>=2);
-  quiz=(missed.length?shuffle(missed):shuffle(SOCIAL)).slice(0,10);
-  idx=0;score=0;wrong=[];show('quiz');renderQ();
-}
-function renderQ(){
-  currentAnswered=false;
-  const q=quiz[idx];
-  document.getElementById('qnum').textContent=`${idx+1} / ${quiz.length}`;
-  document.getElementById('bar').style.width=`${(idx/quiz.length)*100}%`;
-  document.getElementById('qtag').textContent=`${q.subject}｜${q.unit}`;
-  document.getElementById('qtext').textContent=q.q;
-  document.getElementById('feedback').className='hidden';
-  document.getElementById('nextBtn').classList.add('hidden');
-  document.getElementById('tfArea').classList.toggle('hidden',q.type!=='tf');
-  document.getElementById('shortArea').classList.toggle('hidden',q.type!=='short');
-  document.getElementById('shortInput').value='';
-}
-function norm(s){return (s||'').trim().replace(/\s+/g,'').replace(/[０-９]/g,d=>String.fromCharCode(d.charCodeAt(0)-65248));}
-function answerTF(v){ if(currentAnswered)return; grade(v===quiz[idx].answer,v); }
-function answerShort(){ if(currentAnswered)return; const v=document.getElementById('shortInput').value; grade(norm(v)===norm(quiz[idx].answer),v); }
-function grade(ok,user){
-  currentAnswered=true; const q=quiz[idx];
-  const rec=state.answers[q.id]||{count:0,wrong:0,streak:0};
-  rec.count++; rec.last=ok; if(ok) rec.streak=(rec.streak||0)+1; else{rec.wrong=(rec.wrong||0)+1;rec.streak=0;}
-  state.answers[q.id]=rec;
-  const t=todayKey(); state.today[t]=(state.today[t]||0)+1;
-  if(ok) score++; else wrong.push(q);
-  save();
-  const fb=document.getElementById('feedback');
-  fb.className='feedback '+(ok?'good':'bad');
-  fb.innerHTML=`<b>${ok?'✓ 正解！':'× もう一度チェック'}</b><div style="margin-top:8px">${!ok?`正解：<b>${q.answer}</b><br>`:''}${q.explanation}</div>${q.tip?`<div class="tip">🧠 ${q.tip}</div>`:''}`;
-  document.getElementById('nextBtn').classList.remove('hidden');
-}
-function nextQuestion(){
-  idx++;
-  if(idx>=quiz.length) finishQuiz(); else renderQ();
-}
-function finishQuiz(){
-  document.getElementById('score').textContent=score;
-  document.getElementById('resultText').textContent=wrong.length?`${wrong.length}問だけ、もう一度やればOK。`:'全問正解！今日はここまででも十分。';
-  show('result');
-}
-function startReviewFromResult(){
-  quiz=(wrong.length?wrong:shuffle(SOCIAL)).slice(0,10);
-  idx=0;score=0;wrong=[];show('quiz');renderQ();
-}
-function openWords(){
-  wordOrder=shuffle(WORDS);wordIdx=0;show('words');renderWord();
-}
-function renderWord(){
-  const w=wordOrder[wordIdx];
-  document.getElementById('wordNum').textContent=`${wordIdx+1} / ${wordOrder.length}`;
-  document.getElementById('wordBar').style.width=`${(wordIdx/wordOrder.length)*100}%`;
-  document.getElementById('word').textContent=w.word;
-  document.getElementById('meaning').textContent=w.meaning;
-  document.getElementById('pos').textContent=w.pos;
-  document.getElementById('example').textContent=w.example;
-  document.getElementById('exampleJa').textContent=w.ja;
-  document.getElementById('wordDetail').classList.add('hidden');
-  document.getElementById('revealBtn').classList.remove('hidden');
-}
-function revealWord(){ document.getElementById('wordDetail').classList.remove('hidden'); document.getElementById('revealBtn').classList.add('hidden'); }
-function speakWord(){
-  const w=wordOrder[wordIdx].word;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(w); u.lang='en-US'; u.rate=.82; speechSynthesis.speak(u);
-}
-function rateWord(known){
-  const w=wordOrder[wordIdx];
-  const rec=state.words[w.id]||{known:0,review:0};
-  if(known)rec.known++; else rec.review++;
-  state.words[w.id]=rec; save();
-  wordIdx++;
-  if(wordIdx>=wordOrder.length){ alert('英単語10語、おつかれさま！'); goHome(); } else renderWord();
-}
-updateStats();
-</script>
-</body>
-</html>
+const KEY='studyCompassAlphaV2',DAY=86400000;
+let events=[],storageOK=true,readError=false;try{events=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(events))throw Error();}catch{storageOK=false;readError=true;}
+const items=[...SOCIAL.map(q=>({...q,skill:q.type==='tf'?'recognition':'recall',method:q.type==='tf'?'auto':'self',ex:q.explanation})),...WORDS.map(w=>({id:w.id,subject:'英語',unit:'英単語・基礎語彙',q:`「${w.word}」の意味は？`,answer:w.meaning,ex:w.example+' ／ '+w.ja,word:w.word,type:'word',skill:'recall',method:'self'}))];
+const view=document.getElementById('view'),msg=document.getElementById('message');
+let mode='recognition',subject='すべて',queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function localDay(t=Date.now()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(t));}
+function uid(){return globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2);}
+function save(){if(readError){msg.textContent='既存の試作記録が破損しています。上書きせず、この画面の記録をエクスポートしてから削除してください。';return;}try{localStorage.setItem(KEY,JSON.stringify(events));storageOK=true;msg.textContent='';}catch{storageOK=false;msg.innerHTML='<span class="error">保存できません。記録はこの画面を閉じると失われます。エクスポートで保管できます。</span>';}}
+function graded(a=events){return a.filter(e=>e.event_type==='graded');}
+function series(q,skill,method){return graded().filter(e=>e.id===q.id&&e.skill===skill&&e.method===method);}
+function status(q,skill=q.skill,method=q.method){const a=series(q,skill,method),z=a.at(-1);if(!z)return {name:'未学習',priority:0,streak:0};const good=a.filter(e=>e.outcome==='correct'&&!e.assisted);let streak=0,prev=null;for(let i=a.length-1;i>=0;i--){const e=a[i];if(e.outcome!=='correct'||e.assisted)break;if(prev===null||prev-e.at>=DAY){streak++;prev=e.at;}}const stable=streak>=2;const gap=stable?3:1;const due=z.at+DAY*gap,late=Math.max(0,Math.floor((Date.now()-due)/DAY));return {name:z.outcome!=='correct'||z.assisted||Date.now()>=due?'復習おすすめ':stable?'定着の目安':'練習中',priority:(z.outcome==='incorrect'?60:z.outcome==='partial'?40:z.assisted?30:0)+Math.min(late,7)*3+a.slice(-3).filter(e=>e.outcome==='incorrect').length*5+10,streak,due};}
+function mount(html){view.innerHTML=html;document.getElementById('nav').classList.remove('hidden');window.scrollTo(0,0);if(!storageOK)msg.textContent='保存領域を読み込めません。記録の削除またはエクスポートを確認してください。';}
+function home(){const a=graded().filter(e=>e.date===localDay()),auto=a.filter(e=>e.method==='auto'),self=a.filter(e=>e.method==='self');mount(`<section class="hero"><span>迷ったら、ここから。</span><h1>今日の一歩を、<br>確かな力に。</h1><p>短く確認して、自力で思い出す。<br>書く力は、紙で確かめよう。</p><button class="primary" onclick="setup()">今日の10問をはじめる →</button></section><div class="row"><button onclick="reviewSetup()">復習おすすめ</button><button onclick="subject='英語';setup()">英単語</button></div><section class="card"><h2>今日の学習</h2><div class="kpis"><div><strong>${a.length}</strong>採点した回答</div><div><strong>${new Set(a.map(e=>e.id)).size}</strong>学習した知識</div></div><p>自動 正解 ${auto.filter(e=>e.outcome==='correct').length}/${auto.length}　自己採点 ○${self.filter(e=>e.outcome==='correct').length} △${self.filter(e=>e.outcome==='partial').length} ×${self.filter(e=>e.outcome==='incorrect').length}</p><button class="primary" onclick="dashboard()">学習記録を見る</button></section><p class="muted">国語・数学・理科は教材準備中。漢字の画面手書き・英語綴り入力は次の実装段階です。</p>`);}
+function reviewSetup(){mount(`<section class="card"><h1>どの力を復習する？</h1><p>今の復習候補を、回答方式ごとに選べます。</p><div class="choices"><button onclick="mode='recognition';subject='すべて';start(true)">確認・用語の復習</button><button onclick="mode='recall';subject='すべて';start(true)">自力で思い出す復習</button><button onclick="mode='writing';subject='社会';start(true)">紙に書く復習</button></div></section>`);}
+function setup(){mount(`<section class="card"><h1>今日は、どう学ぶ？</h1><label for="subject">教科</label><select id="subject" class="mode" onchange="subject=this.value"><option>すべて</option><option>社会</option><option>英語</option></select><h2 style="margin-top:24px">学び方</h2><div class="choices"><button onclick="mode='recognition';start()">確認する<br><small>社会○×で判断・用語は頭で再生</small></button><button onclick="mode='recall';start()">思い出す<br><small>選択肢なしで頭・口から答える</small></button><button onclick="mode='writing';start()">紙に書く<br><small>社会用語の漢字を確認・自己採点</small></button></div><p class="muted">再生用の問いがない○×は自動変換しません。紙モードは社会用語のみです。</p></section>`);document.getElementById('subject').value=subject;}
+function eligible(){return items.filter(q=>(subject==='すべて'||q.subject===subject)&&(mode==='recognition'||q.type!=='tf')&&(mode!=='writing'||q.type==='short'&&q.subject==='社会'));}
+function qSkill(q){return mode==='writing'?'writing':q.skill;}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function start(isReview=false,specific=null){let candidates=eligible();if(specific)candidates=candidates.filter(q=>specific.includes(q.id));review=isReview;const priority=q=>status(q,qSkill(q),q.method);const due=candidates.filter(q=>priority(q).name==='復習おすすめ').sort((a,b)=>priority(b).priority-priority(a).priority);if(isReview){queue=due.slice(0,10);}else{const unseen=shuffle(candidates.filter(q=>priority(q).name==='未学習')),seen=shuffle(candidates.filter(q=>!['未学習','復習おすすめ'].includes(priority(q).name)));let selected=[...unseen.slice(0,5),...due.slice(0,3),...seen.slice(0,2)];for(const q of [...due,...unseen,...seen])if(selected.length<10&&!selected.includes(q))selected.push(q);queue=selected;}
+if(!queue.length){mount('<section class="card"><h1>今の対象はありません</h1><p>復習は完了、またはこの教科・方式の教材がまだありません。</p><button class="primary" onclick="setup()">教科・学び方を選ぶ</button></section>');return;}index=0;session=uid();sessionEvents=[];renderQ();}
+function renderQ(){locked=false;revealed=false;committed=false;active=0;last=performance.now();timingValid=true;const q=queue[index],skill=qSkill(q);mount(`<section class="card"><div class="row"><span class="pill">${index+1}/${queue.length}</span><small>${esc(q.subject)}｜${esc(q.unit)}</small></div><div class="track"><i style="width:${index/queue.length*100}%"></i></div><p><small>${skill==='recognition'?'認識・自動採点':skill==='writing'?'書字・自己採点':'自力再生・自己採点'}</small></p><div class="q">${esc(skill==='writing'?q.q+'（答えを漢字で紙に書く）':q.q)}</div>${q.word?'<button onclick="speak()">♪ 発音を聞く</button>':''}<div id="answer">${q.type==='tf'?'<div class="row"><button onclick="submitAuto(\'○\')">○ 正しい</button><button onclick="submitAuto(\'×\')">× 誤り</button></div>':`<p class="muted">${skill==='writing'?'紙に答えを書いてから、見本と比べます。':'頭または口で、答えを決めてください。'}</p><button class="primary" onclick="commit()">${skill==='writing'?'紙に書いた':'答えを決めた'}</button>${skill==='writing'?'<button style="width:100%;margin-top:12px" onclick="mode=\'recall\';renderQ()">紙がない → 頭で答える</button>':''}`}</div><p class="row"><button onclick="unknown()">わからない</button><button onclick="skip()">スキップ</button></p><div id="feedback" aria-live="polite"></div></section><button onclick="home()">いったん終了（回答済みは保存）</button>`);document.getElementById('nav').classList.add('hidden');}
+function tick(){const n=performance.now(),delta=n-last;if(delta>120000)timingValid=false;else if(!document.hidden)active+=delta;last=n;}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){timingValid=false;const n=performance.now();if(n-last<120000)active+=n-last;else timingValid=false;last=n;}else last=performance.now();});
+function commit(){if(locked)return;committed=true;document.getElementById('answer').innerHTML='<button class="primary" onclick="reveal()">答えを見る</button>';}
+function reveal(){if(locked||revealed)return;tick();revealed=true;const q=queue[index];document.getElementById('answer').innerHTML=`<div class="good"><strong>答え：${esc(q.answer)}</strong><p>${esc(q.ex)}</p>${mode==='writing'?'<p>字全体・部首・抜けた画を見本と比べよう。</p>':''}</div><p><small>自己採点：答えを見てから思い出した場合は×。一部不足は△。</small></p><div class="choices"><button onclick="record(\'correct\')">○ 自力でできた</button><button onclick="record(\'partial\')">△ 一部不足</button><button onclick="record(\'incorrect\')">× できなかった</button></div>`;}
+function submitAuto(v){if(locked)return;tick();record(v===queue[index].answer?'correct':'incorrect');}
+function unknown(){if(locked)return;tick();record('incorrect');}
+function skip(){if(locked)return;record('ungraded','skipped');}
+function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],skill=qSkill(q),method=q.method,prior=series(q,skill,method).at(-1),at=Date.now();const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':'+skill,skill,method,subject:q.subject,unit:q.unit,question_version:'v0.1-CHECK',at,date:localDay(at),outcome,event_type,assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.getElementById('answer').innerHTML='';document.getElementById('feedback').innerHTML=`<div class="${outcome==='correct'?'good':'bad'}"><b>${event_type==='skipped'?'未回答として残しました':method==='self'?'自己採点を記録しました':outcome==='correct'?'✓ 正解':'× もう一度チェック'}</b><p>答え：${esc(q.answer)}</p><p>${esc(q.ex)}</p></div><button class="primary" style="margin-top:16px" onclick="next()">${index+1===queue.length?'結果を見る':'次の問題 →'}</button>`;}
+function next(){if(!locked)return;index++;if(index<queue.length)renderQ();else finish();}
+function finish(){const a=graded(sessionEvents),auto=a.filter(e=>e.method==='auto'),self=a.filter(e=>e.method==='self'),wrong=a.filter(e=>e.outcome!=='correct'||e.assisted);mount(`<section class="hero"><h1>今日の一歩、完了。</h1><p>${a.length}回答・${sessionEvents.length-a.length}スキップ</p></section><section class="card"><h2>今回の結果</h2><p>自動 正解 ${auto.filter(e=>e.outcome==='correct').length}/${auto.length}</p><p>自己採点 ○${self.filter(e=>e.outcome==='correct').length} △${self.filter(e=>e.outcome==='partial').length} ×${self.filter(e=>e.outcome==='incorrect').length}</p><p>復習対象 ${wrong.length}知識</p>${wrong.length?'<button class="primary" onclick="retry()">対象だけ、もう一度</button>':'<p class="good">今の復習は完了。明日また思い出してみよう。</p>'}<button style="width:100%;margin-top:12px" onclick="dashboard()">記録を見る</button></section>`);}
+function retry(){const ids=sessionEvents.filter(e=>e.event_type==='graded'&&(e.outcome!=='correct'||e.assisted)).map(e=>e.id);queue=items.filter(q=>ids.includes(q.id));if(!queue.length)return;index=0;session=uid();sessionEvents=[];review=true;renderQ();}
+function speak(){if(!('speechSynthesis'in window)){msg.textContent='このブラウザでは音声が使えません。';return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(queue[index].word);u.lang='en-US';u.rate=.82;speechSynthesis.speak(u);}
+function improvement(a){const bases=new Map();for(const e of a)if(e.outcome!=='correct'&&!bases.has(e.id+e.skill+e.method))bases.set(e.id+e.skill+e.method,e);let yes=0,total=0,pending=0;for(const e of bases.values()){const n=graded().find(x=>x.id===e.id&&x.skill===e.skill&&x.method===e.method&&x.at-e.at>=DAY&&!x.assisted&&x.question_version===e.question_version);if(n){total++;if(n.outcome==='correct')yes++;}else pending++;}return {yes,total,pending};}
+let filterSubject='すべて',filterSkill='すべて',period=7;
+function dashboard(){const days=Array.from({length:period},(_,i)=>localDay(Date.now()-(period-1-i)*DAY)),a=graded().filter(e=>days.includes(e.date)&&(filterSubject==='すべて'||e.subject===filterSubject)&&(filterSkill==='すべて'||e.skill===filterSkill)),auto=a.filter(e=>e.method==='auto'),self=a.filter(e=>e.method==='self'),autoFree=auto.filter(e=>!e.assisted),imp=improvement(a);const data=days.map(date=>({date,n:a.filter(e=>e.date===date).length})),max=Math.max(1,...data.map(d=>d.n));const shown=data.slice(-7);let points=[];for(let i=0;i<shown.length;i++){const b=autoFree.filter(e=>e.date===shown[i].date);points.push(b.length?{x:24+i*45,y:100-b.filter(e=>e.outcome==='correct').length/b.length*80,n:b.length}:null);}let lines='';for(let i=1;i<points.length;i++)if(points[i]&&points[i-1])lines+=`<line x1="${points[i-1].x}" y1="${points[i-1].y}" x2="${points[i].x}" y2="${points[i].y}" stroke="#245fe5" stroke-width="3"/>`;
+const candidates=items.filter(q=>(filterSubject==='すべて'||q.subject===filterSubject)&&(filterSkill==='すべて'||q.skill===filterSkill||filterSkill==='writing'&&q.subject==='社会'&&q.type==='short'));const groups=[...new Set(candidates.map(q=>q.subject+'｜'+q.unit))];mount(`<section class="card"><h1>学習の現在地</h1><div class="row"><select aria-label="期間" onchange="period=Number(this.value);dashboard()"><option value="7">7日</option><option value="30">30日</option></select><select aria-label="教科" onchange="filterSubject=this.value;dashboard()"><option>すべて</option><option>社会</option><option>英語</option></select><select aria-label="スキル" onchange="filterSkill=this.value;dashboard()"><option value="すべて">全スキル</option><option value="recognition">認識</option><option value="recall">再生</option><option value="writing">書字</option></select></div><p class="muted">期間内の採点済み回答。旧版の履歴は含みません。</p><div class="kpis"><div><strong>${a.length}</strong>回答数</div><div><strong>${new Set(a.map(e=>e.id)).size}</strong>学習した知識</div><div><strong>${auto.length?Math.round(auto.filter(e=>e.outcome==='correct').length/auto.length*100)+'%':'—'}</strong>自動 ${auto.filter(e=>e.outcome==='correct').length}/${auto.length}</div><div><strong>${self.filter(e=>e.outcome==='correct').length}</strong>自己採点○（${self.length}回答）</div></div><p>自己採点 △${self.filter(e=>e.outcome==='partial').length} ×${self.filter(e=>e.outcome==='incorrect').length}｜ヒントあり ${a.filter(e=>e.assisted).length}</p><p>遅延復習改善 ${imp.yes}/${imp.total}・未復習${imp.pending}<br><small>24時間以降・同じスキル／採点方式の初回再回答</small></p></section><section class="card"><h2>7日間の学習量</h2><div class="bars">${shown.map(d=>`<div class="day"><span>${d.n}</span><i style="height:${d.n/max*90}px"></i><span>${d.date.slice(5)}</span></div>`).join('')}</div><details><summary>日別数値を見る</summary>${data.map(d=>`<p>${d.date}：${d.n}回答</p>`).join('')}</details></section><section class="card"><h2>自力正答率の推移</h2><p><small>自動採点・無補助のみ。自己採点とは分けます。0回答の日は—。</small></p><svg viewBox="0 0 320 130" role="img" aria-label="7日間の自動正答率。数値は下の一覧"><line x1="18" y1="100" x2="310" y2="100" stroke="#ddd"/>${lines}${points.map(p=>p?`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#245fe5"/>`:'').join('')}</svg>${shown.map((d,i)=>`<small>${d.date.slice(5)} ${points[i]?Math.round((100-points[i].y)/80*100)+'%（'+points[i].n+'件）':'—'}　</small>`).join('')}</section><section class="card"><h2>教科・単元の習熟</h2><p class="muted">状態は累計履歴から判定。率は選んだ期間。自己採点は自己申告です。</p>${groups.map(g=>{const qs=candidates.filter(q=>q.subject+'｜'+q.unit===g),skill=filterSkill==='すべて'?null:filterSkill;const states=qs.map(q=>status(q,skill||q.skill,q.method));const cover=states.filter(s=>s.name!=='未学習').length;const b=a.filter(e=>e.subject+'｜'+e.unit===g);return `<details class="unit"><summary><b>${esc(g)}</b> · ${cover}/${qs.length}知識</summary><div class="track"><i style="width:${cover/qs.length*100}%"></i></div><small>カバー ${cover}/${qs.length}知識 · ${qs.length<5?'判定材料が少ない':''}</small><p>${['未学習','練習中','復習おすすめ','定着の目安'].map(n=>n+' '+states.filter(s=>s.name===n).length).join(' ／ ')}</p><small>期間内 ${b.length}回答</small></details>`;}).join('')}<p>国語・数学・理科：準備中</p></section><section class="card"><h2>復習おすすめ</h2>${candidates.filter(q=>status(q,filterSkill==='すべて'?q.skill:filterSkill,q.method).name==='復習おすすめ').sort((a,b)=>status(b).priority-status(a).priority).slice(0,3).map(q=>`<p>${esc(q.subject+'｜'+q.unit)}<br><small>直近の不足または復習期日 · ${esc(q.q)}</small></p>`).join('')||'<p>今の対象はありません。</p>'}<button class="primary" onclick="mode=filterSkill==='writing'?'writing':filterSkill==='recall'?'recall':'recognition';subject=filterSubject;start(true)">復習をはじめる</button></section><section class="card"><details><summary>最近20件・時間・連続正解</summary>${a.slice(-20).reverse().map(e=>`<p>${e.date} ${esc(e.subject)} ${esc(e.skill)} · ${e.method==='self'?'自己採点':'自動'} ${e.outcome==='correct'?'○':e.outcome==='partial'?'△':'×'}<br><small>${e.timing_valid?Math.round(e.active_ms/1000)+'秒':'時間は欠測'} · ${e.review_of?'復習':'通常'} · 連続 ${status(items.find(q=>q.id===e.id),e.skill,e.method).streak}</small></p>`).join('')||'<p>まだ記録がありません。</p>'}</details><p><small>旧版の回答数：${oldSummary()===null?'記録なし':oldSummary()+'回（参考）'}</small></p><div class="row"><button onclick="exportData()">履歴を保存</button><button onclick="clearData()">v0.2の履歴を削除</button></div><p><small>同日に繰り返した正解は定着判定に使いません。旧版の履歴は保持していますが、方式や日時が不足するため新しい分析には含めません。</small></p></section>`);const sels=view.querySelectorAll('select');sels[0].value=String(period);sels[1].value=filterSubject;sels[2].value=filterSkill;}
+function oldSummary(){try{const o=JSON.parse(localStorage.getItem('studyCompassAlphaV1')||'null');return o?Object.values(o.answers||{}).reduce((n,x)=>n+(x.count||0),0):null;}catch{return null;}}
+function exportData(){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([JSON.stringify({schema_version:2,alpha_version:'0.2',events},null,2)],{type:'application/json'}));a.href=url;a.download='study-compass-v02-history.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function clearData(){if(!confirm('このv0.2の履歴だけを削除しますか？'))return;events=[];readError=false;save();dashboard();}
+home();
+</script></html>
