@@ -47,6 +47,9 @@
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 
 .dash-callout .text-button{color:var(--green);margin-top:8px;min-height:34px}
+
+.result-next.compact{background:#fff;border:1px solid var(--line)}
+.result-next.compact .text-button{margin-top:6px}
 </style><main><header><div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M30 10 26 26 10 30 22 22Z" fill="currentColor"/><path d="m18 38 4-16 16-4-12 12Z" fill="#9cbba5"/></svg><div><div class="wordmark">STUDY COMPASS</div><small>高校受験の、その先へ。</small></div></div><span class="version">α v0.3</span></header><div id="message" role="status"></div><div id="view"></div></main><nav id="nav"><div></div></nav><script>
 const SOCIAL = [
 {id:"SC-SOC-HIS-000001",subject:"社会",unit:"歴史・古代",q:"推古天皇のもとで政治を助けたとされる人物は？",answer:"聖徳太子",options:["聖徳太子","藤原道長","源頼朝","徳川家康"],ex:"聖徳太子は推古天皇のもとで政治を助けたとされます。"},
@@ -577,7 +580,53 @@ function unknown(){if(locked)return;tick();record('incorrect');}
 function skip(){if(locked)return;tick();record('ungraded','skipped');}
 function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],at=Date.now(),prior=series(q,q.skill,q.method).at(-1);const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':mcq-v03',skill:q.skill,method:q.method,subject:q.subject,unit:q.unit,unit_id:q.unit_id,question_version:'v0.3-CHECK',at,date:localDay(at),outcome,event_type,selected_answer:selectedAnswer,option_order:[...currentOptions],assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.querySelectorAll('.quiz-actions button').forEach(b=>b.disabled=true);document.querySelectorAll('.choice').forEach((b,i)=>{b.disabled=true;if(currentOptions[i]===q.answer)b.classList.add('correct');else if(currentOptions[i]===selectedAnswer)b.classList.add('wrong');});document.getElementById('feedback').innerHTML='<section class="feedback '+(outcome==='incorrect'?'incorrect':'')+'"><h2>'+(event_type==='skipped'?'次の復習に残しました':outcome==='correct'?'正解。その調子！':'ここで覚えていこう。')+'</h2>'+(selectedAnswer&&outcome==='incorrect'?'<p>あなたの回答：'+esc(selectedAnswer)+'</p>':'')+'<p><b>正解：'+esc(q.answer)+'</b></p><p>'+esc(q.ex)+'</p>'+(q.tip?'<p><small>覚え方：'+esc(q.tip)+'</small></p>':'')+(q.word?'<button class="sound" onclick="speak()">発音を聞く</button>':'')+'<button class="primary" onclick="next()">'+(index+1===queue.length?'結果を見る':'次の問題')+' <span>→</span></button></section>';}
 function next(){if(!locked)return;index++;if(index<queue.length)renderQ();else finish();}
-function finish(){const a=graded(sessionEvents),correct=a.filter(e=>e.outcome==='correct').length,wrong=sessionEvents.filter(e=>e.outcome!=='correct'),skipped=sessionEvents.filter(e=>e.event_type==='skipped').length,rate=a.length?Math.round(correct/a.length*100):null,wrongGraded=a.filter(e=>e.outcome==='incorrect').length;const nextText=wrong.length?'まずは今回の間違いを見直そう。':'今日はここまででもOK。日を空けてもう一度確認しよう。';mount('<section class="result"><div class="result-card"><span class="eyebrow">SESSION COMPLETE</span><h1>今日の一歩、完了。</h1><div class="score">'+correct+'<small> / '+a.length+' 正解</small></div><p>'+ (correct===a.length&&a.length?'いいペース。この調子で積み重ねよう。':'間違いは、次に伸びるポイント。')+'</p></div><div class="result-stats"><div class="result-stat"><small>4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong></div><div class="result-stat"><small>誤答</small><strong>'+wrongGraded+'問</strong></div><div class="result-stat"><small>あとで解く</small><strong>'+skipped+'問</strong></div></div><section class="result-next"><span class="eyebrow">NEXT STEP</span><h2>'+nextText+'</h2><p>'+(wrong.length?'今回の間違い・未回答だけを続けて復習できます。':'同日の繰り返し正解は定着判定に使わず、時間を空けて再確認します。')+'</p></section><div class="result-links">'+(wrong.length?'<button class="primary" onclick="retry()">間違い・未回答の'+wrong.length+'問を復習 <span>→</span></button>':'')+'<button class="secondary" onclick="dashboard()">学習記録を見る</button><button class="text-button" onclick="home()">ホームへ戻る</button></div>'+note()+'</section>');nav('learn');}
+function sessionFocus(){
+  const by=new Map();
+  for(const e of sessionEvents){
+    const q=items.find(x=>x.id===e.id);
+    if(!q)continue;
+    const key=q.unit_id;
+    if(!by.has(key))by.set(key,{unit_id:key,subject:q.subject,unit:q.unit,wrong:0,skipped:0,total:0});
+    const x=by.get(key);
+    x.total++;
+    if(e.event_type==='skipped')x.skipped++;
+    else if(e.outcome==='incorrect')x.wrong++;
+  }
+  return [...by.values()]
+    .filter(x=>x.wrong+x.skipped>0)
+    .sort((a,b)=>(b.wrong*2+b.skipped)-(a.wrong*2+a.skipped)||b.total-a.total)[0]||null;
+}
+function finish(){
+  const a=graded(sessionEvents),
+    correct=a.filter(e=>e.outcome==='correct').length,
+    wrong=sessionEvents.filter(e=>e.outcome!=='correct'),
+    skipped=sessionEvents.filter(e=>e.event_type==='skipped').length,
+    rate=a.length?Math.round(correct/a.length*100):null,
+    wrongGraded=a.filter(e=>e.outcome==='incorrect').length,
+    unit=sessionFocus(),
+    globalFocus=unitLearningSignals(30,'すべて').find(u=>recommendationLevel(u)!=='light')||null;
+
+  let nextTitle='今日はここまででもOK。';
+  let nextBody='同日の繰り返し正解は定着判定に使わず、時間を空けてもう一度確認します。';
+  let action='';
+
+  if(wrong.length){
+    nextTitle='まずは今回の間違いを見直そう。';
+    nextBody='誤答と「あとで解く」だけを、すぐにもう一度確認できます。';
+    action='<button class="primary" onclick="retry()">間違い・未回答の'+wrong.length+'問を復習 <span>→</span></button>';
+  }else if(globalFocus){
+    nextTitle=globalFocus.subject+' / '+globalFocus.unit+'を次に確認。';
+    nextBody=recommendationReason(globalFocus)+'。';
+    action='<button class="primary" onclick="focusUnit(\''+globalFocus.unit_id+'\')">この単元を確認 <span>→</span></button>';
+  }
+
+  const sessionUnit=unit
+    ? '<section class="result-next compact"><span class="eyebrow">SESSION FOCUS</span><h2>'+esc(unit.subject+' / '+unit.unit)+'</h2><p>今回この単元で、誤答 '+unit.wrong+'問 · あとで解く '+unit.skipped+'問。'+(wrong.length?'まずは今回分の復習を優先します。':'')+'</p>'+(wrong.length?'<button class="text-button" onclick="focusUnit(\''+unit.unit_id+'\')">この単元を10問で確認 →</button>':'')+'</section>'
+    : '';
+
+  mount('<section class="result"><div class="result-card"><span class="eyebrow">SESSION COMPLETE</span><h1>今日の一歩、完了。</h1><div class="score">'+correct+'<small> / '+a.length+' 正解</small></div><p>'+(correct===a.length&&a.length?'今回の10問は全問正解。時間を空けた再確認で定着を見ます。':'間違いは、次に確認する場所が見つかったということ。')+'</p></div><div class="result-stats"><div class="result-stat"><small>4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong></div><div class="result-stat"><small>誤答</small><strong>'+wrongGraded+'問</strong></div><div class="result-stat"><small>あとで解く</small><strong>'+skipped+'問</strong></div></div><section class="result-next"><span class="eyebrow">NEXT STEP</span><h2>'+esc(nextTitle)+'</h2><p>'+esc(nextBody)+'</p></section>'+sessionUnit+'<div class="result-links">'+action+'<button class="secondary" onclick="dashboard()">学習記録を見る</button><button class="text-button" onclick="home()">ホームへ戻る</button></div>'+note()+'</section>');
+  nav('learn');
+}
 function retry(){const ids=sessionEvents.filter(e=>e.outcome!=='correct').map(e=>e.id);queue=items.filter(q=>ids.includes(q.id));if(!queue.length)return;index=0;session=uid();sessionEvents=[];review=true;renderQ();}
 function speak(){if(!('speechSynthesis'in window)){msg.textContent='このブラウザでは音声が使えません。';return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(queue[index].word);u.lang='en-US';u.rate=.82;speechSynthesis.speak(u);}
 function improvement(a){const bases=new Map();for(const e of a)if(e.outcome!=='correct'&&!bases.has(e.id+e.skill+e.method))bases.set(e.id+e.skill+e.method,e);let yes=0,total=0,pending=0;for(const e of bases.values()){const n=graded().find(x=>x.id===e.id&&x.skill===e.skill&&x.method===e.method&&x.at-e.at>=DAY&&!x.assisted&&x.question_version===e.question_version);if(n){total++;if(n.outcome==='correct')yes++;}else pending++;}return {yes,total,pending};}
