@@ -129,7 +129,7 @@ const WORDS = [
 {id:"SC-ENG-VOC-000027",word:"often",meaning:"よく・しばしば",pos:"副詞",example:"We often play basketball.",ja:"私たちはよくバスケットボールをします。"},
 {id:"SC-ENG-VOC-000028",word:"sometimes",meaning:"ときどき",pos:"副詞",example:"I sometimes watch movies.",ja:"私はときどき映画を見ます。"},
 {id:"SC-ENG-VOC-000029",word:"usually",meaning:"たいてい",pos:"副詞",example:"I usually walk to school.",ja:"私はたいてい歩いて学校へ行きます。"},
-{id:"SC-ENG-VOC-000030",word:"never",meaning:"決して〜ない",pos:"副詞",example:"I never drink coffee at night.",ja:"私は夜にコーヒーを飲みません。",
+{id:"SC-ENG-VOC-000030",word:"never",meaning:"決して〜ない",pos:"副詞",example:"I never drink coffee at night.",ja:"私は夜にコーヒーを飲みません。"},
 {id:"SC-ENG-VOC-000031",word:"future",meaning:"未来・将来",pos:"名詞",example:"I want to be a doctor in the future.",ja:"私は将来医者になりたいです。"},
 {id:"SC-ENG-VOC-000032",word:"country",meaning:"国",pos:"名詞",example:"Japan is an island country.",ja:"日本は島国です。"},
 {id:"SC-ENG-VOC-000033",word:"language",meaning:"言語",pos:"名詞",example:"English is used in many countries.",ja:"英語は多くの国で使われています。"},
@@ -162,7 +162,6 @@ function buildWordOptions(w,i){
 const items=[...SOCIAL.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...WORDS.map((w,i)=>({id:w.id,subject:"英語",unit:"英単語・基礎語彙",q:"「"+w.word+"」の意味は？",answer:w.meaning,options:buildWordOptions(w,i),ex:w.example+" ／ "+w.ja,word:w.word,type:"mcq",skill:"recognition",method:"auto"}))];
 const KEY='studyCompassAlphaV3',DAY=86400000;
 let events=[],storageOK=true,readError=false;try{events=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(events))throw Error();}catch{storageOK=false;readError=true;}
-const items=[...SOCIAL.map((q,i)=>({...q,q:SOCIAL_OPTIONS[i][0],answer:SOCIAL_OPTIONS[i][1],options:SOCIAL_OPTIONS[i][2],skill:'recognition',method:'auto',type:'mcq',ex:q.explanation})),...WORDS.map((w,i)=>({id:w.id,subject:'英語',unit:'英単語・基礎語彙',q:'「'+w.word+'」の意味は？',answer:w.meaning,options:WORD_OPTIONS[i],ex:w.example+' ／ '+w.ja,word:w.word,type:'mcq',skill:'recognition',method:'auto'}))];
 const view=document.getElementById('view'),msg=document.getElementById('message');
 let mode='recognition',subject='すべて',queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true,currentOptions=[],selectedAnswer=null;
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
