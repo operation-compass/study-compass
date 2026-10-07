@@ -390,7 +390,53 @@ const ENGLISH_GRAMMAR = [
 
 ];
 
-const items=[...SOCIAL.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...WORDS.map((w,i)=>({id:w.id,subject:"英語",unit:"英単語・基礎語彙",q:"「"+w.word+"」の意味は？",answer:w.meaning,options:buildWordOptions(w,i),ex:w.example+" ／ "+w.ja,word:w.word,type:"mcq",skill:"recognition",method:"auto"})),...ENGLISH_GRAMMAR.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...JAPANESE.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...MATH.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...SCIENCE.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"}))];
+const VALID_UNIT_IDS=new Set([
+"SC-ENG-G1-VOC","SC-ENG-G1-BE","SC-ENG-G1-GV","SC-ENG-G2-PST","SC-ENG-G3-REL",
+"SC-SOC-G1-GEO","SC-SOC-G1-ANC","SC-SOC-G2-MED","SC-SOC-G2-EARLY","SC-SOC-G3-MOD","SC-SOC-G3-CIV",
+"SC-SCI-G1-BIO","SC-SCI-G2-CHE","SC-SCI-G3-PHY","SC-SCI-G2-EAR",
+"SC-MAT-G1-ALG","SC-MAT-G1-EQU","SC-MAT-G2-FUN","SC-MAT-G3-FUN","SC-MAT-G2-GEO","SC-MAT-G2-DAT","SC-MAT-G2-PRO",
+"SC-JPN-G1-KAN","SC-JPN-G2-GRA","SC-JPN-G3-CLS","SC-JPN-G2-EXP","SC-JPN-G3-REA"
+]);
+function canonicalUnitId(q){
+  if(q.subject==="英語"){
+    if(q.word||q.unit==="英単語・基礎語彙")return "SC-ENG-G1-VOC";
+    if(q.unit.includes("be動詞"))return "SC-ENG-G1-BE";
+    if(q.unit.includes("一般動詞"))return "SC-ENG-G1-GV";
+    if(q.unit.includes("過去形"))return "SC-ENG-G2-PST";
+    if(q.unit.includes("関係代名詞"))return "SC-ENG-G3-REL";
+  }
+  if(q.subject==="社会"){
+    if(q.unit.includes("地理"))return "SC-SOC-G1-GEO";
+    if(q.unit.includes("歴史・古代"))return "SC-SOC-G1-ANC";
+    if(q.unit.includes("歴史・中世"))return "SC-SOC-G2-MED";
+    if(q.unit.includes("歴史・近世"))return "SC-SOC-G2-EARLY";
+    if(q.unit.includes("歴史・近現代"))return "SC-SOC-G3-MOD";
+    if(q.unit.includes("公民"))return "SC-SOC-G3-CIV";
+  }
+  if(q.subject==="国語"){
+    if(q.unit==="漢字・語句")return "SC-JPN-G1-KAN";
+    if(q.unit==="文法")return "SC-JPN-G2-GRA";
+    if(q.unit==="古典")return "SC-JPN-G3-CLS";
+    if(q.unit==="表現")return "SC-JPN-G2-EXP";
+    if(q.unit==="読解基礎")return "SC-JPN-G3-REA";
+  }
+  if(q.subject==="数学"){
+    if(q.unit==="数と式")return "SC-MAT-G1-ALG";
+    if(q.unit==="方程式")return "SC-MAT-G1-EQU";
+    if(q.unit==="図形")return "SC-MAT-G2-GEO";
+    if(q.unit==="データ")return "SC-MAT-G2-DAT";
+    if(q.unit==="確率")return "SC-MAT-G2-PRO";
+    if(q.unit==="関数")return q.id.includes("-QFUN-")?"SC-MAT-G3-FUN":"SC-MAT-G2-FUN";
+  }
+  if(q.subject==="理科"){
+    if(q.unit==="生物")return "SC-SCI-G1-BIO";
+    if(q.unit==="化学")return "SC-SCI-G2-CHE";
+    if(q.unit==="物理")return "SC-SCI-G3-PHY";
+    if(q.unit==="地学")return "SC-SCI-G2-EAR";
+  }
+  return "";
+}
+const items=([...SOCIAL.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...WORDS.map((w,i)=>({id:w.id,subject:"英語",unit:"英単語・基礎語彙",q:"「"+w.word+"」の意味は？",answer:w.meaning,options:buildWordOptions(w,i),ex:w.example+" ／ "+w.ja,word:w.word,type:"mcq",skill:"recognition",method:"auto"})),...ENGLISH_GRAMMAR.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...JAPANESE.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...MATH.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"})),...SCIENCE.map(q=>({...q,skill:"recognition",method:"auto",type:"mcq"}))]).map(q=>({...q,unit_id:canonicalUnitId(q)}));
 function validateQuestionBank(){
   const ids=new Set(),issues=[];
   for(const q of items){
@@ -398,6 +444,7 @@ function validateQuestionBank(){
     if(q?.id&&ids.has(q.id))issues.push("duplicate:"+q.id);
     if(q?.id)ids.add(q.id);
     if(Array.isArray(q?.options)&&(new Set(q.options).size!==4||!q.options.includes(q.answer)))issues.push("options:"+q.id);
+    if(!q?.unit_id||!VALID_UNIT_IDS.has(q.unit_id))issues.push("unit:"+q.id);
   }
   return issues;
 }
@@ -440,7 +487,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){timingVali
 function submitChoice(i){if(locked)return;tick();selectedAnswer=currentOptions[i];record(selectedAnswer===queue[index].answer?'correct':'incorrect');}
 function unknown(){if(locked)return;tick();record('incorrect');}
 function skip(){if(locked)return;tick();record('ungraded','skipped');}
-function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],at=Date.now(),prior=series(q,q.skill,q.method).at(-1);const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':mcq-v03',skill:q.skill,method:q.method,subject:q.subject,unit:q.unit,question_version:'v0.3-CHECK',at,date:localDay(at),outcome,event_type,selected_answer:selectedAnswer,option_order:[...currentOptions],assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.querySelectorAll('.quiz-actions button').forEach(b=>b.disabled=true);document.querySelectorAll('.choice').forEach((b,i)=>{b.disabled=true;if(currentOptions[i]===q.answer)b.classList.add('correct');else if(currentOptions[i]===selectedAnswer)b.classList.add('wrong');});document.getElementById('feedback').innerHTML='<section class="feedback '+(outcome==='incorrect'?'incorrect':'')+'"><h2>'+(event_type==='skipped'?'次の復習に残しました':outcome==='correct'?'正解。その調子！':'ここで覚えていこう。')+'</h2>'+(selectedAnswer&&outcome==='incorrect'?'<p>あなたの回答：'+esc(selectedAnswer)+'</p>':'')+'<p><b>正解：'+esc(q.answer)+'</b></p><p>'+esc(q.ex)+'</p>'+(q.tip?'<p><small>覚え方：'+esc(q.tip)+'</small></p>':'')+(q.word?'<button class="sound" onclick="speak()">発音を聞く</button>':'')+'<button class="primary" onclick="next()">'+(index+1===queue.length?'結果を見る':'次の問題')+' <span>→</span></button></section>';}
+function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],at=Date.now(),prior=series(q,q.skill,q.method).at(-1);const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':mcq-v03',skill:q.skill,method:q.method,subject:q.subject,unit:q.unit,unit_id:q.unit_id,question_version:'v0.3-CHECK',at,date:localDay(at),outcome,event_type,selected_answer:selectedAnswer,option_order:[...currentOptions],assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.querySelectorAll('.quiz-actions button').forEach(b=>b.disabled=true);document.querySelectorAll('.choice').forEach((b,i)=>{b.disabled=true;if(currentOptions[i]===q.answer)b.classList.add('correct');else if(currentOptions[i]===selectedAnswer)b.classList.add('wrong');});document.getElementById('feedback').innerHTML='<section class="feedback '+(outcome==='incorrect'?'incorrect':'')+'"><h2>'+(event_type==='skipped'?'次の復習に残しました':outcome==='correct'?'正解。その調子！':'ここで覚えていこう。')+'</h2>'+(selectedAnswer&&outcome==='incorrect'?'<p>あなたの回答：'+esc(selectedAnswer)+'</p>':'')+'<p><b>正解：'+esc(q.answer)+'</b></p><p>'+esc(q.ex)+'</p>'+(q.tip?'<p><small>覚え方：'+esc(q.tip)+'</small></p>':'')+(q.word?'<button class="sound" onclick="speak()">発音を聞く</button>':'')+'<button class="primary" onclick="next()">'+(index+1===queue.length?'結果を見る':'次の問題')+' <span>→</span></button></section>';}
 function next(){if(!locked)return;index++;if(index<queue.length)renderQ();else finish();}
 function finish(){const a=graded(sessionEvents),correct=a.filter(e=>e.outcome==='correct').length,wrong=sessionEvents.filter(e=>e.outcome!=='correct'),skipped=sessionEvents.filter(e=>e.event_type==='skipped').length,rate=a.length?Math.round(correct/a.length*100):null,wrongGraded=a.filter(e=>e.outcome==='incorrect').length;const nextText=wrong.length?'まずは今回の間違いを見直そう。':'今日はここまででもOK。日を空けてもう一度確認しよう。';mount('<section class="result"><div class="result-card"><span class="eyebrow">SESSION COMPLETE</span><h1>今日の一歩、完了。</h1><div class="score">'+correct+'<small> / '+a.length+' 正解</small></div><p>'+ (correct===a.length&&a.length?'いいペース。この調子で積み重ねよう。':'間違いは、次に伸びるポイント。')+'</p></div><div class="result-stats"><div class="result-stat"><small>4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong></div><div class="result-stat"><small>誤答</small><strong>'+wrongGraded+'問</strong></div><div class="result-stat"><small>あとで解く</small><strong>'+skipped+'問</strong></div></div><section class="result-next"><span class="eyebrow">NEXT STEP</span><h2>'+nextText+'</h2><p>'+(wrong.length?'今回の間違い・未回答だけを続けて復習できます。':'同日の繰り返し正解は定着判定に使わず、時間を空けて再確認します。')+'</p></section><div class="result-links">'+(wrong.length?'<button class="primary" onclick="retry()">間違い・未回答の'+wrong.length+'問を復習 <span>→</span></button>':'')+'<button class="secondary" onclick="dashboard()">学習記録を見る</button><button class="text-button" onclick="home()">ホームへ戻る</button></div>'+note()+'</section>');nav('learn');}
 function retry(){const ids=sessionEvents.filter(e=>e.outcome!=='correct').map(e=>e.id);queue=items.filter(q=>ids.includes(q.id));if(!queue.length)return;index=0;session=uid();sessionEvents=[];review=true;renderQ();}
