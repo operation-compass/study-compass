@@ -60,6 +60,12 @@
 .question-only-actions{display:grid;gap:10px}
 .result-stats.two{grid-template-columns:repeat(2,1fr)}
 @media(max-width:700px){.mode-switch{gap:8px}.mode-switch button{padding:12px 10px}}
+
+.course-grid{display:grid;gap:12px;margin:18px 0}
+.course-card{display:grid;grid-template-columns:1fr auto;gap:5px 12px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;min-height:82px}
+.course-card b{font-size:15px;grid-column:1}
+.course-card small{font-size:11px;color:var(--muted);line-height:1.5;grid-column:1}
+.course-card span{grid-column:2;grid-row:1/3;font-size:18px}
 </style><main><header><div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M30 10 26 26 10 30 22 22Z" fill="currentColor"/><path d="m18 38 4-16 16-4-12 12Z" fill="#9cbba5"/></svg><div><div class="wordmark">STUDY COMPASS</div><small>高校受験の、その先へ。</small></div></div><span class="version">α v0.3</span></header><div id="message" role="status"></div><div id="view"></div></main><nav id="nav"><div></div></nav><script>
 const SOCIAL = [
 {id:"SC-SOC-HIS-000001",subject:"社会",unit:"歴史・古代",q:"推古天皇のもとで政治を助けたとされる人物は？",answer:"聖徳太子",options:["聖徳太子","藤原道長","源頼朝","徳川家康"],ex:"聖徳太子は推古天皇のもとで政治を助けたとされます。"},
@@ -504,7 +510,7 @@ const SCIENCE_COUNT=items.filter(q=>q.subject==="理科").length;
 const KEY='studyCompassAlphaV3',DAY=86400000;
 let events=[],storageOK=true,readError=false;try{events=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(events))throw Error();}catch{storageOK=false;readError=true;}
 const view=document.getElementById('view'),msg=document.getElementById('message');
-let mode='mcq',subject='すべて',queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true,currentOptions=[],selectedAnswer=null;
+let mode='mcq',subject='すべて',studyFilter={kind:'all',value:''},queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true,currentOptions=[],selectedAnswer=null;
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function localDay(t=Date.now()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(t));}
 function uid(){return globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2);}
@@ -539,7 +545,59 @@ function home(){
   mount('<div class="intro"><div><span class="eyebrow">YOUR NEXT STEP</span><h1>'+(done?'今日の10問、達成。':'今日も、一歩ずつ。')+'</h1></div><p>'+(done?'続けるなら復習を優先。':'小さな積み重ねが、進む力になる。')+'</p></div><div class="home-grid"><section class="hero">'+compass()+'<span class="eyebrow">'+(done?'DAILY GOAL COMPLETE':'DAILY CHALLENGE')+'</span><h1>'+(done?'今日の目標は、<br>クリア。':'10問から、<br>未来を変えよう。')+'</h1><p>'+(done?'ここから先は、間違いの見直しか新しい10問へ。':'4つの選択肢から、答えをタップ。<br>今日の「わかった」を積み重ねよう。')+'</p><div class="home-statusline"><span class="status-chip"><i></i>連続学習 '+streak+'日</span><span class="status-chip">復習 '+due+'問</span></div><button class="primary" onclick="'+(done&&due?'reviewSetup()':"subject=\'すべて\';start()")+'">'+(done&&due?'復習から続ける':'今日の10問をはじめる')+' <span>↗</span></button></section><section class="side-panel"><div><span class="eyebrow">TODAY’S PROGRESS</span><h2>今日の学習</h2><div class="big">'+a.length+'<small> 問回答</small></div><div class="progress"><i style="width:'+goal/10*100+'%"></i></div></div><div><p>正解 '+correct+'問 · '+(rate===null?'まだ記録なし':rate+'%')+'</p><button class="text-button" onclick="dashboard()">学習記録を見る →</button></div></section></div><div class="home-insights"><div class="insight-card"><small>今日の4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong><span>'+a.length+'回答</span></div><div class="insight-card"><small>学習した問題</small><strong>'+covered+'</strong><span>全'+items.length+'問中</span></div><div class="insight-card"><small>定着の目安</small><strong>'+stable+'</strong><span>日を空けて確認</span></div></div>'+focusHtml+'<div class="section-label"><h2>教科から選ぶ</h2><button class="text-button" onclick="reviewSetup()">復習する →</button></div><div class="subjects">'+subjectTile('国語','JPN','漢字・文法・読解',JAPANESE_COUNT)+subjectTile('数学','MAT','数式・関数・図形',MATH_COUNT)+subjectTile('英語','ENG','英単語・文法',ENGLISH_COUNT)+subjectTile('理科','SCI','生物・化学・物理・地学',SCIENCE_COUNT)+subjectTile('社会','SOC','歴史・地理・公民',SOCIAL_COUNT)+'</div>'+note());
   nav('home');
 }
-function subjectTile(s,label,desc,n){return '<button class="subject-tile '+(s==='英語'?'english':'')+'"  onclick="subject=\''+s+'\';start()"><span class="subject-icon">'+label+'</span><div><b>'+s+'</b><small>'+desc+' · '+n+'問</small></div><span class="arrow">↗</span></button>';}
+function fieldOf(q){
+  if(q.subject==='社会'){
+    if(q.unit.startsWith('歴史'))return '歴史';
+    if(q.unit.startsWith('地理'))return '地理';
+    if(q.unit.startsWith('公民'))return '公民';
+  }
+  if(q.subject==='理科')return q.unit;
+  if(q.subject==='数学')return q.unit;
+  if(q.subject==='国語'){
+    if(q.unit==='漢字・語句')return '漢字・語句';
+    if(q.unit==='文法')return '文法';
+    if(q.unit==='古典')return '古典';
+    if(q.unit==='表現')return '表現';
+    return '読解';
+  }
+  if(q.subject==='英語')return q.word?'英単語':'文法';
+  return q.unit;
+}
+function textbookRank(q){
+  const maps={
+    '社会':['地理・世界','地理・日本','歴史・古代','歴史・中世','歴史・近世','歴史・近現代','公民・政治','公民・権利','公民・経済','公民・国際'],
+    '数学':['数と式','方程式','関数','図形','データ','確率'],
+    '英語':['英単語・基礎語彙','文法・be動詞','文法・一般動詞','文法・過去形','文法・関係代名詞'],
+    '理科':['生物','化学','物理','地学'],
+    '国語':['漢字・語句','文法','読解基礎','表現','古典']
+  };
+  const arr=maps[q.subject]||[];
+  const i=arr.indexOf(q.unit);
+  return i<0?999:i;
+}
+function coursePicker(su){
+  subject=su;studyFilter={kind:'all',value:''};
+  const total=items.filter(q=>q.subject===su).length;
+  const fields=[...new Set(items.filter(q=>q.subject===su).map(fieldOf))];
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">CHOOSE HOW</span><h1>'+esc(su)+'をどう進める？</h1><p class="muted">'+total+'問から出題方法を選べます。</p></div><div class="course-grid"><button class="course-card" onclick="studyFilter={kind:\'all\',value:\'\'};start()"><b>おまかせ10問</b><small>復習・未学習を混ぜてランダム</small><span>→</span></button><button class="course-card" onclick="fieldPicker()"><b>分野から選ぶ</b><small>'+fields.map(esc).join(' / ')+'</small><span>→</span></button><button class="course-card" onclick="textbookPicker()"><b>教科書順から選ぶ</b><small>学習する順番で単元を選択</small><span>→</span></button></div><button class="text-button" onclick="setup()">← 教科選択へ戻る</button>'+note()+'</section>');
+  nav('learn');
+}
+function fieldPicker(){
+  const qs=items.filter(q=>q.subject===subject);
+  const fields=[...new Set(qs.map(fieldOf))];
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">FIELD</span><h1>'+esc(subject)+'｜分野から選ぶ</h1><p class="muted">苦手な分野だけ集中できます。</p></div><div class="subjects">'+fields.map(f=>{const n=qs.filter(q=>fieldOf(q)===f).length;return '<button class="subject-tile" onclick="studyFilter={kind:\'field\',value:\''+esc(f)+'\'};start()"><span class="subject-icon">'+esc(f.slice(0,3))+'</span><div><b>'+esc(f)+'</b><small>'+n+'問から出題</small></div><span class="arrow">↗</span></button>'}).join('')+'</div><button class="text-button" onclick="coursePicker(subject)">← 出題方法へ戻る</button>'+note()+'</section>');
+  nav('learn');
+}
+function textbookPicker(){
+  const qs=items.filter(q=>q.subject===subject);
+  const units=[...new Set(qs.map(q=>q.unit))].sort((a,b)=>{
+    const qa=qs.find(q=>q.unit===a),qb=qs.find(q=>q.unit===b);
+    return textbookRank(qa)-textbookRank(qb)||a.localeCompare(b,'ja');
+  });
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">TEXTBOOK ORDER</span><h1>'+esc(subject)+'｜教科書順</h1><p class="muted">出版社共通の学習順を目安に並べています。</p></div><div class="subjects">'+units.map((u,i)=>{const n=qs.filter(q=>q.unit===u).length;return '<button class="subject-tile" onclick="studyFilter={kind:\'unit\',value:\''+esc(u)+'\'};start()"><span class="subject-icon">'+String(i+1).padStart(2,'0')+'</span><div><b>'+esc(u)+'</b><small>'+n+'問から出題</small></div><span class="arrow">↗</span></button>'}).join('')+'</div><button class="text-button" onclick="coursePicker(subject)">← 出題方法へ戻る</button>'+note()+'</section>');
+  nav('learn');
+}
+function subjectTile(s,label,desc,n){return '<button class="subject-tile '+(s==='英語'?'english':'')+'"  onclick="coursePicker(\''+s+'\')"><span class="subject-icon">'+label+'</span><div><b>'+s+'</b><small>'+desc+' · '+n+'問</small></div><span class="arrow">↗</span></button>';}
 function setStudyMode(m){mode=m;setup();}
 function setup(){
   const isQuestion=mode==='question';
@@ -548,7 +606,7 @@ function setup(){
   mount('<section class="selection"><div class="page-title"><span class="eyebrow">CHOOSE YOUR COURSE</span><h1>今日は、どう学ぶ？</h1><p class="muted">'+subtitle+'</p></div><div class="mode-switch" role="group" aria-label="出題方式"><button class="'+(!isQuestion?'active':'')+'" onclick="setStudyMode(\'mcq\')"><b>4択で解く</b><small>自動採点・正答率に反映</small></button><button class="'+(isQuestion?'active':'')+'" onclick="setStudyMode(\'question\')"><b>問題だけで確認</b><small>選択肢なし・採点なし</small></button></div><div class="subjects"><button class="subject-tile" onclick="subject=\'すべて\';start()"><span class="subject-icon">'+(isQuestion?'Q':'MIX')+'</span><div><b>'+(isQuestion?'問題だけ10問':'今日の10問')+'</b><small>'+mixDesc+'</small></div><span class="arrow">↗</span></button>'+subjectTile('国語','JPN','漢字・文法・読解',JAPANESE_COUNT)+subjectTile('数学','MAT','数式・関数・図形',MATH_COUNT)+subjectTile('英語','ENG','英単語・文法',ENGLISH_COUNT)+subjectTile('理科','SCI','生物・化学・物理・地学',SCIENCE_COUNT)+subjectTile('社会','SOC','歴史・地理・公民',SOCIAL_COUNT)+'</div>'+note()+'</section>');
   nav('learn');
 }
-function eligible(){return items.filter(q=>subject==='すべて'||q.subject===subject);}
+function eligible(){return items.filter(q=>(subject==='すべて'||q.subject===subject)&&(studyFilter.kind==='all'||(studyFilter.kind==='field'&&fieldOf(q)===studyFilter.value)||(studyFilter.kind==='unit'&&q.unit===studyFilter.value)));}
 function qSkill(q){return q.skill;}
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function start(isReview=false,specific=null){
