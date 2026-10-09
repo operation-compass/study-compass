@@ -287,6 +287,64 @@ function referencesPage(){
 }
 function compass(){return '<svg class="compass-art" viewBox="0 0 300 300" aria-hidden="true"><g fill="none" stroke="#c9f278" stroke-width=".8"><circle cx="150" cy="150" r="124"/><circle cx="150" cy="150" r="95"/><circle cx="150" cy="150" r="62"/><path d="M150 8v284M8 150h284M50 50l200 200M50 250 250 50"/></g><path d="m188 74-20 94-94 20 58-56Z" fill="#c9f278"/><path d="m112 226 20-94 94-20-58 56Z" fill="#c9f278" opacity=".3"/><circle cx="150" cy="150" r="5" fill="#c9f278"/></svg>';}
 function studyStreak(){const days=[...new Set(graded().map(e=>e.date))].sort().reverse();if(!days.length)return 0;let streak=0,cursor=localDay();const yesterday=localDay(Date.now()-DAY);if(days[0]!==cursor&&days[0]!==yesterday)return 0;if(days[0]===yesterday)cursor=yesterday;for(const d of days){if(d===cursor){streak++;cursor=localDay(new Date(cursor+'T12:00:00+09:00').getTime()-DAY);}else if(d<cursor)break;}return streak;}
+
+function mockWeaknessBoost(q){
+ let boost=0;
+ const t=mockTrendSummary(q.subject);
+ if(!t?.persistent)return boost;
+ const label=t.persistent[0];
+ const f=fieldOf(q),u=q.unit,tp=topicOf(q);
+ if(label.includes(f)||label.includes(u))boost+=35;
+ if(label.includes('長文')&&u==='長文読解')boost+=35;
+ if(label.includes('会話')&&u==='会話表現')boost+=35;
+ if(label.includes('資料')&&/資料/.test(tp))boost+=35;
+ if(label.includes('実験')&&/実験|考察/.test(tp))boost+=35;
+ if(label.includes('漢字')&&(u==='漢字'||f==='漢字・語句'))boost+=30;
+ if(label.includes('物語')&&/物語|心情/.test(tp))boost+=30;
+ if(label.includes('説明')&&/説明|要旨|資料/.test(tp))boost+=30;
+ if(label.includes('古典')&&u==='古典')boost+=30;
+ return boost;
+}
+function adaptivePriority(q,signals){
+ const st=status(q);
+ const sig=signals.find(x=>x.unit_id===q.unit_id);
+ let score=0;
+ if(st.name==='復習おすすめ')score+=60+(st.priority||0);
+ if(st.name==='未学習')score+=18;
+ if(sig)score+=(sig.score||0)*0.8+sig.wrong*8+sig.due*6+sig.skipped*4;
+ score+=mockWeaknessBoost(q);
+ return score;
+}
+function adaptiveDailyPick(){
+ const pool=items.filter(q=>!q.writing_prompt);
+ const signals=unitLearningSignals(30,'すべて');
+ const ranked=[...pool].sort((a,b)=>adaptivePriority(b,signals)-adaptivePriority(a,signals)||Math.random()-.5);
+ const picked=[],subjectCount=new Map();
+ for(const q of ranked){
+   const n=subjectCount.get(q.subject)||0;
+   if(n>=3)continue;
+   if(picked.some(x=>x.id===q.id))continue;
+   picked.push(q);subjectCount.set(q.subject,n+1);
+   if(picked.length===10)break;
+ }
+ if(picked.length<10){
+   for(const q of ranked){if(!picked.includes(q)){picked.push(q);if(picked.length===10)break;}}
+ }
+ return picked;
+}
+function adaptiveDailyReason(){
+ const signals=unitLearningSignals(30,'すべて').filter(u=>recommendationLevel(u)!=='light').slice(0,2);
+ const mocks=['国語','数学','英語','理科','社会'].map(s=>({s,t:mockTrendSummary(s)})).filter(x=>x.t?.persistent);
+ if(signals.length)return signals.map(x=>x.subject+' / '+x.unit).join('・')+'を優先';
+ if(mocks.length)return mocks.slice(0,2).map(x=>x.s+' '+x.t.persistent[0]).join('・')+'を優先';
+ return '5教科をバランスよく出題';
+}
+function startAdaptiveDaily(){
+ miniMockActive=false;mode='mcq';subject='すべて';studyFilter={kind:'all',value:''};review=false;historyTestContext=null;
+ queue=adaptiveDailyPick();
+ if(!queue.length){setup();return;}
+ index=0;session=uid();sessionEvents=[];renderQ();
+}
 function home(){
  if(mode==='written')mode='mcq';
   mode='mcq';
@@ -305,7 +363,7 @@ function home(){
     ? '<section class="next-step-card"><div><span class="eyebrow">NEXT UNIT</span><h2>'+esc(focus.subject+' / '+focus.unit)+'</h2><p>'+esc(recommendationReason(focus))+'。誤答 '+focus.wrong+'問 · 復習 '+focus.due+'問。学力判定ではありません。</p></div><button class="primary" onclick="focusUnit(\''+focus.unit_id+'\')">この単元を確認 <span>→</span></button></section>'
     : '<section class="next-step-card"><div><span class="eyebrow">RECOMMENDED</span><h2>'+(due?'復習から始めるのがおすすめ':'新しい10問へ進もう')+'</h2><p>'+(due?due+'問が復習タイミングです。':'まだ単元別のおすすめを出す学習記録がありません。まずは5教科を進めましょう。')+'</p></div><button class="primary" onclick="'+(due?'reviewSetup()':"subject=\'すべて\';start()")+'">'+(due?'復習を見る':'10問をはじめる')+' <span>→</span></button></section>';
 
-  mount('<div class="intro"><div><span class="eyebrow">YOUR NEXT STEP</span><h1>'+(done?'今日の10問、達成。':'今日も、一歩ずつ。')+'</h1></div><p>'+(done?'続けるなら復習を優先。':'小さな積み重ねが、進む力になる。')+'</p></div><div class="home-grid"><section class="hero">'+compass()+'<span class="eyebrow">'+(done?'DAILY GOAL COMPLETE':'DAILY CHALLENGE')+'</span><h1>'+(done?'今日の目標は、<br>クリア。':'10問から、<br>未来を変えよう。')+'</h1><p>'+(done?'ここから先は、間違いの見直しか新しい10問へ。':'4つの選択肢から、答えをタップ。<br>今日の「わかった」を積み重ねよう。')+'</p><div class="home-statusline"><span class="status-chip"><i></i>連続学習 '+streak+'日</span><span class="status-chip">復習 '+due+'問</span></div><button class="primary" onclick="'+(done&&due?'reviewSetup()':"subject=\'すべて\';start()")+'">'+(done&&due?'復習から続ける':'今日の10問をはじめる')+' <span>↗</span></button></section><section class="side-panel"><div><span class="eyebrow">TODAY’S PROGRESS</span><h2>今日の学習</h2><div class="big">'+a.length+'<small> 問回答</small></div><div class="progress"><i style="width:'+goal/10*100+'%"></i></div></div><div><p>正解 '+correct+'問 · '+(rate===null?'まだ記録なし':rate+'%')+'</p><button class="text-button" onclick="dashboard()">学習記録を見る →</button></div></section></div><div class="home-insights"><div class="insight-card"><small>今日の4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong><span>'+a.length+'回答</span></div><div class="insight-card"><small>学習した問題</small><strong>'+covered+'</strong><span>全'+items.length+'問中</span></div><div class="insight-card"><small>定着の目安</small><strong>'+stable+'</strong><span>日を空けて確認</span></div></div>'+focusHtml+'<div class="section-label"><h2>教科から選ぶ</h2><button class="text-button" onclick="reviewSetup()">復習する →</button></div><div class="subjects home-subjects">'+subjectTile('国語','JPN','漢字・語句・文法',JAPANESE_COUNT)+subjectTile('数学','MAT','数式・関数・図形',MATH_COUNT)+subjectTile('英語','ENG','英単語・文法',ENGLISH_COUNT)+subjectTile('理科','SCI','生物・化学・物理・地学',SCIENCE_COUNT)+subjectTile('社会','SOC','歴史・地理・公民',SOCIAL_COUNT)+'</div>'+note());
+  mount('<div class="intro"><div><span class="eyebrow">YOUR NEXT STEP</span><h1>'+(done?'今日の10問、達成。':'今日も、一歩ずつ。')+'</h1></div><p>'+(done?'続けるなら復習を優先。':'小さな積み重ねが、進む力になる。')+'</p></div><div class="home-grid"><section class="hero">'+compass()+'<span class="eyebrow">'+(done?'DAILY GOAL COMPLETE':'DAILY CHALLENGE')+'</span><h1>'+(done?'今日の目標は、<br>クリア。':'10問から、<br>未来を変えよう。')+'</h1><p>'+(done?'ここから先は、間違いの見直しか新しい10問へ。':'4つの選択肢から、答えをタップ。<br>今日の「わかった」を積み重ねよう。')+'</p><div class="home-statusline"><span class="status-chip"><i></i>連続学習 '+streak+'日</span><span class="status-chip">復習 '+due+'問</span></div><p class="section-hint">今日の10問：'+esc(adaptiveDailyReason())+'</p><button class="primary" onclick="'+(done&&due?'reviewSetup()':'startAdaptiveDaily()')+'">'+(done&&due?'復習から続ける':'今日の10問をはじめる')+' <span>↗</span></button></section><section class="side-panel"><div><span class="eyebrow">TODAY’S PROGRESS</span><h2>今日の学習</h2><div class="big">'+a.length+'<small> 問回答</small></div><div class="progress"><i style="width:'+goal/10*100+'%"></i></div></div><div><p>正解 '+correct+'問 · '+(rate===null?'まだ記録なし':rate+'%')+'</p><button class="text-button" onclick="dashboard()">学習記録を見る →</button></div></section></div><div class="home-insights"><div class="insight-card"><small>今日の4択正答率</small><strong>'+(rate===null?'—':rate+'%')+'</strong><span>'+a.length+'回答</span></div><div class="insight-card"><small>学習した問題</small><strong>'+covered+'</strong><span>全'+items.length+'問中</span></div><div class="insight-card"><small>定着の目安</small><strong>'+stable+'</strong><span>日を空けて確認</span></div></div>'+focusHtml+'<div class="section-label"><h2>教科から選ぶ</h2><button class="text-button" onclick="reviewSetup()">復習する →</button></div><div class="subjects home-subjects">'+subjectTile('国語','JPN','漢字・語句・文法',JAPANESE_COUNT)+subjectTile('数学','MAT','数式・関数・図形',MATH_COUNT)+subjectTile('英語','ENG','英単語・文法',ENGLISH_COUNT)+subjectTile('理科','SCI','生物・化学・物理・地学',SCIENCE_COUNT)+subjectTile('社会','SOC','歴史・地理・公民',SOCIAL_COUNT)+'</div>'+note());
   nav('home');
 }
 const HISTORY_ORDER=['歴史の見方','世界の古代文明','宗教のおこり','旧石器','縄文','弥生','古墳','飛鳥','奈良','平安','世界の中世','鎌倉','室町','大航海と宗教改革','戦国','安土桃山','江戸初期','江戸中期','江戸後期','江戸文化','市民革命','産業革命とアジア','幕末','明治','大正','世界大戦と民族運動','昭和戦前','戦後の世界','昭和戦後'];
