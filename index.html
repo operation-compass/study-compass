@@ -401,6 +401,7 @@ function historyLevelMenu(qs){
  return '<section class="panel"><span class="eyebrow">新着24問 · 標準12＋応用12</span><h2>古代から江戸へ、判断の根拠を確かめる</h2><p class="section-hint">旧石器・縄文・古墳・戦国・江戸後期・歴史の見方を補強。標準の解答後に同じテーマの応用へ進めます。</p><button class="primary" onclick="historyPractice(\'historyBatch\',\'gaps4\')">新着24問を練習する</button><p class="legend">応用では、資料から分かること・断定できないこと、目的と手段、政策と反応を区別します。解答後に参考資料と段階解説を表示します。</p></section>'+historyWritingMenu(qs)+historyDeepMenu(qs)+'<section class="panel history-levels"><span class="eyebrow">FOUNDATION TO APPLICATION</span><h2>頻出対策から応用へ</h2><p class="section-hint">複数サイトの重要テーマを照合した独自問題'+qs.filter(q=>q.difficulty).length+'問。基礎で確認し、比較・順序、資料と因果へ進もう。</p><div class="course-grid">'+[['基礎','重要用語・制度'],['標準','比較・年代・目的'],['応用','資料・複数知識・因果']].map(([level,label])=>'<button class="course-card" onclick="historyPractice(\'historyLevel\',\''+level+'\')"><b>'+level+'</b><small>'+label+' · '+qs.filter(q=>q.difficulty===level).length+'問</small><span>→</span></button>').join('')+'</div><p class="legend">応用は、解答後に「着目点 → 考え方 → 答え → 間違えやすい点」を表示。他の選択肢が違う理由も確認できます。難度は問題形式に基づく教材上の区分で、実測の正答率ではありません。</p><details><summary>「頻出対策」の意味・照合したサイト</summary><p class="legend">重要テーマを優先した入試対策用の区分です。全国の過去問を集計した頻出順位や出題率ではなく、将来の出題を保証しません。石川県の学習資料とe-CLUSの講座で学習範囲・比較観点を確認し、家庭教師のマスターの入試解説で重点テーマを照合。地租・選挙・憲法・条約改正は国立公文書館などの公的資料でも確認しました。設問・整理表・段階解説は独自作成です。</p><ul><li><a href="https://www.pref.ishikawa.lg.jp/kyoiku/gakkou/manabi/kyouka/t-1syakai_rekisi_tousyo.html" target="_blank" rel="noopener">石川県｜古代の学習と比較の観点</a></li><li><a href="https://www.pref.ishikawa.lg.jp/kyoiku/gakkou/manabi/kyouka/t-2syakai_rekisi_tousyo.html" target="_blank" rel="noopener">石川県｜近世の政策・対外関係</a></li><li><a href="https://e-clus.com/course/list/4-3" target="_blank" rel="noopener">e-CLUS｜歴史講座</a></li><li><a href="https://www.u-master.net/column/entrance_exam/8728/" target="_blank" rel="noopener">家庭教師のマスター｜入試の重点テーマ（教材提供者の見解）</a></li><li><a href="https://www.archives.go.jp/learning/archive_collection_1/" target="_blank" rel="noopener">国立公文書館｜男子普通選挙</a></li></ul><p class="legend">過去問PDFの本文は今回取得できていないため、過去問の出題数・割合の根拠には使っていません。史料原文・地図・写真は学校教材や公開過去問も併用してください。</p></details></section>';
 }
 
+function questionMaterial(q){let out='';if(q.material)out+=historyMaterial(q);if(q.passage)out+='<section class="feedback compact reading-passage"><p>'+esc(q.passage)+'</p></section>';return out;}
 function historyMaterial(q){
  const m=q.material;if(!m)return '';
  return '<figure class="history-material"><figcaption>'+esc(m.title)+'</figcaption><div class="material-scroll" tabindex="0" role="region" aria-label="'+esc(m.title)+'"><table><thead><tr>'+m.headers.map(h=>'<th scope="col">'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+m.rows.map(row=>'<tr>'+row.map((v,i)=>i===0?'<th scope="row">'+esc(v)+'</th>':'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div><p>'+esc(m.note)+'</p></figure>';
@@ -590,13 +591,48 @@ function learnBack(){if(subject==='数学'){mathHub();return;}home();}
 function coursePicker(su){
  if(mode==='written')mode='mcq';
  if(su==='数学'){mathHub();return;}
-  subject=su;studyFilter={kind:'all',value:''};
-  const total=items.filter(q=>q.subject===su).length;
-  const writtenCount=items.filter(q=>q.subject===su&&q.writing_prompt).length;
-  const fields=[...new Set(items.filter(q=>q.subject===su&&!q.writing_prompt).map(fieldOf))];
-  mount('<section class="selection"><div class="page-title"><span class="eyebrow">CHOOSE HOW</span><h1>'+esc(su)+'をどう進める？</h1><p class="muted">'+total+'問から出題方法を選べます。</p></div>'+(su==='社会'?'<button class="primary" onclick="historyHub()">歴史を時代順に学ぶ →</button>':'')+'<div class="course-grid"><button class="course-card" onclick="mode=\'mcq\';studyFilter={kind:\'all\',value:\'\'};start()"><b>おまかせ10問</b><small>復習・未学習を混ぜてランダム</small><span>→</span></button>'+(writtenCount?'<button class="course-card" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()"><b>記述・説明練習</b><small>'+writtenCount+'問 · 自己採点で考え方を確認</small><span>→</span></button>':'')<button class="course-card" onclick="fieldPicker()"><b>分野から選ぶ</b><small>'+fields.map(esc).join(' / ')+'</small><span>→</span></button><button class="course-card" onclick="textbookPicker()"><b>教科書順から選ぶ</b><small>学習する順番で単元を選択</small><span>→</span></button></div><button class="text-button" onclick="setup()">← 教科選択へ戻る</button>'+note()+'</section>');
-  nav('learn');
+ subject=su;studyFilter={kind:'all',value:''};
+ const total=items.filter(q=>q.subject===su).length;
+ const writtenCount=items.filter(q=>q.subject===su&&q.writing_prompt).length;
+ const fields=[...new Set(items.filter(q=>q.subject===su&&!q.writing_prompt).map(fieldOf))];
+ mount('<section class="selection"><div class="page-title"><span class="eyebrow">CHOOSE HOW</span><h1>'+esc(su)+'をどう進める？</h1><p class="muted">'+total+'問から出題方法を選べます。</p></div>'+(su==='社会'?'<button class="primary" onclick="historyHub()">歴史を時代順に学ぶ →</button>':'')+'<div class="course-grid"><button class="course-card" onclick="mode=\'mcq\';studyFilter={kind:\'all\',value:\'\'};start()"><b>おまかせ10問</b><small>復習・未学習を混ぜてランダム</small><span>→</span></button><button class="course-card" onclick="miniMockMenu(\''+esc(su)+'\')"><b>福岡入試型ミニ模試</b><small>分野を横断して実戦形式で確認</small><span>→</span></button>'+(writtenCount?'<button class="course-card" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()"><b>記述・説明練習</b><small>'+writtenCount+'問 · 自己採点で考え方を確認</small><span>→</span></button>':'')+'<button class="course-card" onclick="fieldPicker()"><b>分野から選ぶ</b><small>'+fields.map(esc).join(' / ')+'</small><span>→</span></button><button class="course-card" onclick="textbookPicker()"><b>教科書順から選ぶ</b><small>学習する順番で単元を選択</small><span>→</span></button></div><button class="text-button" onclick="setup()">← 教科選択へ戻る</button>'+note()+'</section>');
+ nav('learn');
 }
+const MINI_MOCK_SIZE={'国語':12,'数学':12,'英語':12,'理科':12,'社会':12};
+function mockRank(pool){
+ const due=pool.filter(q=>status(q).name==='復習おすすめ').sort((a,b)=>status(b).priority-status(a).priority);
+ const fresh=shuffle(pool.filter(q=>status(q).name==='未学習'&&!due.includes(q)));
+ const seen=shuffle(pool.filter(q=>!due.includes(q)&&!fresh.includes(q)));
+ return [...due,...fresh,...seen];
+}
+function miniMockPick(su){
+ const count=MINI_MOCK_SIZE[su]||12;
+ let pool=items.filter(q=>q.subject===su&&!q.writing_prompt);
+ const buckets=[...new Set(pool.map(fieldOf))].map(f=>mockRank(pool.filter(q=>fieldOf(q)===f)));
+ const picked=[];
+ while(picked.length<count&&buckets.some(x=>x.length)){
+   for(const bucket of buckets){if(bucket.length&&picked.length<count)picked.push(bucket.shift());}
+ }
+ if(picked.length<count){
+   const rest=mockRank(pool.filter(q=>!picked.includes(q)));
+   picked.push(...rest.slice(0,count-picked.length));
+ }
+ return picked.slice(0,count);
+}
+function miniMockMenu(su){
+ subject=su;mode='mcq';studyFilter={kind:'all',value:''};
+ const n=MINI_MOCK_SIZE[su]||12;
+ const written=items.filter(q=>q.subject===su&&q.writing_prompt).length;
+ mount('<section class="selection"><div class="page-title"><span class="eyebrow">FUKUOKA MINI MOCK</span><h1>'+esc(su)+'｜ミニ模試</h1><p class="muted">福岡県入試を意識し、複数分野を横断して'+n+'問出題します。過去問の転載ではなく、Study COMPASSの独自問題による確認セットです。</p></div><section class="panel"><h2>このセットで見る力</h2><p class="legend">基礎知識だけに偏らず、資料・長文・計算・考察を混ぜます。結果は入試得点の予測ではなく、復習箇所を見つけるための目安です。</p><button class="primary" onclick="startMiniMock()">ミニ模試 '+n+'問を開始 <span>→</span></button>'+(written?'<button class="secondary" style="margin-top:12px" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()">記述・説明も練習 →</button>':'')+'</section><button class="text-button" onclick="coursePicker(subject)">← '+esc(su)+'へ戻る</button>'+note()+'</section>');
+ nav('learn');
+}
+function startMiniMock(){
+ mode='mcq';studyFilter={kind:'all',value:''};review=false;historyTestContext=null;
+ queue=miniMockPick(subject);
+ if(!queue.length){coursePicker(subject);return;}
+ index=0;session=uid();sessionEvents=[];renderQ();
+}
+
 function fieldPicker(){
   const qs=items.filter(q=>q.subject===subject);
   const fields=[...new Set(qs.map(fieldOf))];
@@ -757,12 +793,12 @@ function renderQ(){
   const q=queue[index];
   if(mode==='question'){
     currentOptions=[];
-    mount('<section class="quiz question-only"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+' · 問題だけ確認</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+historyMaterial(q)+'<p class="quiz-tip">選択肢は表示しません。頭の中か紙に答えを出してから確認してください。</p></section><div id="answer" class="question-only-actions"><button class="primary" onclick="revealQuestionOnly()">答えを見る <span>→</span></button><button class="secondary" onclick="skipQuestionOnly()">あとで復習する</button></div><div id="feedback" aria-live="polite"></div></section>');
+    mount('<section class="quiz question-only"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+' · 問題だけ確認</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">選択肢は表示しません。頭の中か紙に答えを出してから確認してください。</p></section><div id="answer" class="question-only-actions"><button class="primary" onclick="revealQuestionOnly()">答えを見る <span>→</span></button><button class="secondary" onclick="skipQuestionOnly()">あとで復習する</button></div><div id="feedback" aria-live="polite"></div></section>');
     document.getElementById('nav').classList.add('hidden');
     return;
   }
   currentOptions=shuffle(q.options);
-  mount('<section class="quiz"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+'</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+historyMaterial(q)+'<p class="quiz-tip">一番近い答えを1つ選んでください。</p></section><div id="answer" class="choices">'+currentOptions.map((v,i)=>'<button class="choice" onclick="submitChoice('+i+')"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+esc(v)+'</span></button>').join('')+'</div><div class="quiz-actions"><button onclick="unknown()">わからない</button><button onclick="skip()">あとで解く</button></div><div id="feedback" aria-live="polite"></div></section>');
+  mount('<section class="quiz"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+'</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">一番近い答えを1つ選んでください。</p></section><div id="answer" class="choices">'+currentOptions.map((v,i)=>'<button class="choice" onclick="submitChoice('+i+')"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+esc(v)+'</span></button>').join('')+'</div><div class="quiz-actions"><button onclick="unknown()">わからない</button><button onclick="skip()">あとで解く</button></div><div id="feedback" aria-live="polite"></div></section>');
   document.getElementById('nav').classList.add('hidden');
 }
 function pushQuestionOnlyEvent(event_type){
