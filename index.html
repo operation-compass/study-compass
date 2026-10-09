@@ -643,10 +643,66 @@ function englishHub(){
   nav('learn');
 }
 
+
+function japanesePool(){return items.filter(q=>q.subject==='国語'&&!q.writing_prompt);}
+function japaneseWrittenPool(){return items.filter(q=>q.subject==='国語'&&q.writing_prompt);}
+function japaneseRank(pool){
+  const due=pool.filter(q=>status(q).name==='復習おすすめ').sort((a,b)=>status(b).priority-status(a).priority);
+  const unseen=shuffle(pool.filter(q=>status(q).name==='未学習'&&!due.includes(q)));
+  const seen=shuffle(pool.filter(q=>!due.includes(q)&&!unseen.includes(q)));
+  return [...due,...unseen,...seen];
+}
+function japaneseStartIds(ids){subject='国語';mode='mcq';studyFilter={kind:'all',value:''};start(false,ids);}
+function japaneseDaily(){
+  const pool=japanesePool();
+  const kan= japaneseRank(pool.filter(q=>fieldOf(q)==='漢字')).slice(0,3);
+  const voc= japaneseRank(pool.filter(q=>fieldOf(q)==='語句')).slice(0,3);
+  const gra= japaneseRank(pool.filter(q=>['文法','表現'].includes(fieldOf(q)))).slice(0,2);
+  const read= japaneseRank(pool.filter(q=>['読解','古典'].includes(fieldOf(q)))).slice(0,2);
+  japaneseStartIds([...kan,...voc,...gra,...read].map(q=>q.id));
+}
+function japaneseStartField(field){
+  const pool=japanesePool().filter(q=>fieldOf(q)===field);
+  japaneseStartIds(japaneseRank(pool).slice(0,10).map(q=>q.id));
+}
+function japaneseStartTopic(topic){
+  const pool=japanesePool().filter(q=>topicOf(q)===topic);
+  japaneseStartIds(japaneseRank(pool).slice(0,10).map(q=>q.id));
+}
+function japaneseVocabularyHub(){
+  subject='国語';mode='mcq';studyFilter={kind:'all',value:''};
+  const pool=japanesePool();
+  const topics=['四字熟語','ことわざ','慣用句','故事成語','類義語・対義語','熟語の構成'];
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">JAPANESE VOCAB</span><h1>語彙・語句</h1><p class="muted">暗記系をテーマ別に10問ずつ確認できます。</p></div><div class="course-grid">'+topics.map(t=>{const n=pool.filter(q=>topicOf(q)===t).length;return '<button class="course-card" onclick="japaneseStartTopic(\''+esc(t)+'\')"><b>'+esc(t)+'</b><small>'+n+'問</small><span>→</span></button>';}).join('')+'</div><button class="text-button" onclick="japaneseHub()">← 国語トップへ</button>'+note()+'</section>');
+  nav('learn');
+}
+function japaneseReadingHub(){
+  subject='国語';mode='mcq';studyFilter={kind:'all',value:''};
+  const pool=japanesePool();
+  const topics=['説明文','物語文','資料読解','説明文・要旨','古文','漢文','古文・漢文'];
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">JAPANESE READING</span><h1>読解・古典</h1><p class="muted">本文読解・要旨・資料・古典を分けて練習します。</p></div><div class="course-grid">'+topics.map(t=>{const n=pool.filter(q=>topicOf(q)===t).length;return n?'<button class="course-card" onclick="japaneseStartTopic(\''+esc(t)+'\')"><b>'+esc(t)+'</b><small>'+n+'問</small><span>→</span></button>':'';}).join('')+'<button class="course-card" onclick="japaneseStartField(\'読解\')"><b>読解まとめ</b><small>'+pool.filter(q=>fieldOf(q)==='読解').length+'問</small><span>→</span></button><button class="course-card" onclick="japaneseStartField(\'古典\')"><b>古典まとめ</b><small>'+pool.filter(q=>fieldOf(q)==='古典').length+'問</small><span>→</span></button></div><button class="text-button" onclick="japaneseHub()">← 国語トップへ</button>'+note()+'</section>');
+  nav('learn');
+}
+function japaneseHub(){
+  subject='国語';mode='mcq';studyFilter={kind:'all',value:''};
+  const pool=japanesePool(),written=japaneseWrittenPool();
+  const counts={
+    kan:pool.filter(q=>fieldOf(q)==='漢字').length,
+    voc:pool.filter(q=>fieldOf(q)==='語句').length,
+    gra:pool.filter(q=>fieldOf(q)==='文法').length,
+    exp:pool.filter(q=>fieldOf(q)==='表現').length,
+    read:pool.filter(q=>fieldOf(q)==='読解').length,
+    cls:pool.filter(q=>fieldOf(q)==='古典').length
+  };
+  mount('<section class="selection"><div class="page-title"><span class="eyebrow">JAPANESE COMPASS</span><h1>国語</h1><p class="muted">4択 '+pool.length+'問 · 記述 '+written.length+'問。暗記と読解を分けて進めます。</p></div><section class="panel"><span class="eyebrow">JAPANESE TODAY\'S 10</span><h2>国語の今日の10問</h2><p class="section-hint">漢字3・語句3・文法/表現2・読解/古典2を基本に出題します。</p><button class="primary" onclick="japaneseDaily()">国語10問スタート <span>→</span></button></section><div class="course-grid"><button class="course-card" onclick="japaneseStartField(\'漢字\')"><b>漢字</b><small>'+counts.kan+'問 · 入試頻出中心</small><span>→</span></button><button class="course-card" onclick="japaneseVocabularyHub()"><b>語彙・語句</b><small>'+counts.voc+'問 · 四字熟語/ことわざ/慣用句</small><span>→</span></button><button class="course-card" onclick="japaneseStartField(\'文法\')"><b>文法</b><small>'+counts.gra+'問</small><span>→</span></button><button class="course-card" onclick="japaneseStartField(\'表現\')"><b>表現技法</b><small>'+counts.exp+'問</small><span>→</span></button><button class="course-card" onclick="japaneseReadingHub()"><b>読解・古典</b><small>'+(counts.read+counts.cls)+'問 · 本文/要旨/古文/漢文</small><span>→</span></button><button class="course-card" onclick="miniMockMenu(\'国語\')"><b>福岡ミニ模試</b><small>12問 · 漢字→語句→説明/物語→古典</small><span>→</span></button>'+(written.length?'<button class="course-card" onclick="subject=\'国語\';mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()"><b>記述練習</b><small>'+written.length+'問 · 要旨/理由/資料記述</small><span>→</span></button>':'')+'</div><button class="text-button" onclick="setup()">← 教科選択へ戻る</button>'+note()+'</section>');
+  nav('learn');
+}
+
 function coursePicker(su){
  if(mode==='written')mode='mcq';
  if(su==='数学'){mathHub();return;}
  if(su==='英語'){englishHub();return;}
+ if(su==='国語'){japaneseHub();return;}
  subject=su;studyFilter={kind:'all',value:''};
  const total=items.filter(q=>q.subject===su).length;
  const writtenCount=items.filter(q=>q.subject===su&&q.writing_prompt).length;
