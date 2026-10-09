@@ -269,7 +269,7 @@ const SCIENCE_COUNT=items.filter(q=>q.subject==="理科").length;
 const KEY='studyCompassAlphaV3',DAY=86400000;
 let events=[],storageOK=true,readError=false;try{events=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(events))throw Error();}catch{storageOK=false;readError=true;}
 const view=document.getElementById('view'),msg=document.getElementById('message');
-let mode='mcq',subject='すべて',studyFilter={kind:'all',value:''},queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true,currentOptions=[],selectedAnswer=null;
+let mode='mcq',subject='すべて',studyFilter={kind:'all',value:''},queue=[],index=0,locked=false,revealed=false,committed=false,session='',review=false,sessionEvents=[],active=0,last=0,timingValid=true,currentOptions=[],selectedAnswer=null,miniMockActive=false;
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function localDay(t=Date.now()){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(t));}
 function uid(){return globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2);}
@@ -342,6 +342,7 @@ function chapterTestHint(chapter){
  return '<small class="chapter-test-status">'+esc(t.date)+' · '+(t.finished?'前回の確認：正解 '+t.correct+' / 10問':'途中の記録：'+t.answered+'問回答')+'</small>';
 }
 function finish(){
+ if(miniMockActive&&mode==='mcq'){finishMiniMock();return;}
  if(historyTestContext!==null&&mode==='mcq'){finishHistoryTest();return;}
  finishDefault();
 }
@@ -647,8 +648,40 @@ function miniMockMenu(su){
  mount('<section class="selection"><div class="page-title"><span class="eyebrow">FUKUOKA MINI MOCK</span><h1>'+esc(su)+'｜ミニ模試</h1><p class="muted">福岡県入試を意識し、複数分野を横断して'+n+'問出題します。過去問の転載ではなく、Study COMPASSの独自問題による確認セットです。</p></div><section class="panel"><h2>このセットで見る力</h2><p class="legend">教科ごとの本番構成を意識して出題順を調整しています。英語は文法→会話→資料→長文、理科は4分野→考察、国語は漢字語句→説明文→物語→古典、数学は6分野、社会は歴史・地理・公民のバランスで構成します。結果は入試得点の予測ではなく、復習箇所を見つけるための目安です。</p><button class="primary" onclick="startMiniMock()">ミニ模試 '+n+'問を開始 <span>→</span></button>'+(written?'<button class="secondary" style="margin-top:12px" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()">記述・説明も練習 →</button>':'')+'</section><button class="text-button" onclick="coursePicker(subject)">← '+esc(su)+'へ戻る</button>'+note()+'</section>');
  nav('learn');
 }
+function miniMockSection(q,i){
+ if(subject==='英語')return i<3?'大問1｜文法':i<5?'大問2｜会話':i<7?'大問3｜資料': '大問4｜長文';
+ if(subject==='理科')return i<2?'大問1｜生物':i<4?'大問2｜化学':i<6?'大問3｜物理':i<8?'大問4｜地学':'大問5｜実験・考察';
+ if(subject==='国語')return i<2?'大問1｜漢字':i<4?'大問2｜語句・文法':i<7?'大問3｜説明・資料':i<10?'大問4｜物語':'大問5｜古典';
+ if(subject==='数学')return ['大問1｜数と式','大問2｜方程式','大問3｜関数','大問4｜図形','大問5｜データ','大問6｜確率'][Math.min(5,Math.floor(i/2))];
+ if(subject==='社会')return i<4?'大問1｜歴史':i<8?'大問2｜地理':'大問3｜公民';
+ return '実戦問題';
+}
+function miniMockPoints(){return 5;}
+function finishMiniMock(){
+ const gradedEvents=graded(sessionEvents),correct=gradedEvents.filter(e=>e.outcome==='correct').length;
+ const totalPoints=queue.length*miniMockPoints(),score=correct*miniMockPoints();
+ const groups=new Map();
+ sessionEvents.forEach((e,i)=>{
+   const q=items.find(x=>x.id===e.id);if(!q)return;
+   const label=e.mock_section||miniMockSection(q,i);
+   if(!groups.has(label))groups.set(label,{correct:0,total:0,wrong:[]});
+   const g=groups.get(label);g.total++;
+   if(e.outcome==='correct')g.correct++;else g.wrong.push(q);
+ });
+ const rows=[...groups.entries()].map(([label,g])=>{
+   const pct=Math.round(g.correct/g.total*100);
+   return '<div class="unit"><b>'+esc(label)+'</b><div class="track"><i style="width:'+pct+'%"></i></div><small>'+g.correct+' / '+g.total+' 正解 · '+pct+'%</small>'+(g.wrong.length?'<p>'+g.wrong.map(q=>esc(topicOf(q))).join(' / ')+' を復習</p>':'<p>この大問は全問正解。</p>')+'</div>';
+ }).join('');
+ const weakest=[...groups.entries()].sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total))[0];
+ mount('<section class="result"><div class="result-card"><span class="eyebrow">FUKUOKA MINI MOCK</span><h1>'+esc(subject)+'｜ミニ模試結果</h1><div class="score">'+score+'<small> / '+totalPoints+' 点</small></div><p>'+correct+' / '+queue.length+'問正解。Study COMPASS独自配点（1問5点）での確認値です。福岡県入試の得点換算・合格判定ではありません。</p></div><section class="panel"><h2>大問別分析</h2>'+rows+'</section>'+(weakest?'<section class="result-next"><span class="eyebrow">NEXT FOCUS</span><h2>'+esc(weakest[0])+'を優先復習</h2><p>今回もっとも正答率が低かった大問です。関連問題を解き直してから、もう一度ミニ模試を使うのがおすすめです。</p></section>':'')+'<div class="result-links">'+(sessionEvents.some(e=>e.outcome!=='correct')?'<button class="primary" onclick="retryMiniMock()">間違いだけ復習 →</button>':'')+'<button class="secondary" onclick="miniMockMenu(subject)">もう一度ミニ模試</button><button class="text-button" onclick="coursePicker(subject)">'+esc(subject)+'メニューへ</button></div></section>');
+ nav('learn');
+}
+function retryMiniMock(){
+ const ids=sessionEvents.filter(e=>e.outcome!=='correct').map(e=>e.id);
+ miniMockActive=false;mode='mcq';queue=items.filter(q=>ids.includes(q.id));index=0;session=uid();sessionEvents=[];review=true;renderQ();
+}
 function startMiniMock(){
- mode='mcq';studyFilter={kind:'all',value:''};review=false;historyTestContext=null;
+ miniMockActive=true;mode='mcq';studyFilter={kind:'all',value:''};review=false;historyTestContext=null;
  queue=miniMockPick(subject);
  if(!queue.length){coursePicker(subject);return;}
  index=0;session=uid();sessionEvents=[];renderQ();
@@ -699,6 +732,7 @@ function flashState(q){
 }
 
 function start(isReview=false,specific=null,testChapter=null){
+  miniMockActive=false;
   historyTestContext=testChapter;
   if(BANK_ISSUES.length){
     mount('<section class="selection"><div class="page-title"><span class="eyebrow">CHECKING DATA</span><h1>教材データを確認中です。</h1><p class="muted">問題データの整合性に問題があるため、学習開始を一時停止しています。</p></div></section>');
@@ -814,12 +848,12 @@ function renderQ(){
   const q=queue[index];
   if(mode==='question'){
     currentOptions=[];
-    mount('<section class="quiz question-only"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+' · 問題だけ確認</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">選択肢は表示しません。頭の中か紙に答えを出してから確認してください。</p></section><div id="answer" class="question-only-actions"><button class="primary" onclick="revealQuestionOnly()">答えを見る <span>→</span></button><button class="secondary" onclick="skipQuestionOnly()">あとで復習する</button></div><div id="feedback" aria-live="polite"></div></section>');
+    mount('<section class="quiz question-only"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+(miniMockActive?esc(miniMockSection(q,index))+' · '+miniMockPoints()+'点 · ': '')+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+' · 問題だけ確認</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">選択肢は表示しません。頭の中か紙に答えを出してから確認してください。</p></section><div id="answer" class="question-only-actions"><button class="primary" onclick="revealQuestionOnly()">答えを見る <span>→</span></button><button class="secondary" onclick="skipQuestionOnly()">あとで復習する</button></div><div id="feedback" aria-live="polite"></div></section>');
     document.getElementById('nav').classList.add('hidden');
     return;
   }
   currentOptions=shuffle(q.options);
-  mount('<section class="quiz"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+'</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">一番近い答えを1つ選んでください。</p></section><div id="answer" class="choices">'+currentOptions.map((v,i)=>'<button class="choice" onclick="submitChoice('+i+')"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+esc(v)+'</span></button>').join('')+'</div><div class="quiz-actions"><button onclick="unknown()">わからない</button><button onclick="skip()">あとで解く</button></div><div id="feedback" aria-live="polite"></div></section>');
+  mount('<section class="quiz"><div class="quiz-head"><button onclick="learnBack()">← 戻る</button><span>QUESTION '+String(index+1).padStart(2,'0')+' / '+queue.length+'</span></div><div class="quiz-progress"><i style="width:'+((index+1)/queue.length*100)+'%"></i></div><div class="meta">'+(miniMockActive?esc(miniMockSection(q,index))+' · '+miniMockPoints()+'点 · ': '')+esc(q.subject)+' / '+esc(q.unit)+(q.difficulty?' · '+esc(q.difficulty):'')+'</div><section class="question-card"><span class="question-kicker">QUESTION</span><h1 class="q">'+esc(q.q)+'</h1>'+questionMaterial(q)+'<p class="quiz-tip">一番近い答えを1つ選んでください。</p></section><div id="answer" class="choices">'+currentOptions.map((v,i)=>'<button class="choice" onclick="submitChoice('+i+')"><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+esc(v)+'</span></button>').join('')+'</div><div class="quiz-actions"><button onclick="unknown()">わからない</button><button onclick="skip()">あとで解く</button></div><div id="feedback" aria-live="polite"></div></section>');
   document.getElementById('nav').classList.add('hidden');
 }
 function pushQuestionOnlyEvent(event_type){
@@ -847,7 +881,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){timingVali
 function submitChoice(i){if(locked)return;tick();selectedAnswer=currentOptions[i];record(selectedAnswer===queue[index].answer?'correct':'incorrect');}
 function unknown(){if(locked)return;tick();record('incorrect');}
 function skip(){if(locked)return;tick();record('ungraded','skipped');}
-function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],at=Date.now(),prior=series(q,q.skill,q.method).at(-1);const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':mcq-v03',skill:q.skill,method:q.method,subject:q.subject,unit:q.unit,unit_id:q.unit_id,question_version:'v0.3-CHECK',history_test_chapter:historyTestContext,at,date:localDay(at),outcome,event_type,selected_answer:selectedAnswer,option_order:[...currentOptions],assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.querySelectorAll('.quiz-actions button').forEach(b=>b.disabled=true);document.querySelectorAll('.choice').forEach((b,i)=>{b.disabled=true;if(currentOptions[i]===q.answer)b.classList.add('correct');else if(currentOptions[i]===selectedAnswer)b.classList.add('wrong');});document.getElementById('feedback').innerHTML='<section class="feedback '+(outcome==='incorrect'?'incorrect':'')+'"><h2>'+(event_type==='skipped'?'次の復習に残しました':outcome==='correct'?'正解。その調子！':'ここで覚えていこう。')+'</h2>'+(selectedAnswer&&outcome==='incorrect'?'<p>あなたの回答：'+esc(selectedAnswer)+'</p>':'')+'<p><b>正解：'+esc(q.answer)+'</b></p>'+historyExplanation(q)+''+(q.tip?'<p><small>覚え方：'+esc(q.tip)+'</small></p>':'')+(q.word?'<button class="sound" onclick="speak()">発音を聞く</button>':'')+'<button class="primary" onclick="next()">'+(index+1===queue.length?'結果を見る':'次の問題')+' <span>→</span></button></section>';}
+function record(outcome,event_type='graded'){if(locked)return;locked=true;const q=queue[index],at=Date.now(),prior=series(q,q.skill,q.method).at(-1);const e={attempt_id:uid(),session_id:session,id:q.id,knowledge_id:q.id,variant_id:q.id+':mcq-v03',skill:q.skill,method:q.method,subject:q.subject,unit:q.unit,unit_id:q.unit_id,question_version:'v0.3-CHECK',history_test_chapter:historyTestContext,mock_exam:miniMockActive,mock_section:miniMockActive?miniMockSection(q,index):null,mock_points:miniMockActive?miniMockPoints():null,at,date:localDay(at),outcome,event_type,selected_answer:selectedAnswer,option_order:[...currentOptions],assisted:false,active_ms:Math.round(active),timing_valid:timingValid,review_of:review&&prior?prior.attempt_id:null};events.push(e);sessionEvents.push(e);save();document.querySelectorAll('.quiz-actions button').forEach(b=>b.disabled=true);document.querySelectorAll('.choice').forEach((b,i)=>{b.disabled=true;if(currentOptions[i]===q.answer)b.classList.add('correct');else if(currentOptions[i]===selectedAnswer)b.classList.add('wrong');});document.getElementById('feedback').innerHTML='<section class="feedback '+(outcome==='incorrect'?'incorrect':'')+'"><h2>'+(event_type==='skipped'?'次の復習に残しました':outcome==='correct'?'正解。その調子！':'ここで覚えていこう。')+'</h2>'+(selectedAnswer&&outcome==='incorrect'?'<p>あなたの回答：'+esc(selectedAnswer)+'</p>':'')+'<p><b>正解：'+esc(q.answer)+'</b></p>'+historyExplanation(q)+''+(q.tip?'<p><small>覚え方：'+esc(q.tip)+'</small></p>':'')+(q.word?'<button class="sound" onclick="speak()">発音を聞く</button>':'')+'<button class="primary" onclick="next()">'+(index+1===queue.length?'結果を見る':'次の問題')+' <span>→</span></button></section>';}
 function next(){if(!locked)return;index++;if(index<queue.length)renderQ();else if(mode==='question')finishQuestionOnly();else finish();}
 function finishQuestionOnly(){
   const viewed=sessionEvents.filter(e=>e.event_type==='viewed').length;
