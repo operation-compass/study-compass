@@ -605,13 +605,34 @@ function mockRank(pool){
  const seen=shuffle(pool.filter(q=>!due.includes(q)&&!fresh.includes(q)));
  return [...due,...fresh,...seen];
 }
+function takeMock(pool,picked,n,filter){
+ const candidates=mockRank(pool.filter(q=>!picked.includes(q)&&filter(q)));
+ picked.push(...candidates.slice(0,Math.max(0,n)));
+}
 function miniMockPick(su){
  const count=MINI_MOCK_SIZE[su]||12;
- let pool=items.filter(q=>q.subject===su&&!q.writing_prompt);
- const buckets=[...new Set(pool.map(fieldOf))].map(f=>mockRank(pool.filter(q=>fieldOf(q)===f)));
+ const pool=items.filter(q=>q.subject===su&&!q.writing_prompt);
  const picked=[];
- while(picked.length<count&&buckets.some(x=>x.length)){
-   for(const bucket of buckets){if(bucket.length&&picked.length<count)picked.push(bucket.shift());}
+ if(su==='英語'){
+   takeMock(pool,picked,3,q=>fieldOf(q)==='文法');
+   takeMock(pool,picked,2,q=>q.unit==='会話表現');
+   takeMock(pool,picked,2,q=>q.topic_name==='資料読解');
+   takeMock(pool,picked,5,q=>q.unit==='長文読解');
+ }else if(su==='理科'){
+   for(const f of ['生物','化学','物理','地学'])takeMock(pool,picked,2,q=>fieldOf(q)===f&&!/実験考察|資料考察|複合実験/.test(topicOf(q)));
+   takeMock(pool,picked,4,q=>/実験考察|資料考察|複合実験|考察/.test(topicOf(q)));
+ }else if(su==='国語'){
+   takeMock(pool,picked,2,q=>fieldOf(q)==='漢字'||q.unit==='漢字');
+   takeMock(pool,picked,2,q=>fieldOf(q)==='語句'||q.unit==='語句'||q.unit==='文法');
+   takeMock(pool,picked,3,q=>fieldOf(q)==='読解'&&/説明文|要旨|資料/.test(topicOf(q)));
+   takeMock(pool,picked,3,q=>fieldOf(q)==='読解'&&/物語|心情/.test(topicOf(q)));
+   takeMock(pool,picked,2,q=>q.unit==='古典');
+ }else if(su==='数学'){
+   for(const u of ['数と式','方程式','関数','図形','データ','確率'])takeMock(pool,picked,2,q=>q.unit===u);
+ }else if(su==='社会'){
+   takeMock(pool,picked,4,q=>fieldOf(q)==='歴史');
+   takeMock(pool,picked,4,q=>fieldOf(q)==='地理');
+   takeMock(pool,picked,4,q=>fieldOf(q)==='公民');
  }
  if(picked.length<count){
    const rest=mockRank(pool.filter(q=>!picked.includes(q)));
@@ -623,7 +644,7 @@ function miniMockMenu(su){
  subject=su;mode='mcq';studyFilter={kind:'all',value:''};
  const n=MINI_MOCK_SIZE[su]||12;
  const written=items.filter(q=>q.subject===su&&q.writing_prompt).length;
- mount('<section class="selection"><div class="page-title"><span class="eyebrow">FUKUOKA MINI MOCK</span><h1>'+esc(su)+'｜ミニ模試</h1><p class="muted">福岡県入試を意識し、複数分野を横断して'+n+'問出題します。過去問の転載ではなく、Study COMPASSの独自問題による確認セットです。</p></div><section class="panel"><h2>このセットで見る力</h2><p class="legend">基礎知識だけに偏らず、資料・長文・計算・考察を混ぜます。結果は入試得点の予測ではなく、復習箇所を見つけるための目安です。</p><button class="primary" onclick="startMiniMock()">ミニ模試 '+n+'問を開始 <span>→</span></button>'+(written?'<button class="secondary" style="margin-top:12px" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()">記述・説明も練習 →</button>':'')+'</section><button class="text-button" onclick="coursePicker(subject)">← '+esc(su)+'へ戻る</button>'+note()+'</section>');
+ mount('<section class="selection"><div class="page-title"><span class="eyebrow">FUKUOKA MINI MOCK</span><h1>'+esc(su)+'｜ミニ模試</h1><p class="muted">福岡県入試を意識し、複数分野を横断して'+n+'問出題します。過去問の転載ではなく、Study COMPASSの独自問題による確認セットです。</p></div><section class="panel"><h2>このセットで見る力</h2><p class="legend">教科ごとの本番構成を意識して出題順を調整しています。英語は文法→会話→資料→長文、理科は4分野→考察、国語は漢字語句→説明文→物語→古典、数学は6分野、社会は歴史・地理・公民のバランスで構成します。結果は入試得点の予測ではなく、復習箇所を見つけるための目安です。</p><button class="primary" onclick="startMiniMock()">ミニ模試 '+n+'問を開始 <span>→</span></button>'+(written?'<button class="secondary" style="margin-top:12px" onclick="mode=\'written\';studyFilter={kind:\'all\',value:\'\'};start()">記述・説明も練習 →</button>':'')+'</section><button class="text-button" onclick="coursePicker(subject)">← '+esc(su)+'へ戻る</button>'+note()+'</section>');
  nav('learn');
 }
 function startMiniMock(){
