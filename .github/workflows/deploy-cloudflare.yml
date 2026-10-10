@@ -61,7 +61,18 @@ jobs:
           echo
 
           echo "Checking study route..."
-          curl -fsSL --retry 5 --retry-delay 2 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}" -o /tmp/study.html
+          for i in {1..20}; do
+            curl -fsSL --retry 3 --retry-delay 1 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}&attempt=$i" -o /tmp/study.html
+            if grep -q 'data-study-v2-worker="20261011-8"' /tmp/study.html; then
+              echo "Latest worker version is live on attempt $i"
+              break
+            fi
+            if [ "$i" -eq 20 ]; then
+              echo "::error::Latest worker version did not propagate within wait window"
+              exit 1
+            fi
+            sleep 3
+          done
           echo "--- study headers ---"
           sed -n '1,20p' /tmp/study.headers
           echo "--- study size ---"
