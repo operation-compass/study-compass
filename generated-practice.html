@@ -14,9 +14,10 @@
 .choice.ok{border-color:var(--accent)}.choice.ng{border-color:#d98282}.result{display:none;margin-top:13px;padding:13px;border-radius:13px;background:#0d1626;line-height:1.6}
 .actions,.nav{display:flex;gap:10px;margin-top:14px}.nav{justify-content:space-between}.btn{border:0;border-radius:12px;padding:11px 13px;font-weight:800;background:#24344f;color:white}.primary{background:var(--accent);color:#0a1720}
 .progress{margin-top:14px;height:8px;border-radius:99px;background:#1b2940;overflow:hidden}.bar{height:100%;background:var(--accent)}.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.stat{font-size:13px;color:#c9d7ea;background:#111c2e;border:1px solid var(--line);padding:8px 10px;border-radius:12px}
+.global-home{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:flex;align-items:center;gap:6px;padding:11px 14px;border-radius:999px;text-decoration:none;background:linear-gradient(135deg,#1769ff,#31d7ff);color:#00101b!important;font-weight:900;font-size:13px;border:1px solid rgba(204,219,224,.62);box-shadow:0 0 22px rgba(0,168,255,.38),0 8px 24px rgba(0,0,0,.32)}
 </style><link rel="stylesheet" href="./compass-theme.css">
 </head>
-<body><div class="wrap">
+<body><a class="global-home" href="/" aria-label="Study COMPASSホームへ戻る">⌂ ホーム</a><div class="wrap">
 <div class="brand">STUDY COMPASS</div><div style="margin-top:8px"><a href="./practice-beta.html" style="color:#9fb0c8;text-decoration:none;font-size:12px">← β学習メニュー</a></div><h1>生成資料トレーニング β</h1>
 <div class="sub">資料の見せ方が変わっても、正答の考え方が変わらないように設計した社会・歴史の応用問題です。資料は再生成できます。</div>
 <div class="stats"><div class="stat" id="count"></div><div class="stat" id="score"></div></div>
