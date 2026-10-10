@@ -166,7 +166,19 @@ export default {
     n++;
     scheduleEnhance();
     if(!routeApplied) routeApplied=applyRoute();
-    if(routeApplied||n>30) clearInterval(timer);
+    if(routeApplied){ clearInterval(timer); return; }
+    if(n>60){
+      clearInterval(timer);
+      const view=document.getElementById("view");
+      if(view && !document.getElementById("study-route-recovery")){
+        const notice=document.createElement("div");
+        notice.id="study-route-recovery";
+        notice.setAttribute("role","status");
+        notice.style.cssText="margin:12px;padding:16px;border:1px solid #31d7ff;border-radius:14px;background:#08203a;color:#f4f7fb;font-size:14px;line-height:1.7";
+        notice.innerHTML='<b>学習ページの準備に時間がかかっています。</b><div>下のリンクから再読み込みしてください。</div><a href="/study.html?mode=qa" style="color:#72dfff;text-decoration:underline">一問一答を開き直す</a>　<a href="/" style="color:#72dfff;text-decoration:underline">ホームへ戻る</a>';
+        view.prepend(notice);
+      }
+    }
   },200);
 })();
 </script>`, { html:true });
