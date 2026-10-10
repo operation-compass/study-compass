@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study COMPASS｜生成資料トレーニング</title>
+<style>
+:root{--bg:#09101c;--card:#121c2f;--text:#f6f3ea;--muted:#9fb0c8;--accent:#78e0c2;--line:#26354f}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#09101c,#0e1727);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+.wrap{max-width:780px;margin:auto;padding:18px 14px 42px}.brand{font-size:12px;letter-spacing:.16em;color:var(--accent);font-weight:800}h1{font-size:24px;margin:8px 0 6px}
+.sub,.note{color:var(--muted);font-size:14px;line-height:1.7}.card{background:#121c2f;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px}
+.meta{display:flex;gap:8px;flex-wrap:wrap}.tag{font-size:12px;padding:5px 9px;border-radius:999px;background:#1d2a42;color:#c9d7ea}
+.material{margin:14px 0;padding:14px;border-radius:14px;background:#0d1626;border:1px solid var(--line);white-space:pre-line;line-height:1.7}
+.q{font-size:18px;line-height:1.7;font-weight:800}.choices{display:grid;gap:10px;margin-top:14px}.choice{width:100%;text-align:left;border:1px solid #344867;background:#162238;color:white;border-radius:13px;padding:13px;font-size:15px;line-height:1.5}
+.choice.ok{border-color:var(--accent)}.choice.ng{border-color:#d98282}.result{display:none;margin-top:13px;padding:13px;border-radius:13px;background:#0d1626;line-height:1.6}
+.actions,.nav{display:flex;gap:10px;margin-top:14px}.nav{justify-content:space-between}.btn{border:0;border-radius:12px;padding:11px 13px;font-weight:800;background:#24344f;color:white}.primary{background:var(--accent);color:#0a1720}
+.progress{margin-top:14px;height:8px;border-radius:99px;background:#1b2940;overflow:hidden}.bar{height:100%;background:var(--accent)}.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.stat{font-size:13px;color:#c9d7ea;background:#111c2e;border:1px solid var(--line);padding:8px 10px;border-radius:12px}
+</style></head>
+<body><div class="wrap">
+<div class="brand">STUDY COMPASS</div><h1>生成資料トレーニング β</h1>
+<div class="sub">資料の見せ方が変わっても、正答の考え方が変わらないように設計した社会・歴史の応用問題です。資料は再生成できます。</div>
+<div class="stats"><div class="stat" id="count"></div><div class="stat" id="score"></div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="card">
+<div class="meta"><span class="tag" id="family"></span><span class="tag" id="qid"></span></div>
+<div class="material" id="material"></div><div class="q" id="question"></div>
+<div class="choices" id="choices"></div><div class="result" id="result"></div>
+<div class="actions"><button class="btn primary" id="regen">資料を再生成</button></div>
+<div class="nav"><button class="btn" id="prev">← 前へ</button><button class="btn" id="next">次へ →</button></div>
+</div><div class="note">生成は学習用の表現・並び替えです。史実・正答概念は固定し、架空資料は架空であることが分かる形にしています。</div>
+</div>
+<script>
+const KEY="studyCompassGeneratedBetaV1";
+const Q=[
+{id:"SC-SOC-HIS-APPLY-000001",family:"APPLY",m:["【資料】軍事：十字軍が東方へ遠征。\n商業：地中海交易で香辛料・絹織物などがヨーロッパへ運ばれた。","【比較資料】対立面＝十字軍遠征。\n交流面＝東方産の香辛料や絹織物が地中海交易で流通。"],q:"中世ヨーロッパと東方の関係として最も適切なのは？",a:"軍事的な対立がある一方、交易による物資や文化の接触もあった",o:["軍事的な対立がある一方、交易による物資や文化の接触もあった","軍事的対立だけで交流はなかった","交易だけがあり軍事的対立はなかった","両地域は完全に無関係だった"]},
+{id:"SC-SOC-HIS-APPLY-000002",family:"APPLY",m:["【資料】ヨーロッパ：宗教改革後、カトリック側が海外布教を強化。\n日本：1549年、ザビエルがキリスト教を伝える。","【年表】宗教改革→カトリック側の布教強化→1549年ザビエル来日"],q:"ヨーロッパと日本の動きを結び付けた説明として適切なのは？",a:"宗教改革に対するカトリック側の動きとして海外布教が進み、日本へのキリスト教伝来にもつながった",o:["宗教改革に対するカトリック側の動きとして海外布教が進み、日本へのキリスト教伝来にもつながった","宗教改革によって日本で仏教が禁止された","ザビエルは宗教改革を始めた","日本へのキリスト教伝来は宗教改革以前に完了した"]},
+{id:"SC-SOC-HIS-APPLY-000003",family:"APPLY",m:["【資料】元禄文化：上方中心・町人文化。\n化政文化：江戸中心・町人文化。","【比較】共通：町人が文化を支える。\n違い：元禄＝上方、化政＝江戸。"],q:"元禄文化と化政文化の比較として適切なのは？",a:"町人文化という共通点を持ちながら、中心地や代表的な作品・作者には違いがある",o:["町人文化という共通点を持ちながら、中心地や代表的な作品・作者には違いがある","どちらも武士だけが支えた文化である","元禄文化も化政文化も中心は同じだった","化政文化は平安時代の文化である"]},
+{id:"SC-SOC-HIS-APPLY-000004",family:"APPLY",m:["【富岡製糸場】政府が官営工場として技術導入・人材育成→1893年に民間へ払い下げ。","【経過】官営で模範工場化→技術普及・人材育成→民間経営へ移行。"],q:"明治の殖産興業を説明したものとして適切なのは？",a:"政府が模範工場で技術導入・人材育成を進め、後に民間へ経営を移す動きがあった",o:["政府が模範工場で技術導入・人材育成を進め、後に民間へ経営を移す動きがあった","政府は工場建設を一切行わなかった","民間工場をすべて国有化し続けた","技術普及より農地改革を目的とした"]},
+{id:"SC-SOC-HIS-APPLY-000005",family:"APPLY",m:["【1919年】朝鮮：三・一独立運動。\n中国：五・四運動。","【比較】朝鮮＝日本の植民地支配への反発。\n中国＝山東省の権益処理などへの反発。"],q:"二つの運動を比較した説明として適切なのは？",a:"同じ1919年に民族的な権利を求める動きがみられたが、地域と直接の背景は異なる",o:["同じ1919年に民族的な権利を求める動きがみられたが、地域と直接の背景は異なる","同じ地域で同じ理由から起きた","どちらも江戸時代の出来事である","どちらもヨーロッパで起きた"]},
+{id:"SC-SOC-HIS-APPLY-000006",family:"APPLY",m:["【恐慌対策】米：公共事業などで国内雇用を増やす。\n英仏：自国・植民地などの経済圏を優遇。","【政策比較】ニューディール＝国内雇用へ働きかけ。\nブロック経済＝自国中心の経済圏を優遇。"],q:"政策の働き方の違いとして適切なのは？",a:"アメリカは公共事業などで国内の雇用を増やし、英仏は自国・植民地などの経済圏を優遇した",o:["アメリカは公共事業などで国内の雇用を増やし、英仏は自国・植民地などの経済圏を優遇した","米英仏はいずれも同じ政策だけを行った","アメリカは植民地だけを優遇した","英仏は公共事業だけで対応した"]},
+{id:"SC-SOC-HIS-APPLY-000007",family:"APPLY",m:["【年表】1945 女性参政権→1946 女性が投票した総選挙→1947 日本国憲法施行","【順序】参政権実現 → 女性参加の総選挙 → 憲法施行"],q:"女性参政権と日本国憲法の関係として適切なのは？",a:"女性参政権は憲法施行より前に認められ、女性が投票した総選挙も施行より前に行われた",o:["女性参政権は憲法施行より前に認められ、女性が投票した総選挙も施行より前に行われた","女性参政権は憲法施行後に初めて認められた","女性の初投票は1950年代である","憲法施行前には選挙はなかった"]},
+{id:"SC-SOC-HIS-APPLY-000008",family:"APPLY",m:["【戦後改革】財閥解体＝企業の経済支配を見直す。\n農地改革＝地主と小作人の関係を見直す。","【比較】対象は異なるが、経済力の集中を弱める方向。"],q:"二つの戦後改革に共通する方向として適切なのは？",a:"経済力や社会的な影響力の集中を見直し、経済の民主化を進める",o:["経済力や社会的な影響力の集中を見直し、経済の民主化を進める","旧来の経済力集中をさらに強める","軍部の政治参加を増やす","身分制度を復活させる"]},
+{id:"SC-SOC-HIS-APPLY-000009",family:"APPLY",m:["【架空投票A】賛成9、反対6。反対に常任理事国1か国を含む。\n【架空投票B】賛成10、反対5。常任理事国の反対なし。","【安全保障理事会・学習例】A＝9票賛成＋常任理事国反対1。B＝10票賛成＋常任理事国反対0。"],q:"手続事項以外の決議で、拒否権が原因で成立しないのはどちら？",a:"例A：賛成票は9票あるが、常任理事国が1か国反対している",o:["例A：賛成票は9票あるが、常任理事国が1か国反対している","例B：賛成票は10票あり、常任理事国の反対がない","AもBも必ず成立する","AもBも賛成票数に関係なく成立しない"]},
+{id:"SC-SOC-HIS-APPLY-000010",family:"APPLY",m:["【高度経済成長】工業生産・消費が拡大。\n【公害対応】公害対策基本法、環境庁などを整備。","【資料】経済成長による生活変化と同時に公害が社会問題化し、法制度・行政整備が進む。"],q:"高度経済成長と公害対策を説明したものとして適切なのは？",a:"経済成長による生活の変化の一方、公害も社会問題となり、法制度や行政の整備が進んだ",o:["経済成長による生活の変化の一方、公害も社会問題となり、法制度や行政の整備が進んだ","経済成長期には公害問題は存在しなかった","公害への対応として江戸幕府が環境庁を設置した","工業生産は減少し続けた"]},
+{id:"SC-SOC-HIS-APPLY-000011",family:"APPLY",m:["【学習資料】稲作の広がり→土地と収穫物の蓄えが重要→富や力の差が生じる場合→争いにつながる場合。","【因果の例】土地・蓄えの差が社会的な差や集落間の対立につながることがある。"],q:"稲作の広がりと社会の変化について慎重に述べたものは？",a:"蓄えや土地の確保が重要になり、富や力の差、集落間の争いにつながる場合があった",o:["蓄えや土地の確保が重要になり、富や力の差、集落間の争いにつながる場合があった","稲作が始まるとすべての争いがなくなった","土地の所有は社会に何の影響も与えなかった","稲作の広がりだけで全員の身分を確定できる"]},
+{id:"SC-SOC-HIS-APPLY-000012",family:"APPLY",m:["【年表】663 白村江の戦いで敗北→664 水城を築く。","【東アジア情勢】唐・新羅軍への敗戦後、侵攻を警戒して防衛施設を整備。"],q:"水城が築かれた理由として適切なのは？",a:"白村江の敗戦後、唐・新羅の侵攻を警戒し、国内の防衛を強化した",o:["白村江の敗戦後、唐・新羅の侵攻を警戒し、国内の防衛を強化した","農地改革のために築いた","鎖国を完成させるために築いた","日米修好通商条約を守るために築いた"]},
+{id:"SC-SOC-HIS-GAP-ADV-000001",family:"GAP_ADV",m:["【架空資料】A地点：打製石器のみ。B地点：縄文土器＋打製石器。","【学習例】遺物A＝打製石器。遺物B＝縄文土器と打製石器が同じ層から出土。"],q:"この資料からの判断として最も慎重で適切なのは？",a:"Bは縄文時代を考える手がかりがあるが、Aは打製石器だけで時代を断定できない",o:["Bは縄文時代を考える手がかりがあるが、Aは打製石器だけで時代を断定できない","Aは必ず旧石器時代と断定できる","Bは必ず弥生時代である","打製石器は縄文時代には使われなかった"]},
+{id:"SC-SOC-HIS-GAP-ADV-000002",family:"GAP_ADV",m:["【地層】上層X、下層Y。地層は乱されていない。","【架空断面】Xが上、Yが下。断層や逆転は見られない。"],q:"上下の地層から分かることと、分からないことの組み合わせは？",a:"下層の方が古いと考えられるが、具体的な年代は別の調査が必要である",o:["下層の方が古いと考えられるが、具体的な年代は別の調査が必要である","上層の方が必ず古い","上下だけで西暦何年かまで確定できる","地層の上下からは何も分からない"]},
+{id:"SC-SOC-HIS-GAP-ADV-000003",family:"GAP_ADV",m:["【架空集落】竪穴住居跡、貝殻、魚骨、木の実、石器が出土。水田跡は未確認。","【資料】定住を示す住居跡と、狩猟・採集・漁労を示す遺物が見つかった。"],q:"縄文時代の集落について適切な説明は？",a:"定住と狩猟・採集・漁労は両立するため、住居跡だけで水田稲作中心とは断定しない",o:["定住と狩猟・採集・漁労は両立するため、住居跡だけで水田稲作中心とは断定しない","定住していれば必ず水田稲作中心である","魚骨があれば農業は一切していないと断定できる","住居跡だけで弥生時代と確定できる"]},
+{id:"SC-SOC-HIS-GAP-ADV-000004",family:"GAP_ADV",m:["【架空遺跡】産地が数百km離れた黒曜石が出土。","【資料】遺跡Xで、遠方産と判定された石材が複数見つかった。"],q:"この学習例から推測できる範囲として適切なのは？",a:"物資が地域を越えて移動したと考えられるが、住民が産地へ直接行ったとは限らない",o:["物資が地域を越えて移動したと考えられるが、住民が産地へ直接行ったとは限らない","住民全員が産地へ直接行ったと断定できる","遠方との交流はなかったと分かる","黒曜石だけで国家の範囲を確定できる"]},
+{id:"SC-SOC-HIS-GAP-ADV-000005",family:"GAP_ADV",m:["【架空比較】古墳A：全長180m。古墳B：全長45m。築造時期は近い。","【資料】同地域・近い時期に大小の古墳が存在。"],q:"資料から導く説明として適切なのは？",a:"規模の違いから有力者の存在を考えられるが、名前や全住民の地位までは確定しない",o:["規模の違いから有力者の存在を考えられるが、名前や全住民の地位までは確定しない","大きさだけで被葬者の名前まで確定できる","全住民の身分が同じだったと分かる","古墳の大きさは社会と無関係である"]},
+{id:"SC-SOC-HIS-GAP-ADV-000006",family:"GAP_ADV",m:["【資料】政治：朝鮮半島の国々との外交。\n技術：鉄器生産・窯業などの技術が伝来。","【比較】外交交渉の記録と、渡来人による技術伝播の痕跡。"],q:"政治と技術の二つの欄を合わせた説明は？",a:"外交交渉と人・技術の交流の両面で、列島は東アジアと結び付いていた",o:["外交交渉と人・技術の交流の両面で、列島は東アジアと結び付いていた","列島は東アジアと完全に孤立していた","技術交流だけで外交はなかった","外交だけで人の移動はなかった"]},
+{id:"SC-SOC-HIS-GAP-ADV-000007",family:"GAP_ADV",m:["【資料】幕府の権威低下。戦国大名Xは領国内で独自の法を制定。","【学習例】中央の支配が弱まる一方、地域権力が独自法で領国支配を進める。"],q:"室町幕府の権威低下と結び付けた説明として適切なのは？",a:"幕府の力が弱まる中、戦国大名が領国で独自の支配を進めた",o:["幕府の力が弱まる中、戦国大名が領国で独自の支配を進めた","幕府の力が強まったため分国法が不要になった","戦国大名は領国支配を行わなかった","分国法は明治政府が制定した"]},
+{id:"SC-SOC-HIS-GAP-ADV-000008",family:"GAP_ADV",m:["【架空例】家臣Bが主君Aを倒して領地支配を奪った。","【学習例】下位の立場だったBが実力でAの地位・支配を奪う。"],q:"この例を下剋上と結び付ける際、適切な説明は？",a:"BとAの地位・支配の逆転は下剋上の例だが、全国の全員が同様に逆転したとは言えない",o:["BとAの地位・支配の逆転は下剋上の例だが、全国の全員が同様に逆転したとは言えない","全国の全員が同じように地位を逆転したと断定できる","この例は参勤交代を示す","この例は農地改革を示す"]},
+{id:"SC-SOC-HIS-GAP-ADV-000009",family:"GAP_ADV",m:["【比較】田沼意次：株仲間を奨励。\n水野忠邦：天保の改革で株仲間を解散。","【政策】共に財政再建を意識したが、株仲間への対応は逆。"],q:"この比較から読み取れるものは？",a:"財政を立て直す目標は共通でも、株仲間への政策手段は異なった",o:["財政を立て直す目標は共通でも、株仲間への政策手段は異なった","両者とも株仲間を一貫して奨励した","両者とも株仲間を一貫して禁止した","株仲間は江戸時代と無関係である"]},
+{id:"SC-SOC-HIS-GAP-ADV-000010",family:"GAP_ADV",m:["【架空資料】幕府が江戸・大坂周辺の大名・旗本領を幕領にしようとする方針を発表。強い反発で撤回。","【政策と反応】支配地拡大の方針が、土地を持つ大名・旗本の利害と衝突。"],q:"政策と反応を結び付けた説明として適切なのは？",a:"幕府の支配地を増やす方針は、土地に関わる大名や旗本などの利害と衝突した",o:["幕府の支配地を増やす方針は、土地に関わる大名や旗本などの利害と衝突した","反対は土地とまったく無関係だった","大名や旗本は全員無条件で賛成した","政策は鎌倉時代に行われた"]},
+{id:"SC-SOC-HIS-GAP-ADV-000011",family:"GAP_ADV",m:["【架空年表】A：紀元前500年、X：紀元前420年、B：紀元前300年、Y：紀元前220年、C：紀元前100年。","【年代資料】A(-500) / X(-420) / B(-300) / Y(-220) / C(-100)"],q:"XとYの時期をA・B・Cと比較した説明として適切なのは？",a:"XはAとBの間、YはBとCの間に起きた",o:["XはAとBの間、YはBとCの間に起きた","XはBとCの間、YはAより前である","XもYもCより後である","XとYは同じ年である"]},
+{id:"SC-SOC-HIS-GAP-ADV-000012",family:"GAP_ADV",m:["【架空資料】政策Pの実施後に価格が上昇。ほぼ同時期に天候不順と輸送障害も発生。","【因果学習例】政策が先行したが、価格上昇期には別の要因も重なっている。"],q:"この情報だけからの結論として適切なのは？",a:"政策が先だとは分かるが、政策だけが価格上昇の原因とは確定できない",o:["政策が先だとは分かるが、政策だけが価格上昇の原因とは確定できない","政策が唯一の原因だと断定できる","天候不順だけが唯一の原因だと断定できる","前後関係と因果関係は常に同じである"]}
+];
+let state=JSON.parse(localStorage.getItem(KEY)||'{"i":0,"score":0,"answered":{}}');if(state.i>=Q.length)state.i=0;
+let variant=0;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function render(){const x=Q[state.i];document.getElementById("family").textContent=x.family;document.getElementById("qid").textContent=x.id;document.getElementById("material").textContent=x.m[variant%x.m.length];document.getElementById("question").textContent=x.q;document.getElementById("result").style.display="none";const box=document.getElementById("choices");box.innerHTML="";for(const o of shuffle(x.o)){const b=document.createElement("button");b.className="choice";b.textContent=o;b.onclick=()=>answer(b,o);box.appendChild(b)}document.getElementById("count").textContent=(state.i+1)+" / "+Q.length+"問";document.getElementById("score").textContent="正解 "+Object.values(state.answered).filter(Boolean).length+" / "+Object.keys(state.answered).length;document.getElementById("bar").style.width=((state.i+1)/Q.length*100)+"%"}
+function answer(btn,o){const x=Q[state.i],ok=o===x.a;state.answered[x.id]=ok;save();for(const b of document.querySelectorAll(".choice")){b.disabled=true;if(b.textContent===x.a)b.classList.add("ok")}if(!ok)btn.classList.add("ng");const r=document.getElementById("result");r.textContent=ok?"正解。資料の形が変わっても、同じ根拠で判断できます。":"もう一度資料の『何が分かるか／何までは分からないか』を確認しよう。";r.style.display="block";document.getElementById("score").textContent="正解 "+Object.values(state.answered).filter(Boolean).length+" / "+Object.keys(state.answered).length}
+document.getElementById("regen").onclick=()=>{variant++;render()};document.getElementById("prev").onclick=()=>{state.i=(state.i-1+Q.length)%Q.length;variant=0;save();render()};document.getElementById("next").onclick=()=>{state.i=(state.i+1)%Q.length;variant=0;save();render()};render();
+</script></body></html>
