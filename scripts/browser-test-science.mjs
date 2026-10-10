@@ -1,12 +1,10 @@
 import { chromium } from 'playwright';
-import { pathToFileURL } from 'node:url';
-import path from 'node:path';
 import assert from 'node:assert/strict';
 
 const browser = await chromium.launch({headless:true});
 try {
  const page=await browser.newPage({viewport:{width:390,height:844}});
- const url=pathToFileURL(path.resolve('legacy-study.html')).href;
+ const url='http://127.0.0.1:8765/legacy-study.html';
  await page.goto(url);
  await page.waitForFunction(() => typeof start==='function' && typeof renderQ==='function');
  const issues=await page.evaluate(()=>BANK_ISSUES);
