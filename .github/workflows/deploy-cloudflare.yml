@@ -19,6 +19,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check Worker syntax and learning routes before deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check worker.js
+          python3 - <<'PY'
+          from pathlib import Path
+          worker = Path("worker.js").read_text()
+          legacy = Path("legacy-study.html").read_text()
+          home = Path("home-v2.html").read_text()
+          for mode, target in (("qa", "mcq"), ("flashcards", "flashcard"), ("questions", "question")):
+              assert f'mode==="{mode}"' in worker, f"missing deep link {mode}"
+              assert f'activateMode("{target}"' in worker, f"missing mode activation {mode}"
+              assert f'./study.html?mode={mode}' in home, f"missing home entry {mode}"
+          for token in ('function setup()', 'function setStudyMode(m)', 'class="mode-switch three"'):
+              assert token in legacy, f"missing legacy study structure: {token}"
+          assert "data-study-route-ready" in worker
+          assert "study-route-recovery" in worker
+          print("Static learning-route checks passed.")
+          PY
+
       - name: Verify Cloudflare secrets
         shell: bash
         env:
