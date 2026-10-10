@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Study COMPASS｜記述式トレーニング</title>
+<style>
+:root{--bg:#0b1220;--card:#121c2f;--text:#f6f3ea;--muted:#9fb0c8;--accent:#78e0c2;--line:#26354f;--warn:#ffd479}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#09101c,#0e1727);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.brand{font-size:12px;letter-spacing:.16em;color:var(--accent);font-weight:800}
+h1{font-size:24px;margin:8px 0 6px}.sub{color:var(--muted);font-size:14px;line-height:1.7}.card{background:rgba(18,28,47,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:18px;box-shadow:0 14px 40px rgba(0,0,0,.22)}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tag{font-size:12px;padding:5px 9px;border-radius:999px;background:#1d2a42;color:#c9d7ea}
+.q{font-size:18px;line-height:1.7;font-weight:700}.hint{color:var(--muted);font-size:13px;margin:10px 0}
+textarea{width:100%;min-height:130px;border:1px solid #344867;border-radius:14px;background:#0d1626;color:white;padding:13px;font-size:16px;line-height:1.6;resize:vertical}
+.actions{display:flex;gap:10px;margin-top:12px}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer}.primary{background:var(--accent);color:#0a1720}.secondary{background:#24344f;color:#fff}.result{display:none;margin-top:14px;padding:14px;border-radius:14px;background:#0d1626;border:1px solid var(--line);line-height:1.65}
+.score{font-size:20px;font-weight:900;color:var(--accent)}.answer{margin-top:10px;color:#e9edf4}.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}.progress{margin-top:14px;height:8px;border-radius:99px;background:#1b2940;overflow:hidden}.bar{height:100%;background:var(--accent);width:0}
+.topstats{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.stat{background:#111c2e;border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:13px;color:#c9d7ea}
+.note{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="brand">STUDY COMPASS</div>
+<h1>記述式トレーニング β</h1>
+<div class="sub">社会・歴史の理由説明を、必須概念＋因果関係で採点する試作版です。完全一致ではなく、内容要素で部分点を出します。</div>
+<div class="topstats"><div class="stat" id="countStat"></div><div class="stat" id="scoreStat"></div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="card">
+  <div class="meta"><span class="tag">社会</span><span class="tag">記述</span><span class="tag" id="idTag"></span></div>
+  <div class="q" id="q"></div>
+  <div class="hint">目安：15〜120字。理由・原因と結果をつなげて書いてみよう。</div>
+  <textarea id="answer" placeholder="ここに自分の答えを書く"></textarea>
+  <div class="actions">
+    <button class="btn primary" id="check">採点する</button>
+    <button class="btn secondary" id="model">模範解答を見る</button>
+  </div>
+  <div class="result" id="result"></div>
+  <div class="nav">
+    <button class="btn secondary" id="prev">← 前へ</button>
+    <button class="btn secondary" id="next">次へ →</button>
+  </div>
+</div>
+<div class="note">採点は学習補助用のルーブリック判定です。表現が違っても意味が合えば正解になり得ます。正式公開前に教科監修とWeb本体への統合を行います。</div>
+</div>
+<script>
+const KEY="studyCompassWrittenBetaV1";
+const qs=[
+{id:"SC-SOC-HIS-WRITE-000001",q:"稲作の広がりによる社会の変化を説明しなさい。",model:"米の蓄えや土地の所有に差が生まれ、土地や水をめぐる争いが起こったため。",groups:[["蓄え","米","収穫"],["土地","水"],["争い","差","富","力"]]},
+{id:"SC-SOC-HIS-WRITE-000002",q:"墾田永年私財法によって土地のあり方がどのように変化したか説明しなさい。",model:"新しく開墾した土地の永久私有が認められ、貴族や寺院などの私有地が広がった。",groups:[["永久","私有"],["開墾"],["貴族","寺院","私有地","荘園"]]},
+{id:"SC-SOC-HIS-WRITE-000003",q:"元寇後に御家人が困窮した理由を説明しなさい。",model:"防衛のために戦費を負担した一方、新たな領地を得られず十分な恩賞を受けにくかったため。",groups:[["戦費","負担"],["領地","土地"],["恩賞","少な","得られ"]]},
+{id:"SC-SOC-HIS-WRITE-000004",q:"日明貿易で勘合を用いた理由を説明しなさい。",model:"明が倭寇と正式な貿易船を区別するために、勘合を使って船を確認した。",groups:[["倭寇"],["正式","貿易船"],["区別","確認","勘合"]]},
+{id:"SC-SOC-HIS-WRITE-000005",q:"太閤検地のねらいを説明しなさい。",model:"田畑の面積や生産力、耕作者を調べて、年貢を納める基準と負担する者を明確にするため。",groups:[["田畑","面積","生産力","石高"],["耕作者"],["年貢","基準","負担"]]},
+{id:"SC-SOC-HIS-WRITE-000006",q:"参勤交代が大名統制につながった理由を説明しなさい。",model:"大名に江戸と領地の往復や江戸滞在を義務づけ、費用の負担などによって統制を強めた。",groups:[["江戸","往復","滞在"],["費用","負担"],["統制","大名"]]},
+{id:"SC-SOC-HIS-WRITE-000007",q:"工業化が進んだ国がアジアへ進出した背景を説明しなさい。",model:"機械工業の発達で大量生産が進み、原料の供給地と製品を売る市場を求めたため。",groups:[["工業","大量生産"],["原料"],["市場","売る"]]},
+{id:"SC-SOC-HIS-WRITE-000008",q:"日米修好通商条約が不平等条約とされる理由を二つの内容に触れて説明しなさい。",model:"アメリカの領事裁判権を認め、日本に関税自主権がなかったため。",groups:[["領事裁判権","治外法権"],["関税自主権"],["ない","認め"]]},
+{id:"SC-SOC-HIS-WRITE-000009",q:"地租改正が政府の安定した収入につながった理由を説明しなさい。",model:"収穫高ではなく地価を基準とし、土地所有者に現金で税を納めさせたため。",groups:[["地価"],["現金"],["土地所有者","税","地租"]]},
+{id:"SC-SOC-HIS-WRITE-000010",q:"第一次世界大戦中に日本の輸出が増えた理由を説明しなさい。",model:"ヨーロッパ諸国の生産やアジア向け輸出が戦争で減り、日本製品への需要と日本の輸出が増えたため。",groups:[["ヨーロッパ","欧州"],["生産","輸出","減"],["日本","需要","輸出","増"]]},
+{id:"SC-SOC-HIS-WRITE-000011",q:"農地改革のねらいを説明しなさい。",model:"地主の農地を政府が買い上げ小作農に売り渡し、自作農を増やして地主への依存を弱めようとした。",groups:[["地主","農地"],["小作","売り渡"],["自作農","依存","弱"]]},
+{id:"SC-SOC-HIS-WRITE-000012",q:"高度経済成長期に公害が深刻化した理由を説明しなさい。",model:"工業生産が急増する一方で環境対策が十分でなく、工場の排水や排煙が水や空気を汚染したため。",groups:[["工業","生産","増"],["環境","対策","十分でな"],["排水","排煙","汚染","公害"]]}
+];
+let state=JSON.parse(localStorage.getItem(KEY)||'{"i":0,"scores":{}}');
+function norm(s){return (s||"").toLowerCase().normalize("NFKC").replace(/[\s、。,.・「」『』（）()]/g,"")}
+function grade(item,text){
+ const n=norm(text); if(!n) return {score:0,hit:0};
+ let hit=0; for(const g of item.groups){if(g.some(k=>n.includes(norm(k)))) hit++}
+ const score=hit>=3?2:hit>=1?1:0; return {score,hit};
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function render(){
+ const item=qs[state.i]; document.getElementById("q").textContent=item.q; document.getElementById("idTag").textContent=item.id;
+ document.getElementById("answer").value=""; document.getElementById("result").style.display="none";
+ const done=Object.keys(state.scores).length, total=Object.values(state.scores).reduce((a,b)=>a+b,0);
+ document.getElementById("countStat").textContent=(state.i+1)+" / "+qs.length+"問";
+ document.getElementById("scoreStat").textContent="累計 "+total+" / "+(done*2||0)+"点";
+ document.getElementById("bar").style.width=((state.i+1)/qs.length*100)+"%";
+}
+document.getElementById("check").onclick=()=>{
+ const item=qs[state.i], text=document.getElementById("answer").value.trim(), g=grade(item,text);
+ state.scores[item.id]=g.score; save();
+ const msg=g.score===2?"必要な要素がしっかり入っています。":g.score===1?"方向は合っています。理由と結果のつながりをもう一段具体化しよう。":"必須要素が不足しています。模範解答で原因と結果のつながりを確認しよう。";
+ const r=document.getElementById("result"); r.innerHTML='<div class="score">'+g.score+' / 2点</div><div>'+msg+'</div><div class="answer"><b>模範解答：</b>'+item.model+'</div>';r.style.display="block";renderStatsOnly();
+};
+function renderStatsOnly(){const done=Object.keys(state.scores).length,total=Object.values(state.scores).reduce((a,b)=>a+b,0);document.getElementById("scoreStat").textContent="累計 "+total+" / "+(done*2||0)+"点"}
+document.getElementById("model").onclick=()=>{const item=qs[state.i],r=document.getElementById("result");r.innerHTML='<div class="answer"><b>模範解答：</b>'+item.model+'</div>';r.style.display="block"};
+document.getElementById("prev").onclick=()=>{state.i=(state.i-1+qs.length)%qs.length;save();render()};
+document.getElementById("next").onclick=()=>{state.i=(state.i+1)%qs.length;save();render()};
+render();
+</script>
+</body></html>
