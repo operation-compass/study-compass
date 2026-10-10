@@ -63,7 +63,7 @@ jobs:
           echo "Checking study route..."
           for i in {1..20}; do
             curl -fsSL --retry 3 --retry-delay 1 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}&attempt=$i" -o /tmp/study.html
-            if grep -q 'data-study-v2-worker="20261011-8"' /tmp/study.html; then
+            if grep -q 'data-study-v2-worker="20261011-9"' /tmp/study.html; then
               echo "Latest worker version is live on attempt $i"
               break
             fi
@@ -83,8 +83,8 @@ jobs:
           head -c 700 /tmp/study.html || true
           echo
 
-          grep -q 'study-v2.css?v=20261011-8' /tmp/study.html
-          grep -q 'data-study-v2-worker="20261011-8"' /tmp/study.html
+          grep -q 'study-v2.css?v=20261011-9' /tmp/study.html
+          grep -q 'data-study-v2-worker="20261011-9"' /tmp/study.html
           grep -q 'study-home-fab' /tmp/study.html
 
           echo "Checking V2 stylesheet..."
