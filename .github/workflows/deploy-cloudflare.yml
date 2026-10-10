@@ -72,8 +72,8 @@ jobs:
           head -c 700 /tmp/study.html || true
           echo
 
-          grep -q 'study-v2.css?v=20261011-6' /tmp/study.html
-          grep -q 'data-study-v2-worker="20261011-6"' /tmp/study.html
+          grep -q 'study-v2.css?v=20261011-7' /tmp/study.html
+          grep -q 'data-study-v2-worker="20261011-7"' /tmp/study.html
           grep -q 'study-home-fab' /tmp/study.html
 
           echo "Checking V2 stylesheet..."
