@@ -29,8 +29,8 @@ export default {
       return new HTMLRewriter()
         .on("html", {
           element(element) {
-            element.setAttribute("data-study-v2-worker", "20261011-6");
-            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-6"><meta name="study-v2-worker" content="20261011-6">', { html:true });
+            element.setAttribute("data-study-v2-worker", "20261011-7");
+            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-7"><meta name="study-v2-worker" content="20261011-7">', { html:true });
             element.append(`
 <a id="study-home-fab" href="/" aria-label="Study COMPASSホームへ戻る" style="position:fixed;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:2147483647;display:flex;align-items:center;gap:6px;padding:10px 13px;border-radius:999px;text-decoration:none;background:linear-gradient(135deg,#1769ff,#31d7ff);color:#00101b;font:800 12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;border:1px solid rgba(204,219,224,.62);box-shadow:0 0 22px rgba(0,168,255,.38),0 8px 24px rgba(0,0,0,.32)">⌂ ホーム</a>
 <script>
@@ -49,8 +49,24 @@ export default {
       document.body.classList.toggle("study-selection-active",selection);
       document.body.classList.toggle("study-flash-active",!!document.querySelector(".flash-study"));
       document.body.classList.toggle("study-question-only-active",!!document.querySelector(".question-only"));
+      const navEl=document.getElementById("nav");
+      const navHidden=!!(navEl && navEl.classList.contains("hidden"));
+      document.body.classList.toggle("study-nav-hidden",navHidden);
     }
     document.documentElement.classList.add("study-v2-runtime-root");
+    const navHome=document.querySelector("#nav>div button:first-child");
+    if(navHome){
+      navHome.setAttribute("onclick","location.href='/'");
+      navHome.setAttribute("aria-label","Study COMPASSホームへ戻る");
+    }
+
+    document.querySelectorAll("button.text-button").forEach(btn=>{
+      const txt=(btn.textContent||"").trim();
+      if(txt==="ホームへ戻る"||txt==="← ホームへ戻る"){
+        btn.textContent=txt.startsWith("←")?"← 学習トップへ戻る":"学習トップへ戻る";
+      }
+    });
+
     document.querySelectorAll(".subject-tile").forEach(el=>{
       const t=(el.textContent||"");
       const icon=el.querySelector(".subject-icon");
