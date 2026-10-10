@@ -1,0 +1,30 @@
+:root{
+  --compass-bg:#010a19;
+  --compass-bg-2:#06152c;
+  --compass-panel:#0b1b34;
+  --compass-panel-2:#112d4f;
+  --compass-blue:#00a8ff;
+  --compass-blue-2:#1769ff;
+  --compass-cyan:#31d7ff;
+  --compass-silver:#ccdbe0;
+  --compass-silver-2:#6b869d;
+  --compass-gold:#e8c36a;
+  --compass-text:#f4f7fb;
+  --compass-muted:#9fb2c8;
+  --compass-line:rgba(98,177,255,.32);
+  --compass-glow:0 0 26px rgba(0,168,255,.18);
+}
+html,body{background:
+ radial-gradient(circle at 50% -20%,rgba(0,168,255,.18),transparent 36%),
+ linear-gradient(180deg,var(--compass-bg),var(--compass-bg-2));
+ color:var(--compass-text)}
+body{min-height:100vh}
+.card,.panel{background:linear-gradient(180deg,rgba(17,45,79,.72),rgba(5,18,37,.94));border-color:var(--compass-line)!important;box-shadow:var(--compass-glow)}
+.brand,.kicker,.score,.arrow{color:var(--compass-cyan)!important}
+.tag,.stat{background:rgba(17,45,79,.74)!important;color:var(--compass-silver)!important;border-color:var(--compass-line)!important}
+.primary{background:linear-gradient(135deg,var(--compass-blue-2),var(--compass-cyan))!important;color:#00101b!important;box-shadow:0 0 18px rgba(0,168,255,.28)}
+.secondary,.btn:not(.primary){background:linear-gradient(180deg,#17375d,#0f2745)!important;color:var(--compass-text)!important;border:1px solid var(--compass-line)!important}
+textarea,.material,.result{background:rgba(2,12,27,.88)!important;border-color:var(--compass-line)!important}
+a{color:var(--compass-cyan)}
+h1,.title{letter-spacing:.01em}
+.compass-accent{color:var(--compass-gold)}
