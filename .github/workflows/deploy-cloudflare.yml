@@ -94,3 +94,23 @@ jobs:
           grep -q 'global-home' /tmp/practice-beta.html
 
           echo "Production smoke test passed."
+
+      - name: Verify rendered study page
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://study-compass.occompass-info.workers.dev"
+          BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$BROWSER" ]; then
+            echo "::error::No headless browser found on runner"
+            exit 1
+          fi
+          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=qa&render=${GITHUB_SHA}" > /tmp/rendered.html
+          echo "--- rendered size ---"
+          wc -c /tmp/rendered.html
+          echo "--- rendered markers ---"
+          grep -oE 'study-v2-runtime|study-selection-active|study-quiz-active|一問一答|教科|今日の10問|学習トップへ戻る' /tmp/rendered.html | head -30 || true
+          grep -q 'study-v2-runtime' /tmp/rendered.html
+          grep -Eq 'study-selection-active|study-quiz-active' /tmp/rendered.html
+          test "$(wc -c < /tmp/rendered.html)" -gt 100000
+          echo "Rendered study page test passed."
