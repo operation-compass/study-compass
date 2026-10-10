@@ -444,3 +444,98 @@ html,body{overflow-x:hidden!important}
   .study-v2-runtime .hero h1{font-size:28px!important}
   .study-v2-runtime nav button{font-size:9px!important}
 }
+
+
+/* Cross-page polish v9 — eliminate remaining legacy light surfaces */
+.study-v2-runtime .metric,
+.study-v2-runtime .review-item,
+.study-v2-runtime .review-badge,
+.study-v2-runtime .history-flow,
+.study-v2-runtime .history-topic-buttons button,
+.study-v2-runtime .written-answer,
+.study-v2-runtime .filters select,
+.study-v2-runtime .quiz-actions button,
+.study-v2-runtime .sound,
+.study-v2-runtime details,
+.study-v2-runtime .unit{
+  color:#f4f7fb!important
+}
+.study-v2-runtime .review-badge,
+.study-v2-runtime .history-topic-buttons button,
+.study-v2-runtime .written-answer,
+.study-v2-runtime .filters select,
+.study-v2-runtime .quiz-actions button,
+.study-v2-runtime .sound{
+  background:linear-gradient(180deg,rgba(14,38,69,.94),rgba(5,18,37,.99))!important;
+  border-color:rgba(98,177,255,.28)!important
+}
+.study-v2-runtime .review-badge.high{
+  background:rgba(255,113,139,.12)!important;
+  color:#ffdbe2!important;
+  border-color:rgba(255,113,139,.30)!important
+}
+.study-v2-runtime .review-badge.wait{
+  background:rgba(49,215,255,.10)!important;
+  color:#d9fbff!important;
+  border-color:rgba(49,215,255,.26)!important
+}
+.study-v2-runtime .history-flow{
+  background:rgba(49,215,255,.07)!important;
+  border-left-color:#31d7ff!important;
+  color:#c8d8e9!important
+}
+.study-v2-runtime .written-answer{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)!important
+}
+.study-v2-runtime .written-answer:focus{
+  outline:2px solid #31d7ff!important;
+  outline-offset:2px!important
+}
+.study-v2-runtime .filters{
+  flex-wrap:wrap!important
+}
+.study-v2-runtime .filters select{
+  flex:1 1 180px!important;
+  width:auto!important;
+  min-width:0!important
+}
+.study-v2-runtime .history-material table{
+  color:#dce9f6!important
+}
+.study-v2-runtime .history-material th,
+.study-v2-runtime .history-material td{
+  border-color:rgba(98,177,255,.22)!important;
+  background:rgba(4,17,36,.58)!important
+}
+.study-v2-runtime .history-material thead{
+  background:rgba(23,105,255,.16)!important
+}
+.study-v2-runtime .history-material figcaption{
+  color:#f4f7fb!important
+}
+.study-v2-runtime .history-material p{
+  color:#9fb2c8!important
+}
+.study-v2-runtime .alpha-note{
+  color:#708aa3!important;
+  border-top-color:rgba(98,177,255,.18)!important
+}
+.study-v2-runtime .text-button{
+  text-decoration:none!important;
+  font-weight:750!important
+}
+.study-v2-runtime button{
+  -webkit-tap-highlight-color:transparent!important
+}
+.study-v2-runtime button:focus-visible,
+.study-v2-runtime a:focus-visible,
+.study-v2-runtime select:focus-visible{
+  outline:2px solid #31d7ff!important;
+  outline-offset:2px!important
+}
+@media(max-width:700px){
+  .study-v2-runtime .filters{display:grid!important;grid-template-columns:1fr!important}
+  .study-v2-runtime .filters select{width:100%!important}
+  .study-v2-runtime .history-material{overflow:hidden!important}
+  .study-v2-runtime .material-scroll{-webkit-overflow-scrolling:touch!important}
+}
