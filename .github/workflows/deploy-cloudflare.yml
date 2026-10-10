@@ -83,7 +83,7 @@ jobs:
           head -c 700 /tmp/study.html || true
           echo
 
-          grep -q 'study-v2.css?v=20261011-12' /tmp/study.html
+          grep -q 'study-v2.css?v=20261011-13' /tmp/study.html
           grep -q 'data-study-v2-worker="20261011-10"' /tmp/study.html
           grep -q 'study-home-fab' /tmp/study.html
 
@@ -96,6 +96,7 @@ jobs:
           grep -q 'study-quiz-active' /tmp/study-v2.css
           grep -q 'Mobile flashcard readability' /tmp/study-v2.css
           grep -q 'Flashcard nested explanation' /tmp/study-v2.css
+          grep -Fq '.study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child' /tmp/study-v2.css
           grep -q 'grid-template-columns:42px minmax(0,1fr)' /tmp/study-v2.css
 
           echo "Checking beta navigation..."
