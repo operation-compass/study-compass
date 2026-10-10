@@ -40,3 +40,27 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --yes wrangler@4.148.0 deploy
+
+      - name: Verify production routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://study-compass.occompass-info.workers.dev"
+
+          echo "Checking homepage..."
+          HOME_HTML="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}")"
+          echo "$HOME_HTML" | grep -q 'study-compass-build'
+          echo "$HOME_HTML" | grep -q 'Study COMPASS'
+
+          echo "Checking study route..."
+          STUDY_HTML="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}")"
+          echo "$STUDY_HTML" | grep -q 'study-v2.css?v=20261011-2'
+          echo "$STUDY_HTML" | grep -q 'study-v2-runtime'
+          echo "$STUDY_HTML" | grep -q 'study-home-fab'
+
+          echo "Checking V2 stylesheet..."
+          CSS="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/study-v2.css?v=${GITHUB_SHA}")"
+          echo "$CSS" | grep -q 'Study COMPASS V2 runtime theme'
+          echo "$CSS" | grep -q '.study-v2-runtime'
+
+          echo "Production smoke test passed."
