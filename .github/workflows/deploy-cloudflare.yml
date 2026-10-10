@@ -52,6 +52,14 @@ jobs:
           grep -q 'study-compass-build' /tmp/home.html
           grep -q 'Study COMPASS' /tmp/home.html
 
+          echo "Checking raw legacy asset..."
+          curl -fsSL --retry 5 --retry-delay 2 -D /tmp/legacy.headers "$BASE/legacy-study.html?smoke=${GITHUB_SHA}" -o /tmp/legacy.html
+          echo "--- legacy size ---"
+          wc -c /tmp/legacy.html
+          echo "--- legacy head ---"
+          head -c 180 /tmp/legacy.html || true
+          echo
+
           echo "Checking study route..."
           curl -fsSL --retry 5 --retry-delay 2 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}" -o /tmp/study.html
           echo "--- study headers ---"
