@@ -149,15 +149,31 @@ export default {
     return false;
   }
 
+  function courseReady(expectedIndex){
+    const buttons=Array.from(document.querySelectorAll(".selection .mode-switch button"));
+    return buttons.length===3 && !!buttons[expectedIndex]?.classList.contains("active");
+  }
+  function activateMode(target,index){
+    if(typeof window.setStudyMode!=="function")return false;
+    if(!courseReady(index))window.setStudyMode(target);
+    enhance();
+    return courseReady(index);
+  }
   function applyRoute(){
     try{
-      if(mode==="qa" && typeof window.setStudyMode==="function"){ if(!document.querySelector(".selection"))window.setStudyMode("mcq"); enhance(); return !!document.querySelector(".selection"); }
-      if(mode==="flashcards" && typeof window.setStudyMode==="function"){ window.setStudyMode("flashcard"); enhance(); return true; }
-      if(mode==="questions" && typeof window.setStudyMode==="function"){ window.setStudyMode("question"); enhance(); return true; }
-      if(mode==="history" && typeof window.dashboard==="function"){ window.dashboard(); enhance(); return true; }
-    }catch(e){}
-    if(subject && clickByLabel([subject])){ enhance(); return true; }
-    return !mode && !subject;
+      let ready=false;
+      if(mode==="qa")ready=activateMode("mcq",0);
+      else if(mode==="flashcards")ready=activateMode("flashcard",2);
+      else if(mode==="questions")ready=activateMode("question",1);
+      else if(mode==="history" && typeof window.dashboard==="function"){
+        if(!document.querySelector(".dashboard"))window.dashboard();
+        enhance();
+        ready=!!document.querySelector("#view .panel");
+      }else if(subject)ready=clickByLabel([subject]);
+      else ready=!mode;
+      if(ready && document.body)document.body.setAttribute("data-study-route-ready",mode||"default");
+      return ready;
+    }catch(e){return false;}
   }
 
   let n=0;
