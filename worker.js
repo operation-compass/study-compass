@@ -166,9 +166,9 @@ export default {
       else if(mode==="flashcards")ready=activateMode("flashcard",2);
       else if(mode==="questions")ready=activateMode("question",1);
       else if(mode==="history" && typeof window.dashboard==="function"){
-        if(!document.querySelector(".dashboard"))window.dashboard();
+        if(!document.querySelector("#view .eyebrow") || !document.querySelector("#view .eyebrow")?.textContent?.includes("YOUR LEARNING MAP"))window.dashboard();
         enhance();
-        ready=!!document.querySelector("#view .panel");
+        ready=!!document.querySelector("#view .eyebrow")?.textContent?.includes("YOUR LEARNING MAP");
       }else if(subject)ready=clickByLabel([subject]);
       else ready=!mode;
       if(ready && document.body)document.body.setAttribute("data-study-route-ready",mode||"default");
