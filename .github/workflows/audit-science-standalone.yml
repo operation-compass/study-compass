@@ -1,0 +1,28 @@
+name: Audit science standalone questions
+on:
+  push:
+    branches:
+      - audit/drive-sync-safety-20261011
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify data and learning-code invariants
+        run: node scripts/test-standalone-science.mjs legacy-study.html
+      - name: Verify browser rendering (no production access)
+        shell: bash
+        run: |
+          set -euo pipefail
+          BROWSER="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$BROWSER"
+          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "file://$PWD/legacy-study.html" > /tmp/study-audit-rendered.html
+          grep -q 'id="view"' /tmp/study-audit-rendered.html
+          grep -q 'Study COMPASS' /tmp/study-audit-rendered.html
+          test "$(wc -c < /tmp/study-audit-rendered.html)" -gt 100000
