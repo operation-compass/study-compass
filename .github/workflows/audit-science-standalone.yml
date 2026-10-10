@@ -16,6 +16,12 @@ jobs:
           node-version: '22'
       - name: Verify data and learning-code invariants
         run: node scripts/test-standalone-science.mjs legacy-study.html
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify answer, question-only mode and history in browser
+        run: node scripts/browser-test-science.mjs
       - name: Verify browser rendering (no production access)
         shell: bash
         run: |
