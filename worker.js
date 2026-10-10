@@ -13,7 +13,7 @@ export default {
     }
 
     if (request.method === "GET" && url.pathname === "/study.html") {
-      const legacyUrl = new URL("/index.html", url.origin);
+      const legacyUrl = new URL("/legacy-study.html", url.origin);
       const response = await env.ASSETS.fetch(new Request(legacyUrl.toString(), request));
       const headers = new Headers(response.headers);
       headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -62,16 +62,12 @@ export default {
     return false;
   }
   function run(){
-    if(subject){
-      if(clickByLabel([subject])) return true;
-    }
-    if(mode && modeLabels[mode]){
-      if(clickByLabel(modeLabels[mode])) return true;
-    }
+    if(subject && clickByLabel([subject])) return true;
+    if(mode && modeLabels[mode] && clickByLabel(modeLabels[mode])) return true;
     return false;
   }
   let n=0;
-  const timer=setInterval(()=>{n++; if(run()||n>20) clearInterval(timer)},250);
+  const timer=setInterval(()=>{n++; if(run()||n>24) clearInterval(timer)},250);
 })();
 </script>`, { html:true });
           }
