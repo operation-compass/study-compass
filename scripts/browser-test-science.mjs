@@ -32,7 +32,12 @@ try {
  await page.locator('.question-only .question-card .q').waitFor();
  assert.ok(!(await page.locator('.question-only .question-card .q').innerText()).includes('前問'));
  assert.equal(await page.locator('.question-only .choices .choice').count(),0);
- console.log('PASS question-only mode');
+ await page.getByRole('button',{name:/答えを見る/}).click();
+ const revealed=await page.locator('#feedback').innerText();
+ assert.ok(revealed.includes('7.5g'),'question-only answer reveal failed');
+ const recallSaved=await page.evaluate(id=>JSON.parse(localStorage.getItem('studyCompassAlphaV3')||'[]').some(e=>e.id===id&&e.event_type==='viewed'),ids[1]);
+ assert.ok(recallSaved,'question-only recall history not saved');
+ console.log('PASS question-only reveal and recall history');
  await page.reload();
  const restored=await page.evaluate(ids=>ids.every(id=>JSON.parse(localStorage.getItem('studyCompassAlphaV3')||'[]').some(e=>e.id===id)),ids);
  assert.ok(restored,'history lost on reload');
