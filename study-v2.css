@@ -173,3 +173,42 @@ body.study-v2-runtime{margin:0!important}
   .study-v2-runtime.study-quiz-active .choice{min-height:62px!important;padding:12px!important;font-size:14px!important}
   .study-v2-runtime.study-quiz-active .feedback{padding:14px!important}
 }
+
+
+/* Navigation clarity v7 */
+#study-home-fab{display:none!important}
+.study-v2-runtime.study-nav-hidden #study-home-fab{display:flex!important}
+.study-v2-runtime:not(.study-nav-hidden) main{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+.study-v2-runtime.study-selection-active .page-title{
+  margin-top:10px!important;margin-bottom:12px!important
+}
+.study-v2-runtime.study-selection-active .page-title h1{
+  font-size:22px!important;line-height:1.35!important
+}
+.study-v2-runtime.study-selection-active .page-title p{
+  font-size:11px!important;line-height:1.6!important;max-width:44em!important
+}
+.study-v2-runtime.study-selection-active .mode-switch{
+  margin:10px 0 12px!important
+}
+.study-v2-runtime.study-selection-active .subjects{
+  gap:9px!important
+}
+.study-v2-runtime.study-selection-active .subject-tile{
+  min-height:84px!important
+}
+.study-v2-runtime.study-result-active .result{
+  margin-top:12px!important
+}
+.study-v2-runtime.study-result-active .result-card{
+  padding:22px!important;border-radius:18px!important
+}
+.study-v2-runtime.study-result-active .result-links{
+  gap:9px!important
+}
+.study-v2-runtime.study-result-active .result-links button{
+  min-height:48px!important
+}
+.study-v2-runtime nav button:first-child{
+  color:#d9efff!important
+}
