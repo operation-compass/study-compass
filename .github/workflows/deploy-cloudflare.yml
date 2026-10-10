@@ -154,3 +154,19 @@ jobs:
           grep -q 'study-v2-runtime' /tmp/rendered-questions.html
           echo "All three study-entry modes rendered."
           echo "Rendered study page test passed."
+
+      - name: Preserve production diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: study-production-diagnostics
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/home.html
+            /tmp/study.html
+            /tmp/study.headers
+            /tmp/study-v2.css
+            /tmp/rendered.html
+            /tmp/rendered-flashcards.html
+            /tmp/rendered-questions.html
