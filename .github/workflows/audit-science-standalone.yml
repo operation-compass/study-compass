@@ -1,0 +1,49 @@
+name: Audit science standalone questions
+on:
+  push:
+    branches:
+      - audit/drive-sync-safety-20261011
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify data and learning-code invariants
+        run: node scripts/test-standalone-science.mjs legacy-study.html
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify answer, question-only mode and history in browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/study-audit-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8765/legacy-study.html -o /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/browser-test-science.mjs
+      - name: Record diagnostic metadata
+        if: always()
+        shell: bash
+        run: |
+          echo 'Audit branch: ' "$GITHUB_REF_NAME"
+          echo 'Commit: ' "$GITHUB_SHA"
+          wc -c legacy-study.html
+          git status --short
+      - name: Verify branch HTML is not truncated
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(wc -c < legacy-study.html)" -gt 800000
+          grep -q 'const SCIENCE = ' legacy-study.html
