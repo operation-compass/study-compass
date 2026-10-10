@@ -125,15 +125,18 @@ jobs:
           wc -c /tmp/rendered.html
           echo "--- rendered markers ---"
           grep -oE 'study-v2-runtime|study-selection-active|study-quiz-active|一問一答|教科|今日の10問|学習トップへ戻る' /tmp/rendered.html | head -30 || true
+          grep -q 'data-study-route-ready="qa"' /tmp/rendered.html
           grep -q 'study-v2-runtime' /tmp/rendered.html
           grep -Eq 'study-selection-active|study-quiz-active' /tmp/rendered.html
           test "$(wc -c < /tmp/rendered.html)" -gt 100000
           echo "Checking flashcard and question-only deep links..."
           "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=flashcards&render=${GITHUB_SHA}" > /tmp/rendered-flashcards.html
+          grep -q 'data-study-route-ready="flashcards"' /tmp/rendered-flashcards.html
           grep -q 'study-selection-active' /tmp/rendered-flashcards.html
           grep -q 'フラッシュカード20枚' /tmp/rendered-flashcards.html
           grep -q 'study-v2-runtime' /tmp/rendered-flashcards.html
           "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=questions&render=${GITHUB_SHA}" > /tmp/rendered-questions.html
+          grep -q 'data-study-route-ready="questions"' /tmp/rendered-questions.html
           grep -q 'study-selection-active' /tmp/rendered-questions.html
           grep -q '問題だけ10問' /tmp/rendered-questions.html
           grep -q 'study-v2-runtime' /tmp/rendered-questions.html
