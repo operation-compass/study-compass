@@ -48,19 +48,31 @@ jobs:
           BASE="https://study-compass.occompass-info.workers.dev"
 
           echo "Checking homepage..."
-          HOME_HTML="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}")"
-          echo "$HOME_HTML" | grep -q 'study-compass-build'
-          echo "$HOME_HTML" | grep -q 'Study COMPASS'
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
+          grep -q 'study-compass-build' /tmp/home.html
+          grep -q 'Study COMPASS' /tmp/home.html
 
           echo "Checking study route..."
-          STUDY_HTML="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}")"
-          echo "$STUDY_HTML" | grep -q 'study-v2.css?v=20261011-3'
-          echo "$STUDY_HTML" | grep -q 'data-study-v2-worker=\"20261011-3\"'
-          echo "$STUDY_HTML" | grep -q 'study-home-fab'
+          curl -fsSL --retry 5 --retry-delay 2 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}" -o /tmp/study.html
+          echo "--- study headers ---"
+          sed -n '1,20p' /tmp/study.headers
+          echo "--- study size ---"
+          wc -c /tmp/study.html
+          echo "--- study markers ---"
+          grep -oE 'study-v2\.css[^" <]*|data-study-v2-worker="[^"]*"|study-home-fab|legacy-study|study-compass-build|Study COMPASS' /tmp/study.html | head -20 || true
+          echo "--- study head ---"
+          head -c 700 /tmp/study.html || true
+          echo
+
+          grep -q 'study-v2.css?v=20261011-3' /tmp/study.html
+          grep -q 'data-study-v2-worker="20261011-3"' /tmp/study.html
+          grep -q 'study-home-fab' /tmp/study.html
 
           echo "Checking V2 stylesheet..."
-          CSS="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/study-v2.css?v=${GITHUB_SHA}")"
-          echo "$CSS" | grep -q 'Study COMPASS V2 runtime theme'
-          echo "$CSS" | grep -q '.study-v2-runtime'
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/study-v2.css?v=${GITHUB_SHA}" -o /tmp/study-v2.css
+          echo "--- css size ---"
+          wc -c /tmp/study-v2.css
+          grep -q 'Study COMPASS V2 runtime theme' /tmp/study-v2.css
+          grep -q '.study-v2-runtime' /tmp/study-v2.css
 
           echo "Production smoke test passed."
