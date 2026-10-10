@@ -614,3 +614,104 @@ html,body{overflow-x:hidden!important}
     font-size:11px!important;
   }
 }
+
+/* Mobile overflow guard: learning cards / subject counts */
+.study-v2-runtime .selection,
+.study-v2-runtime .selection *,
+.study-v2-runtime .quiz,
+.study-v2-runtime .quiz *{box-sizing:border-box}
+.study-v2-runtime .selection,
+.study-v2-runtime .quiz,
+.study-v2-runtime .question-card,
+.study-v2-runtime .subject-tile,
+.study-v2-runtime .choices,
+.study-v2-runtime .choice{min-width:0;max-width:100%}
+.study-v2-runtime .question-card .q,
+.study-v2-runtime .subject-tile b,
+.study-v2-runtime .subject-tile small,
+.study-v2-runtime .choice{overflow-wrap:anywhere;word-break:normal}
+@media(max-width:390px){
+  .study-v2-runtime .selection .subject-tile{padding:13px 10px!important}
+  .study-v2-runtime .subject-tile small{white-space:normal!important}
+  .study-v2-runtime .subject-count{white-space:normal!important}
+}
+
+/* Mobile flashcard readability + course card icon layout — 2026-10-11 */
+.study-v2-runtime .selection .subjects .subject-tile{
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr)!important;
+  align-content:center!important;
+  align-items:center!important;
+  column-gap:12px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+.study-v2-runtime .selection .subjects .subject-tile .subject-icon{
+  grid-column:1!important;
+  width:42px!important;
+  min-width:42px!important;
+  height:42px!important;
+  font-size:13px!important;
+  line-height:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  flex-shrink:0!important;
+}
+.study-v2-runtime .selection .subjects .subject-tile>div{
+  grid-column:2!important;
+  min-width:0!important;
+  width:100%!important;
+  overflow-wrap:anywhere!important;
+}
+.study-v2-runtime .selection .subjects .subject-tile b{
+  font-size:clamp(15px,3.6vw,19px)!important;
+  line-height:1.35!important;
+  overflow-wrap:anywhere!important;
+}
+.study-v2-runtime .selection .subjects .subject-tile .arrow{
+  display:none!important;
+}
+.study-v2-runtime .flash-study .flash-card,
+.study-v2-runtime .flash-study .flash-back,
+.study-v2-runtime .flash-study .flash-back *{
+  box-sizing:border-box!important;
+  max-width:100%!important;
+  overflow-wrap:anywhere!important;
+}
+.study-v2-runtime .flash-study .flash-back{
+  background:linear-gradient(145deg,#102b49,#06182e)!important;
+  border:1px solid rgba(98,177,255,.38)!important;
+  border-radius:17px!important;
+  padding:18px!important;
+  margin-top:14px!important;
+  color:#f4f7fb!important;
+}
+.study-v2-runtime .flash-study .flash-back:empty{
+  display:none!important;
+}
+.study-v2-runtime .flash-study .flash-back b{
+  color:#ffffff!important;
+  font-size:clamp(20px,5.2vw,27px)!important;
+  line-height:1.45!important;
+}
+.study-v2-runtime .flash-study .flash-back p{
+  color:#d0e1f1!important;
+  font-size:15px!important;
+  line-height:1.7!important;
+}
+@media(max-width:390px){
+  .study-v2-runtime .selection .subjects .subject-tile{
+    grid-template-columns:36px minmax(0,1fr)!important;
+    gap:8px!important;
+    padding:12px 9px!important;
+  }
+  .study-v2-runtime .selection .subjects .subject-tile .subject-icon{
+    width:36px!important;min-width:36px!important;height:36px!important;
+    font-size:11px!important;
+  }
+  .study-v2-runtime .selection .subjects .subject-tile b{
+    font-size:15px!important;
+  }
+}
