@@ -16,10 +16,11 @@ textarea{width:100%;min-height:130px;border:1px solid #344867;border-radius:14px
 .score{font-size:20px;font-weight:900;color:var(--accent)}.answer{margin-top:10px;color:#e9edf4}.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}.progress{margin-top:14px;height:8px;border-radius:99px;background:#1b2940;overflow:hidden}.bar{height:100%;background:var(--accent);width:0}
 .topstats{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.stat{background:#111c2e;border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:13px;color:#c9d7ea}
 .note{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.7}
+.global-home{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;display:flex;align-items:center;gap:6px;padding:11px 14px;border-radius:999px;text-decoration:none;background:linear-gradient(135deg,#1769ff,#31d7ff);color:#00101b!important;font-weight:900;font-size:13px;border:1px solid rgba(204,219,224,.62);box-shadow:0 0 22px rgba(0,168,255,.38),0 8px 24px rgba(0,0,0,.32)}
 </style>
 <link rel="stylesheet" href="./compass-theme.css">
 </head>
-<body>
+<body><a class="global-home" href="/" aria-label="Study COMPASSホームへ戻る">⌂ ホーム</a>
 <div class="wrap">
 <div class="brand">STUDY COMPASS</div><div style="margin-top:8px"><a href="./practice-beta.html" style="color:#9fb0c8;text-decoration:none;font-size:12px">← β学習メニュー</a></div>
 <h1>記述式トレーニング β</h1>
