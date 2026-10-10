@@ -29,8 +29,8 @@ export default {
       return new HTMLRewriter()
         .on("html", {
           element(element) {
-            element.setAttribute("data-study-v2-worker", "20261011-4");
-            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-4"><meta name="study-v2-worker" content="20261011-4">', { html:true });
+            element.setAttribute("data-study-v2-worker", "20261011-5");
+            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-5"><meta name="study-v2-worker" content="20261011-5">', { html:true });
             element.append(`
 <a id="study-home-fab" href="/" aria-label="Study COMPASSホームへ戻る" style="position:fixed;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:2147483647;display:flex;align-items:center;gap:6px;padding:10px 13px;border-radius:999px;text-decoration:none;background:linear-gradient(135deg,#1769ff,#31d7ff);color:#00101b;font:800 12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;border:1px solid rgba(204,219,224,.62);box-shadow:0 0 22px rgba(0,168,255,.38),0 8px 24px rgba(0,0,0,.32)">⌂ ホーム</a>
 <script>
@@ -55,15 +55,27 @@ export default {
       const t=(el.textContent||"");
       const icon=el.querySelector(".subject-icon");
       if(!icon) return;
-      if(t.includes("国語")) icon.textContent="JPN";
-      else if(t.includes("数学")) icon.textContent="MAT";
-      else if(t.includes("英語")) icon.textContent="ENG";
-      else if(t.includes("理科")) icon.textContent="SCI";
-      else if(t.includes("社会")) icon.textContent="SOC";
+      let code="";
+      if(t.includes("国語")) code="JPN";
+      else if(t.includes("数学")) code="MAT";
+      else if(t.includes("英語")) code="ENG";
+      else if(t.includes("理科")) code="SCI";
+      else if(t.includes("社会")) code="SOC";
+      if(code && icon.textContent!==code) icon.textContent=code;
     });
   }
 
-  const observer=new MutationObserver(enhance);
+  let enhanceQueued=false;
+  function scheduleEnhance(){
+    if(enhanceQueued) return;
+    enhanceQueued=true;
+    requestAnimationFrame(()=>{
+      enhanceQueued=false;
+      enhance();
+    });
+  }
+
+  const observer=new MutationObserver(scheduleEnhance);
   observer.observe(document.documentElement,{subtree:true,childList:true});
   enhance();
 
@@ -93,10 +105,12 @@ export default {
   }
 
   let n=0;
+  let routeApplied=false;
   const timer=setInterval(()=>{
     n++;
-    enhance();
-    if(applyRoute()||n>30) clearInterval(timer);
+    scheduleEnhance();
+    if(!routeApplied) routeApplied=applyRoute();
+    if(routeApplied||n>30) clearInterval(timer);
   },200);
 })();
 </script>`, { html:true });
