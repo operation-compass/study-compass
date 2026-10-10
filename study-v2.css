@@ -614,3 +614,24 @@ html,body{overflow-x:hidden!important}
     font-size:11px!important;
   }
 }
+
+/* Mobile overflow guard: learning cards / subject counts */
+.study-v2-runtime .selection,
+.study-v2-runtime .selection *,
+.study-v2-runtime .quiz,
+.study-v2-runtime .quiz *{box-sizing:border-box}
+.study-v2-runtime .selection,
+.study-v2-runtime .quiz,
+.study-v2-runtime .question-card,
+.study-v2-runtime .subject-tile,
+.study-v2-runtime .choices,
+.study-v2-runtime .choice{min-width:0;max-width:100%}
+.study-v2-runtime .question-card .q,
+.study-v2-runtime .subject-tile b,
+.study-v2-runtime .subject-tile small,
+.study-v2-runtime .choice{overflow-wrap:anywhere;word-break:normal}
+@media(max-width:390px){
+  .study-v2-runtime .selection .subject-tile{padding:13px 10px!important}
+  .study-v2-runtime .subject-tile small{white-space:normal!important}
+  .study-v2-runtime .subject-count{white-space:normal!important}
+}
