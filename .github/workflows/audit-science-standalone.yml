@@ -9,6 +9,7 @@ permissions:
 jobs:
   inspect:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,6 +33,14 @@ jobs:
             sleep 1
           done
           node scripts/browser-test-science.mjs
+      - name: Record diagnostic metadata
+        if: always()
+        shell: bash
+        run: |
+          echo 'Audit branch: ' "$GITHUB_REF_NAME"
+          echo 'Commit: ' "$GITHUB_SHA"
+          wc -c legacy-study.html
+          git status --short
       - name: Verify branch HTML is not truncated
         shell: bash
         run: |
