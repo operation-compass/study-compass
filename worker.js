@@ -151,7 +151,7 @@ export default {
 
   function applyRoute(){
     try{
-      if(mode==="qa" && typeof window.setStudyMode==="function"){ window.setStudyMode("mcq"); enhance(); return !!document.querySelector(".selection"); }
+      if(mode==="qa" && typeof window.setStudyMode==="function"){ if(!document.querySelector(".selection"))window.setStudyMode("mcq"); enhance(); return !!document.querySelector(".selection"); }
       if(mode==="flashcards" && typeof window.setStudyMode==="function"){ window.setStudyMode("flashcard"); enhance(); return true; }
       if(mode==="questions" && typeof window.setStudyMode==="function"){ window.setStudyMode("question"); enhance(); return true; }
       if(mode==="history" && typeof window.dashboard==="function"){ window.dashboard(); enhance(); return true; }
