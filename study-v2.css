@@ -742,7 +742,7 @@ html,body{overflow-x:hidden!important}
 /* The mixed-mode flashcard entry is a different card from subject entries.
    On narrow screens place the CARD badge above the text, never beside it. */
 @media (max-width:700px){
-  .study-v2-runtime.study-selection-active .home-subjects>.subject-tile:first-child{
+  .study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child{
     display:flex!important;
     flex-direction:column!important;
     align-items:flex-start!important;
@@ -751,7 +751,7 @@ html,body{overflow-x:hidden!important}
     min-width:0!important;
     padding:14px!important;
   }
-  .study-v2-runtime.study-selection-active .home-subjects>.subject-tile:first-child .subject-icon{
+  .study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child .subject-icon{
     flex:none!important;
     width:auto!important;
     min-width:0!important;
@@ -762,12 +762,12 @@ html,body{overflow-x:hidden!important}
     font-size:12px!important;
     white-space:nowrap!important;
   }
-  .study-v2-runtime.study-selection-active .home-subjects>.subject-tile:first-child>div{
+  .study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child>div{
     width:100%!important;
     flex:none!important;
     min-width:0!important;
   }
-  .study-v2-runtime.study-selection-active .home-subjects>.subject-tile:first-child b{
+  .study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child b{
     display:block!important;
     font-size:clamp(15px,4vw,18px)!important;
     line-height:1.35!important;
