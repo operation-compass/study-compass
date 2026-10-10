@@ -29,8 +29,8 @@ export default {
       return new HTMLRewriter()
         .on("html", {
           element(element) {
-            element.setAttribute("data-study-v2-worker", "20261011-5");
-            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-5"><meta name="study-v2-worker" content="20261011-5">', { html:true });
+            element.setAttribute("data-study-v2-worker", "20261011-6");
+            element.prepend('<link rel="stylesheet" href="/study-v2.css?v=20261011-6"><meta name="study-v2-worker" content="20261011-6">', { html:true });
             element.append(`
 <a id="study-home-fab" href="/" aria-label="Study COMPASSホームへ戻る" style="position:fixed;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:2147483647;display:flex;align-items:center;gap:6px;padding:10px 13px;border-radius:999px;text-decoration:none;background:linear-gradient(135deg,#1769ff,#31d7ff);color:#00101b;font:800 12px/1 -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;border:1px solid rgba(204,219,224,.62);box-shadow:0 0 22px rgba(0,168,255,.38),0 8px 24px rgba(0,0,0,.32)">⌂ ホーム</a>
 <script>
@@ -65,18 +65,20 @@ export default {
     });
   }
 
-  let enhanceQueued=false;
   function scheduleEnhance(){
-    if(enhanceQueued) return;
-    enhanceQueued=true;
-    requestAnimationFrame(()=>{
-      enhanceQueued=false;
-      enhance();
-    });
+    requestAnimationFrame(enhance);
   }
 
-  const observer=new MutationObserver(scheduleEnhance);
-  observer.observe(document.documentElement,{subtree:true,childList:true});
+  if(typeof window.mount==="function" && !window.mount.__studyV2Wrapped){
+    const originalMount=window.mount;
+    const wrappedMount=function(html){
+      const out=originalMount(html);
+      scheduleEnhance();
+      return out;
+    };
+    wrappedMount.__studyV2Wrapped=true;
+    window.mount=wrappedMount;
+  }
   enhance();
 
   function clickByLabel(labels){
