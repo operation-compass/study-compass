@@ -52,6 +52,13 @@ export default {
       const navEl=document.getElementById("nav");
       const navHidden=!!(navEl && navEl.classList.contains("hidden"));
       document.body.classList.toggle("study-nav-hidden",navHidden);
+      // Keep one visible Home control: bottom navigation when available,
+      // floating return button only while the learning navigation is hidden.
+      const homeFab=document.getElementById("study-home-fab");
+      if(homeFab){
+        homeFab.hidden=!navHidden;
+        homeFab.style.display=navHidden?"flex":"none";
+      }
     }
     document.documentElement.classList.add("study-v2-runtime-root");
     const navHome=document.querySelector("#nav>div button:first-child");
