@@ -212,3 +212,235 @@ body.study-v2-runtime{margin:0!important}
 .study-v2-runtime nav button:first-child{
   color:#d9efff!important
 }
+
+
+/* Visual cleanup v8 — screenshot-driven */
+html,body{overflow-x:hidden!important}
+.study-v2-runtime *, .study-v2-runtime *::before, .study-v2-runtime *::after{box-sizing:border-box!important}
+.study-v2-runtime main,
+.study-v2-runtime .home-grid,
+.study-v2-runtime .selection,
+.study-v2-runtime .quiz,
+.study-v2-runtime .flash-study,
+.study-v2-runtime .result{width:100%!important;max-width:100%!important;min-width:0!important}
+
+.study-v2-runtime .hero,
+.study-v2-runtime .side-panel,
+.study-v2-runtime .insight-card,
+.study-v2-runtime .next-step-card,
+.study-v2-runtime .course-card,
+.study-v2-runtime .mode-switch button,
+.study-v2-runtime .panel,
+.study-v2-runtime .result-stat,
+.study-v2-runtime .result-next,
+.study-v2-runtime .result-next.compact,
+.study-v2-runtime .history-material{
+  background:
+    radial-gradient(circle at 90% 8%,rgba(49,215,255,.07),transparent 28%),
+    linear-gradient(180deg,rgba(15,42,76,.96),rgba(4,17,36,.99))!important;
+  border:1px solid rgba(98,177,255,.28)!important;
+  color:#f4f7fb!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.20)!important
+}
+.study-v2-runtime .hero h1,
+.study-v2-runtime .next-step-card h2,
+.study-v2-runtime .insight-card strong,
+.study-v2-runtime .course-card b,
+.study-v2-runtime .panel h2,
+.study-v2-runtime .result-stat strong,
+.study-v2-runtime .result-next h2{color:#f4f7fb!important}
+.study-v2-runtime .hero p,
+.study-v2-runtime .next-step-card p,
+.study-v2-runtime .insight-card small,
+.study-v2-runtime .insight-card span,
+.study-v2-runtime .course-card small,
+.study-v2-runtime .result-stat small,
+.study-v2-runtime .result-next p{color:#9fb2c8!important}
+.study-v2-runtime .next-step-card .eyebrow,
+.study-v2-runtime .hero .eyebrow{color:#31d7ff!important}
+
+.study-v2-runtime .home-grid{gap:12px!important}
+.study-v2-runtime .hero{
+  min-height:260px!important;
+  padding:22px!important;
+  border-radius:20px!important;
+  overflow:hidden!important
+}
+.study-v2-runtime .hero h1{
+  font-size:clamp(28px,7vw,40px)!important;
+  line-height:1.24!important;
+  max-width:72%!important
+}
+.study-v2-runtime .hero p{max-width:74%!important;line-height:1.7!important}
+.study-v2-runtime .compass-art{opacity:.14!important;right:-34px!important}
+.study-v2-runtime .side-panel{border-radius:17px!important}
+.study-v2-runtime .home-insights{gap:8px!important}
+.study-v2-runtime .insight-card{padding:13px!important;border-radius:14px!important}
+.study-v2-runtime .next-step-card{
+  padding:17px!important;
+  border-radius:17px!important;
+  align-items:center!important
+}
+.study-v2-runtime .next-step-card .primary{
+  min-width:190px!important;
+  color:#00101b!important
+}
+
+.study-v2-runtime .flash-study{
+  max-width:720px!important;
+  padding:0 2px!important
+}
+.study-v2-runtime .flash-card{
+  width:100%!important;
+  max-width:100%!important;
+  min-height:310px!important;
+  margin:14px 0 0!important;
+  padding:24px!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 86% 12%,rgba(49,215,255,.10),transparent 26%),
+    linear-gradient(155deg,rgba(14,43,80,.98),rgba(3,15,33,.99))!important;
+  border:1px solid rgba(98,177,255,.34)!important;
+  color:#f4f7fb!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.26)!important
+}
+.study-v2-runtime .flash-card strong{color:#f4f7fb!important}
+.study-v2-runtime .flash-label{color:#72dfff!important;font-weight:800!important}
+.study-v2-runtime .flash-card small,
+.study-v2-runtime .flash-back p{color:#b6c7da!important}
+.study-v2-runtime .flash-back{
+  border-top:1px solid rgba(98,177,255,.22)!important;
+  padding-top:18px!important;
+  color:#f4f7fb!important
+}
+.study-v2-runtime .flash-back b{color:#f4f7fb!important}
+.study-v2-runtime .flash-actions{
+  width:100%!important;
+  max-width:100%!important;
+  gap:10px!important
+}
+.study-v2-runtime .flash-actions button{
+  width:100%!important;
+  min-width:0!important;
+  min-height:54px!important;
+  color:#f4f7fb!important;
+  border-radius:14px!important
+}
+.study-v2-runtime .flash-miss{
+  background:linear-gradient(180deg,rgba(112,42,57,.92),rgba(50,18,29,.98))!important;
+  border-color:rgba(255,113,139,.38)!important;
+  color:#ffdbe2!important
+}
+.study-v2-runtime .flash-known{
+  background:linear-gradient(180deg,rgba(20,85,86,.92),rgba(7,42,49,.98))!important;
+  border-color:rgba(49,215,255,.34)!important;
+  color:#d9fbff!important
+}
+
+.study-v2-runtime nav{
+  width:min(calc(100% - 24px),560px)!important;
+  max-width:560px!important;
+  left:50%!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  overflow:hidden!important;
+  z-index:80!important
+}
+.study-v2-runtime nav>div{width:100%!important;min-width:0!important}
+.study-v2-runtime nav button{min-width:0!important}
+.study-v2-runtime:not(.study-nav-hidden) main{
+  padding-bottom:calc(132px + env(safe-area-inset-bottom))!important
+}
+
+.study-v2-runtime .subjects,
+.study-v2-runtime .home-subjects,
+.study-v2-runtime .course-grid,
+.study-v2-runtime .mode-switch{min-width:0!important}
+.study-v2-runtime .subject-tile,
+.study-v2-runtime .course-card,
+.study-v2-runtime .mode-switch button{min-width:0!important;max-width:100%!important}
+.study-v2-runtime .subject-tile>div,
+.study-v2-runtime .course-card>div{min-width:0!important}
+.study-v2-runtime .subject-tile b,
+.study-v2-runtime .subject-tile small,
+.study-v2-runtime .course-card b,
+.study-v2-runtime .course-card small,
+.study-v2-runtime .q,
+.study-v2-runtime .choice,
+.study-v2-runtime .flash-card strong,
+.study-v2-runtime .flash-back p{
+  overflow-wrap:anywhere!important;
+  word-break:normal!important
+}
+
+@media(min-width:760px){
+  .study-v2-runtime main{max-width:980px!important;padding-left:28px!important;padding-right:28px!important}
+  .study-v2-runtime .selection{max-width:900px!important}
+  .study-v2-runtime .quiz,.study-v2-runtime .flash-study{max-width:760px!important}
+  .study-v2-runtime .home-grid{grid-template-columns:minmax(0,1.55fr) minmax(250px,.75fr)!important}
+  .study-v2-runtime .hero{min-height:300px!important}
+  .study-v2-runtime .next-step-card{display:flex!important}
+}
+
+@media(max-width:700px){
+  .study-v2-runtime main{
+    padding-left:12px!important;
+    padding-right:12px!important;
+    padding-bottom:calc(142px + env(safe-area-inset-bottom))!important
+  }
+  .study-v2-runtime header{padding-left:6px!important;padding-right:6px!important}
+  .study-v2-runtime .wordmark{font-size:15px!important;white-space:nowrap!important}
+  .study-v2-runtime .version{flex:0 0 auto!important}
+  .study-v2-runtime .hero{
+    min-height:240px!important;
+    padding:18px!important
+  }
+  .study-v2-runtime .hero h1{
+    max-width:78%!important;
+    font-size:31px!important;
+    margin:18px 0 12px!important
+  }
+  .study-v2-runtime .hero p{
+    max-width:82%!important;
+    font-size:11px!important
+  }
+  .study-v2-runtime .compass-art{
+    width:180px!important;height:180px!important;right:-44px!important;top:16px!important
+  }
+  .study-v2-runtime .home-insights{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important
+  }
+  .study-v2-runtime .insight-card{padding:11px 8px!important}
+  .study-v2-runtime .insight-card strong{font-size:21px!important}
+  .study-v2-runtime .next-step-card{display:block!important}
+  .study-v2-runtime .next-step-card .primary{
+    width:100%!important;min-width:0!important;margin-top:13px!important
+  }
+  .study-v2-runtime .subjects,
+  .study-v2-runtime .selection .subjects{grid-template-columns:1fr 1fr!important}
+  .study-v2-runtime .home-subjects .subject-tile{
+    min-height:142px!important;
+    padding:14px 12px!important
+  }
+  .study-v2-runtime nav{
+    width:calc(100% - 20px)!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important
+  }
+  .study-v2-runtime .flash-card{
+    min-height:260px!important;
+    padding:18px!important;
+    border-radius:17px!important
+  }
+  .study-v2-runtime .flash-card strong{font-size:22px!important}
+  .study-v2-runtime .flash-actions{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .study-v2-runtime .flash-actions button{min-height:50px!important;font-size:13px!important}
+}
+
+@media(max-width:390px){
+  .study-v2-runtime .wordmark{font-size:14px!important;letter-spacing:.05em!important}
+  .study-v2-runtime .home-insights{grid-template-columns:1fr 1fr 1fr!important}
+  .study-v2-runtime .hero h1{font-size:28px!important}
+  .study-v2-runtime nav button{font-size:9px!important}
+}
