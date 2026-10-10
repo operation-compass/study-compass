@@ -54,8 +54,8 @@ jobs:
 
           echo "Checking study route..."
           STUDY_HTML="$(curl -fsSL --retry 5 --retry-delay 2 "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}")"
-          echo "$STUDY_HTML" | grep -q 'study-v2.css?v=20261011-2'
-          echo "$STUDY_HTML" | grep -q 'study-v2-runtime'
+          echo "$STUDY_HTML" | grep -q 'study-v2.css?v=20261011-3'
+          echo "$STUDY_HTML" | grep -q 'data-study-v2-worker=\"20261011-3\"'
           echo "$STUDY_HTML" | grep -q 'study-home-fab'
 
           echo "Checking V2 stylesheet..."
