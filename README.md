@@ -21,3 +21,14 @@
 テーマ: 学習コンパス。深いネイビー、温かい白、ミントを基調に、スマホで1問ずつ集中できるUIを優先しています。
 
 教材は確認中です。4択の結果だけで、数学の途中式・記述力・入試得点そのものを判定したとは表示しません。
+
+
+## β学習メニュー
+公開サイト: https://study-compass.occompass-info.workers.dev/
+
+- β入口: https://study-compass.occompass-info.workers.dev/beta.html
+- β学習ハブ: https://study-compass.occompass-info.workers.dev/practice-beta.html
+- 記述式トレーニング: https://study-compass.occompass-info.workers.dev/written-practice.html
+- 生成資料トレーニング: https://study-compass.occompass-info.workers.dev/generated-practice.html
+
+現在は本体 index.html を変更せず、独立ページでβ検証しています。
