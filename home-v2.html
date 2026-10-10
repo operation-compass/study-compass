@@ -15,7 +15,7 @@ radial-gradient(circle at 72% 30%,rgba(49,215,255,.22),transparent 25%),
 radial-gradient(circle at 65% 42%,rgba(23,105,255,.20),transparent 38%),
 linear-gradient(160deg,rgba(1,10,25,.96),rgba(6,21,44,.98));box-shadow:var(--compass-glow)}
 .hero:before{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(49,215,255,.28);border-radius:50%;right:-55px;top:12px;box-shadow:0 0 40px rgba(0,168,255,.18),inset 0 0 40px rgba(0,168,255,.08)}
-.hero:after{content:"✦";position:absolute;right:58px;top:72px;font-size:140px;color:rgba(204,219,224,.92);text-shadow:0 0 24px rgba(49,215,255,.75);transform:rotate(45deg)}
+.compass-mark{position:absolute;right:34px;top:48px;width:174px;height:174px;border-radius:50%;border:2px solid rgba(204,219,224,.78);box-shadow:0 0 28px rgba(49,215,255,.35),inset 0 0 28px rgba(49,215,255,.10);background:radial-gradient(circle at center,#0b2d61 0 12%,#dce7ed 13% 15%,#082347 16% 34%,transparent 35%)}.compass-mark:before,.compass-mark:after{content:"";position:absolute;left:50%;top:50%;width:24px;height:122px;transform-origin:50% 50%;background:linear-gradient(180deg,#31d7ff 0 48%,#dce7ed 49% 100%);clip-path:polygon(50% 0,100% 50%,50% 42%,0 50%);filter:drop-shadow(0 0 8px rgba(49,215,255,.75))}.compass-mark:before{transform:translate(-50%,-50%)}.compass-mark:after{transform:translate(-50%,-50%) rotate(90deg)}.compass-ring{position:absolute;inset:17px;border-radius:50%;border:1px solid rgba(49,215,255,.55)}
 .eyebrow{font-size:12px;letter-spacing:.22em;color:var(--compass-cyan);font-weight:800}.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:42px;line-height:1.05;margin:14px 0 6px;letter-spacing:.04em}.hero h1 small{display:block;font-size:16px;letter-spacing:.18em;margin-bottom:6px;color:var(--compass-silver)}
 .catch{font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:24px;line-height:1.55;margin:18px 0 6px;max-width:58%}.sub{color:var(--compass-muted);font-size:14px;line-height:1.7;max-width:62%}.goldline{width:150px;height:1px;background:linear-gradient(90deg,var(--compass-gold),transparent);margin:14px 0}
 .subjects{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}.subject{padding:10px 4px;border-radius:13px;text-align:center;font-size:12px;border:1px solid var(--compass-line);background:rgba(7,24,49,.82)}.subject b{display:block;font-size:18px;margin-bottom:4px}.jp b{color:#f2a8c0}.math b{color:#57b8ff}.eng b{color:#a991ff}.sci b{color:#63e0b0}.soc b{color:#e8c36a}
@@ -28,9 +28,9 @@ linear-gradient(180deg,rgba(17,45,79,.78),rgba(3,15,33,.96));box-shadow:0 0 22px
 .stats-head{display:flex;justify-content:space-between;color:var(--compass-silver);font-size:13px;margin-bottom:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.statbox{text-align:center;padding:10px 6px;border-right:1px solid rgba(107,134,157,.28)}.statbox:last-child{border-right:0}.statbox small{display:block;color:var(--compass-muted);font-size:11px}.statbox strong{display:block;font-size:22px;margin-top:4px}.bar{height:5px;background:#17304d;border-radius:99px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--compass-blue),var(--compass-cyan));border-radius:99px}.bar.gold i{background:linear-gradient(90deg,#b9933f,#ffd86a)}
 .banner{margin-top:14px;border:1px solid var(--compass-line);border-radius:18px;padding:18px;background:
 radial-gradient(circle at 85% 40%,rgba(232,195,106,.15),transparent 26%),
-linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-family:Georgia,"Yu Mincho",serif;font-size:21px;margin:0 0 7px}.banner p{color:var(--compass-muted);font-size:12px;line-height:1.7;margin:0}
+linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-family:Georgia,"Yu Mincho",serif;font-size:21px;margin:0 0 7px}.banner p{color:var(--compass-muted);font-size:12px;line-height:1.7;margin:0}.bottom-nav{position:sticky;bottom:10px;z-index:20;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px;border:1px solid var(--compass-line);border-radius:16px;background:rgba(1,10,25,.90);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(0,0,0,.30)}.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;color:var(--compass-muted);font-size:10px}.bottom-nav a b{font-size:18px;color:var(--compass-silver)}.bottom-nav a.active{background:rgba(23,105,255,.18);color:var(--compass-cyan)}
 .beta-badge{display:inline-block;font-size:10px;padding:3px 7px;border-radius:999px;background:rgba(49,215,255,.14);color:var(--compass-cyan);border:1px solid rgba(49,215,255,.35);margin-left:6px;vertical-align:middle}
-@media(max-width:520px){.hero{min-height:310px;padding:22px 17px}.hero h1{font-size:36px}.catch{font-size:22px;max-width:70%}.sub{max-width:72%;font-size:12px}.hero:after{font-size:112px;right:32px;top:78px}.subjects{gap:6px}.subject{font-size:11px;padding:9px 2px}.grid{gap:10px}.tile{min-height:154px;padding:14px}.tile h3{font-size:17px}.stats-grid{gap:3px}.statbox strong{font-size:18px}}
+@media(max-width:520px){.hero{min-height:310px;padding:22px 17px}.hero h1{font-size:36px}.catch{font-size:22px;max-width:67%}.sub{max-width:70%;font-size:12px}.compass-mark{width:136px;height:136px;right:18px;top:72px}.compass-mark:before,.compass-mark:after{height:96px;width:20px}.subjects{gap:6px}.subject{font-size:11px;padding:9px 2px}.grid{gap:10px}.tile{min-height:154px;padding:14px}.tile h3{font-size:17px}.stats-grid{gap:3px}.statbox strong{font-size:18px}}
 </style>
 </head>
 <body>
@@ -41,6 +41,7 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
 </header>
 
 <section class="hero">
+  <div class="compass-mark" aria-hidden="true"><span class="compass-ring"></span></div>
   <div class="eyebrow">HIGH SCHOOL ENTRANCE EXAM SUPPORT</div>
   <div class="catch">学びが、<br>未来の方向をつくる。</div>
   <div class="goldline"></div>
@@ -91,6 +92,11 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
   <h3>今の努力が、きっと未来につながる。</h3>
   <p>Study COMPASSは、頑張る中学生の学びを、正確さと使いやすさを大切にしながら支えます。</p>
 </section>
+<nav class="bottom-nav" aria-label="クイックナビ">
+  <a class="active" href="./home-v2.html"><b>⌂</b>ホーム</a>
+  <a href="./index.html"><b>◎</b>通常学習</a>
+  <a href="./practice-beta.html"><b>✦</b>β学習</a>
+</nav>
 </div>
 <script>
 (function(){
