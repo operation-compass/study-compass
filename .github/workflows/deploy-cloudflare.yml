@@ -72,8 +72,8 @@ jobs:
           head -c 700 /tmp/study.html || true
           echo
 
-          grep -q 'study-v2.css?v=20261011-3' /tmp/study.html
-          grep -q 'data-study-v2-worker="20261011-3"' /tmp/study.html
+          grep -q 'study-v2.css?v=20261011-4' /tmp/study.html
+          grep -q 'data-study-v2-worker="20261011-4"' /tmp/study.html
           grep -q 'study-home-fab' /tmp/study.html
 
           echo "Checking V2 stylesheet..."
@@ -82,5 +82,15 @@ jobs:
           wc -c /tmp/study-v2.css
           grep -q 'Study COMPASS V2 runtime theme' /tmp/study-v2.css
           grep -q '.study-v2-runtime' /tmp/study-v2.css
+          grep -q 'study-quiz-active' /tmp/study-v2.css
+
+          echo "Checking beta navigation..."
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/beta.html?smoke=${GITHUB_SHA}" -o /tmp/beta.html
+          grep -q 'global-home' /tmp/beta.html
+          grep -q 'href="/"' /tmp/beta.html
+
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/practice-beta.html?smoke=${GITHUB_SHA}" -o /tmp/practice-beta.html
+          grep -q '/study.html?mode=qa' /tmp/practice-beta.html
+          grep -q 'global-home' /tmp/practice-beta.html
 
           echo "Production smoke test passed."
