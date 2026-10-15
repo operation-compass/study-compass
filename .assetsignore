@@ -6,3 +6,4 @@ worker.js
 wrangler.jsonc
 README.md
 .assetsignore
+/data/staging/

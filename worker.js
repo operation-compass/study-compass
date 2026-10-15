@@ -2,6 +2,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // Review candidates are private to the release process, never public assets.
+    if (url.pathname === "/data/staging" || url.pathname.startsWith("/data/staging/")) {
+      return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
+    }
+
     if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       const homeUrl = new URL("/home-v2.html", url.origin);
       const response = await env.ASSETS.fetch(new Request(homeUrl.toString(), request));
