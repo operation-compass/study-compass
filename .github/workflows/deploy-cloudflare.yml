@@ -24,6 +24,9 @@ jobs:
         run: |
           set -euo pipefail
           node --check worker.js
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
           python3 - <<'PY'
           from pathlib import Path
           worker = Path("worker.js").read_text()

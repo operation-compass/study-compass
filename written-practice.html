@@ -24,7 +24,8 @@ textarea{width:100%;min-height:130px;border:1px solid #344867;border-radius:14px
 <div class="wrap">
 <div class="brand">STUDY COMPASS</div><div style="margin-top:8px"><a href="./practice-beta.html" style="color:#9fb0c8;text-decoration:none;font-size:12px">← β学習メニュー</a></div>
 <h1>記述式トレーニング β</h1>
-<div class="sub">社会・理科・英語の記述を、教科別ルーブリックで採点する試作版です。完全一致ではなく、必要な内容要素と伝わり方で部分点を出します。</div>
+<div class="sub">5教科の記述を、模範解答と比べて見直す試作版です。キーワード確認は参考情報で、文章の意味・正誤・得点を自動判定するものではありません。</div>
+<div class="sub" id="storageNotice" role="status"></div>
 <div class="topstats"><div class="stat" id="countStat"></div><div class="stat" id="scoreStat"></div></div>
 <div class="progress"><div class="bar" id="bar"></div></div>
 <div class="card">
@@ -33,7 +34,7 @@ textarea{width:100%;min-height:130px;border:1px solid #344867;border-radius:14px
   <div class="hint" id="hint"></div>
   <textarea id="answer" placeholder="ここに自分の答えを書く"></textarea>
   <div class="actions">
-    <button class="btn primary" id="check">採点する</button>
+    <button class="btn primary" id="check">答えを比較する</button>
     <button class="btn secondary" id="model">模範解答を見る</button>
   </div>
   <div class="result" id="result"></div>
@@ -42,8 +43,9 @@ textarea{width:100%;min-height:130px;border:1px solid #344867;border-radius:14px
     <button class="btn secondary" id="next">次へ →</button>
   </div>
 </div>
-<div class="note">採点は学習補助用のルーブリック判定です。表現が違っても意味が合えば正解になり得ます。英作文も完全一致ではなく、必要な意味要素を中心に評価します。正式公開前に教科監修とWeb本体への統合を行います。</div>
+<div class="note">キーワードが含まれていても、否定・因果関係・文法・証明の筋道が誤っている場合があります。模範解答や教材と照らし合わせ、判断が難しい答案は先生に確認してください。比較した回数は正答率・得点に含めません。</div>
 </div>
+<script src="./beta-storage.js"></script>
 <script>
 const KEY="studyCompassWrittenBetaV1";
 const qs=[
@@ -88,18 +90,18 @@ const qs=[
 {id:"SC-SOC-HIS-WRITEPLUS-000011",subject:"社会",schema:"資料記述",max:2,hint:"土地と蓄えを使い、富や力の差につなげよう。",q:"【資料】稲作では土地と収穫物の蓄えが重要になった。これが富や力の差や争いにつながり得た理由を説明しなさい。",model:"稲作では土地と収穫物の蓄えの確保が重要となり、それらを多く持つ人や集落に富や力が集まり、争いにつながる場合があった。",groups:[["土地"],["蓄え","収穫"],["富","力","争い"]]},
 {id:"SC-SOC-HIS-WRITEPLUS-000012",subject:"社会",schema:"資料記述",max:2,hint:"敗戦と防衛強化を因果でつなげよう。",q:"【資料】663年：白村江の戦いで唐・新羅軍に敗れる。664年：水城を築く。水城が築かれた目的を説明しなさい。",model:"663年の白村江の戦いで唐・新羅軍に敗れた後、侵攻を警戒して国内防衛を強めるため、翌664年に水城を築いた。",groups:[["663","白村江","敗"],["唐","新羅","侵攻","警戒"],["664","水城","防衛"]]}
 ];
-let state=JSON.parse(localStorage.getItem(KEY)||'{"i":0,"scores":{}}');
+const storage=betaStorage(KEY,{i:0,scores:{},checked:{}},s=>s&&typeof s==='object'&&!Array.isArray(s)&&Number.isInteger(s.i)&&s.i>=0&&s.scores&&typeof s.scores==='object'&&!Array.isArray(s.scores)&&(!s.checked||(typeof s.checked==='object'&&!Array.isArray(s.checked))));
+let state=storage.state;
 if(state.i>=qs.length) state.i=0;
+state.checked=state.checked||{};
 function norm(s){return (s||"").toLowerCase().normalize("NFKC").replace(/[\s、。,.・「」『』（）()!?]/g,"")}
 function spec(item){return {subject:item.subject||"社会",schema:item.schema||"理由説明",max:item.max||2,hint:item.hint||"目安：15〜120字。理由・原因と結果をつなげて書いてみよう。"}}
 function grade(item,text){
- const n=norm(text), s=spec(item); if(!n) return {score:0,hit:0,max:s.max};
+ const n=norm(text); if(!n) return {hit:0,total:item.groups.length};
  let hit=0; for(const g of item.groups){if(g.some(k=>n.includes(norm(k)))) hit++}
- let score=0;
- if(s.max===3){score=hit>=3?3:hit===2?2:hit===1?1:0}else{score=hit>=3?2:hit>=1?1:0}
- return {score,hit,max:s.max};
+ return {hit,total:item.groups.length};
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function save(){storage.save(state)}
 function totals(){
  const ids=Object.keys(state.scores),total=Object.values(state.scores).reduce((a,b)=>a+b,0);
  const possible=ids.reduce((a,id)=>{const x=qs.find(q=>q.id===id);return a+(x?spec(x).max:0)},0);
@@ -111,15 +113,16 @@ function render(){
  document.getElementById("subjectTag").textContent=s.subject;document.getElementById("schemaTag").textContent=s.schema;document.getElementById("hint").textContent=s.hint;
  document.getElementById("answer").value="";document.getElementById("result").style.display="none";
  const t=totals();document.getElementById("countStat").textContent=(state.i+1)+" / "+qs.length+"問";
- document.getElementById("scoreStat").textContent="累計 "+t.total+" / "+t.possible+"点";
+ document.getElementById("scoreStat").textContent="模範解答と比較 "+qs.filter(q=>state.checked[q.id]).length+"問（採点なし）";
  document.getElementById("bar").style.width=((state.i+1)/qs.length*100)+"%";
 }
 document.getElementById("check").onclick=()=>{
  const item=qs[state.i],text=document.getElementById("answer").value.trim(),g=grade(item,text);
- state.scores[item.id]=g.score;save();
- const msg=g.score===g.max?"必要な要素がしっかり入っています。":g.score>0?"方向は合っています。足りない要素を模範解答と比べてみよう。":"必須要素が不足しています。模範解答で内容の組み立てを確認しよう。";
- const r=document.getElementById("result");r.innerHTML='<div class="score">'+g.score+' / '+g.max+'点</div><div>'+msg+'</div><div class="answer"><b>模範解答：</b>'+item.model+'</div>';r.style.display="block";
- const t=totals();document.getElementById("scoreStat").textContent="累計 "+t.total+" / "+t.possible+"点";
+ if(!text){document.getElementById("result").textContent='答えを書いてから比較してください。';document.getElementById("result").style.display='block';return;}
+ state.checked[item.id]=true;save();
+ const msg="単語の一致だけでは正誤は分かりません。意味・理由・条件・結論が模範解答と合っているか、自分で確認してください。";
+ const r=document.getElementById("result");r.innerHTML='<div class="score">キーワード確認 '+g.hit+' / '+g.total+'群（参考）</div><div>'+msg+'</div><div class="answer"><b>模範解答：</b>'+item.model+'</div>';r.style.display="block";
+ document.getElementById("scoreStat").textContent="模範解答と比較 "+qs.filter(q=>state.checked[q.id]).length+"問（採点なし）";
 };
 document.getElementById("model").onclick=()=>{const item=qs[state.i],r=document.getElementById("result");r.innerHTML='<div class="answer"><b>模範解答：</b>'+item.model+'</div>';r.style.display="block"};
 document.getElementById("prev").onclick=()=>{state.i=(state.i-1+qs.length)%qs.length;save();render()};

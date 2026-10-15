@@ -65,7 +65,7 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
     <div class="icon">📖</div><h3>一問一答</h3><p>5教科を4択でテンポよく確認。基礎から入試対策まで。</p><span class="arrow">›</span>
   </a>
   <a class="tile beta" href="./written-practice.html">
-    <div class="icon">📝</div><h3>記述式トレーニング <span class="beta-badge">40問</span></h3><p>理由・根拠・途中過程を部分点で確認。</p><span class="arrow">›</span>
+    <div class="icon">📝</div><h3>記述式トレーニング <span class="beta-badge">40問</span></h3><p>理由・根拠・途中過程を模範解答と比較。</p><span class="arrow">›</span>
   </a>
   <a class="tile beta" href="./generated-practice.html">
     <div class="icon">✦</div><h3>生成資料トレーニング <span class="beta-badge">24問</span></h3><p>資料の形が変わっても考え方を使える力を鍛える。</p><span class="arrow">›</span>
@@ -104,7 +104,7 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
 (function(){
  const d=new Date(); document.getElementById("today").textContent=d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
  let w=0,g=0;
- try{const s=JSON.parse(localStorage.getItem("studyCompassWrittenBetaV1")||"{}");w=Object.keys(s.scores||{}).length}catch(e){}
+ try{const s=JSON.parse(localStorage.getItem("studyCompassWrittenBetaV1")||"{}");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{})]).size}catch(e){}
  try{const s=JSON.parse(localStorage.getItem("studyCompassGeneratedBetaV1")||"{}");g=Object.keys(s.answered||{}).length}catch(e){}
  document.getElementById("written").textContent=w+" / 40";document.getElementById("generated").textContent=g+" / 24";document.getElementById("total").textContent=(w+g)+" / 64";
  document.getElementById("writtenBar").style.width=Math.min(100,w/40*100)+"%";document.getElementById("generatedBar").style.width=Math.min(100,g/24*100)+"%";document.getElementById("totalBar").style.width=Math.min(100,(w+g)/64*100)+"%";

@@ -21,6 +21,7 @@
 <div class="brand">STUDY COMPASS</div><div style="margin-top:8px"><a href="./practice-beta.html" style="color:#9fb0c8;text-decoration:none;font-size:12px">← β学習メニュー</a></div><h1>生成資料トレーニング β</h1>
 <div class="sub">資料の見せ方が変わっても、正答の考え方が変わらないように設計した社会・歴史の応用問題です。資料は再生成できます。</div>
 <div class="stats"><div class="stat" id="count"></div><div class="stat" id="score"></div></div>
+<div class="sub" id="storageNotice" role="status"></div>
 <div class="progress"><div class="bar" id="bar"></div></div>
 <div class="card">
 <div class="meta"><span class="tag" id="family"></span><span class="tag" id="qid"></span></div>
@@ -30,6 +31,7 @@
 <div class="nav"><button class="btn" id="prev">← 前へ</button><button class="btn" id="next">次へ →</button></div>
 </div><div class="note">生成は学習用の表現・並び替えです。史実・正答概念は固定し、架空資料は架空であることが分かる形にしています。</div>
 </div>
+<script src="./beta-storage.js"></script>
 <script>
 const KEY="studyCompassGeneratedBetaV1";
 const Q=[
@@ -58,10 +60,11 @@ const Q=[
 {id:"SC-SOC-HIS-GAP-ADV-000011",family:"GAP_ADV",m:["【架空年表】A：紀元前500年、X：紀元前420年、B：紀元前300年、Y：紀元前220年、C：紀元前100年。","【年代資料】A(-500) / X(-420) / B(-300) / Y(-220) / C(-100)"],q:"XとYの時期をA・B・Cと比較した説明として適切なのは？",a:"XはAとBの間、YはBとCの間に起きた",o:["XはAとBの間、YはBとCの間に起きた","XはBとCの間、YはAより前である","XもYもCより後である","XとYは同じ年である"]},
 {id:"SC-SOC-HIS-GAP-ADV-000012",family:"GAP_ADV",m:["【架空資料】政策Pの実施後に価格が上昇。ほぼ同時期に天候不順と輸送障害も発生。","【因果学習例】政策が先行したが、価格上昇期には別の要因も重なっている。"],q:"この情報だけからの結論として適切なのは？",a:"政策が先だとは分かるが、政策だけが価格上昇の原因とは確定できない",o:["政策が先だとは分かるが、政策だけが価格上昇の原因とは確定できない","政策が唯一の原因だと断定できる","天候不順だけが唯一の原因だと断定できる","前後関係と因果関係は常に同じである"]}
 ];
-let state=JSON.parse(localStorage.getItem(KEY)||'{"i":0,"score":0,"answered":{}}');if(state.i>=Q.length)state.i=0;
+const storage=betaStorage(KEY,{i:0,score:0,answered:{}},s=>s&&typeof s==='object'&&!Array.isArray(s)&&Number.isInteger(s.i)&&s.i>=0&&s.answered&&typeof s.answered==='object'&&!Array.isArray(s.answered));
+let state=storage.state;if(state.i>=Q.length)state.i=0;
 let variant=0;
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function save(){storage.save(state)}
 function render(){const x=Q[state.i];document.getElementById("family").textContent=x.family;document.getElementById("qid").textContent=x.id;document.getElementById("material").textContent=x.m[variant%x.m.length];document.getElementById("question").textContent=x.q;document.getElementById("result").style.display="none";const box=document.getElementById("choices");box.innerHTML="";for(const o of shuffle(x.o)){const b=document.createElement("button");b.className="choice";b.textContent=o;b.onclick=()=>answer(b,o);box.appendChild(b)}document.getElementById("count").textContent=(state.i+1)+" / "+Q.length+"問";document.getElementById("score").textContent="正解 "+Object.values(state.answered).filter(Boolean).length+" / "+Object.keys(state.answered).length;document.getElementById("bar").style.width=((state.i+1)/Q.length*100)+"%"}
 function answer(btn,o){const x=Q[state.i],ok=o===x.a;state.answered[x.id]=ok;save();for(const b of document.querySelectorAll(".choice")){b.disabled=true;if(b.textContent===x.a)b.classList.add("ok")}if(!ok)btn.classList.add("ng");const r=document.getElementById("result");r.textContent=ok?"正解。資料の形が変わっても、同じ根拠で判断できます。":"もう一度資料の『何が分かるか／何までは分からないか』を確認しよう。";r.style.display="block";document.getElementById("score").textContent="正解 "+Object.values(state.answered).filter(Boolean).length+" / "+Object.keys(state.answered).length}
 document.getElementById("regen").onclick=()=>{variant++;render()};document.getElementById("prev").onclick=()=>{state.i=(state.i-1+Q.length)%Q.length;variant=0;save();render()};document.getElementById("next").onclick=()=>{state.i=(state.i+1)%Q.length;variant=0;save();render()};render();

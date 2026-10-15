@@ -7,3 +7,5 @@ wrangler.jsonc
 README.md
 .assetsignore
 /data/staging/
+/data/release/
+/scripts/
