@@ -14,13 +14,16 @@ const STUDY = Object.freeze({
   audit:'Web自動公開｜3段階監査ログ'
 });
 const STUDY_FIELDS=['id','subject','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation'];
+const STUDY_FIELDS_V2=['id','subject','grade','unit_major','unit_minor','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation'];
 function studyRows_(sheet) {
   if(!sheet)throw Error('Missing required sheet');
   const values=sheet.getDataRange().getValues(), headers=values.shift().map(String);
   return values.map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]])));
 }
-function studySha_(q) {
-  const payload=JSON.stringify(STUDY_FIELDS.map(k=>String(q[k]===undefined||q[k]===null?'':q[k])));
+function studySha_(q,hashVersion) {
+  if(hashVersion && hashVersion!=='v1' && hashVersion!=='v2')throw Error('Unsupported SHA version');
+  const fields=hashVersion==='v2'?STUDY_FIELDS_V2:STUDY_FIELDS;
+  const payload=JSON.stringify(fields.map(k=>String(q[k]===undefined||q[k]===null?'':q[k])));
   return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,payload,Utilities.Charset.UTF_8)
     .map(x=>('0'+(x<0?x+256:x).toString(16)).slice(-2)).join('');
 }
@@ -47,7 +50,7 @@ function studyCollect_() {
       choice_d:String(row.choice_d||''),correct_answer:String(row.correct_answer||''),
       explanation:String(row.explanation||''),version:String(row.version||'') || (auditedCheck?reviewed.version:'')};
     if(auditedCheck){
-      const sha=studySha_(q);
+      const sha=studySha_(q,reviewed.hash_version);
       const pass=reviewed.version===q.version&&reviewed.sha256===sha&&
         reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&
         reviewed.risk==='LOW'&&!reviewed.exception_reason&&reviewed.checked_at&&
@@ -75,6 +78,7 @@ function studyAuditRecords_(book,approvedItems,includeAll) {
     const date=v=>v instanceof Date?Utilities.formatDate(v,'Asia/Tokyo',"yyyy-MM-dd'T'HH:mm:ssXXX"):String(v||'').trim();
     records.push({
       id,version:String(row.question_version||'').trim(),
+      hash_version:String(row.hash_version||'v1').trim(),
       sha256:String(row.content_sha256||'').trim(),
       accuracy:String(row.audit_1_accuracy||'').trim(),
       accuracy_checked_at:date(row.audit_1_checked_at),
