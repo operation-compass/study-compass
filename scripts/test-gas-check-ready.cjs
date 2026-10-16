@@ -17,3 +17,11 @@ assert.deepEqual(ids,['CHECK_READY','PUBLIC_EXISTING']);
 assert.equal(found.scanned,4);
 assert.equal(found.items.find(x=>x.id==='CHECK_READY').version,'1');
 console.log('GAS CHECK status requires 3PASS, LOW, matching SHA; HOLD and invalid SHA excluded; PUBLIC retained.');
+
+const recent=new Date().toISOString(),old=new Date(Date.now()-13*3600000).toISOString();
+const snapshot=t=>({candidate:{items:[{id:'A'}]},audit:{records:[]},approval:{mode:'ai_three_stage',source_spreadsheet_id:'S',exported_at:t}});
+assert.equal(context.studySameSnapshot_(snapshot(recent),snapshot(recent)),true);
+assert.equal(context.studySameSnapshot_(snapshot(old),snapshot(recent)),false,'12h refresh mandatory');
+assert.equal(context.studySameSnapshot_(snapshot('not-a-date'),snapshot(recent)),false);
+assert.match(source,/current\\.content\\.replace\\(\\/\\\\s\\/g/,'GitHub base64 must strip actual whitespace');
+console.log('GAS snapshot freshness and Base64 normalization guards verified.');
