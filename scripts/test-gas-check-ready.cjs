@@ -89,3 +89,4 @@ sheets['Web自動公開｜3段階監査ログ']=oldAudit;
 console.log('GAS never fabricates independent reviewer evidence and rejects malformed reviewer JSON.');
 require('./test-gas-production-read.cjs');
 require('./test-live-unpublished-snapshot.cjs');
+require('./test-reviewed-two-preview.cjs');
