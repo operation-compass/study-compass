@@ -6,7 +6,7 @@ const id='1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88';
 function b64(x){return Buffer.from(JSON.stringify(x)).toString('base64url')}
 async function main(){
  const raw=process.env.STUDY_COMPASS_GOOGLE_SERVICE_ACCOUNT_JSON;
- if(!raw){console.log('SKIP: no service-account secret');return}
+ if(!raw)throw Error('Missing service-account secret; connection not verified')
  const sa=JSON.parse(raw);
  if(!sa.client_email||!sa.private_key||sa.token_uri!=='https://oauth2.googleapis.com/token')throw Error('Invalid service account configuration');
  const now=Math.floor(Date.now()/1000),base=b64({alg:'RS256',typ:'JWT'})+'.'+b64({iss:sa.client_email,scope:'https://www.googleapis.com/auth/spreadsheets.readonly',aud:sa.token_uri,iat:now,exp:now+1200});
