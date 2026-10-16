@@ -20,14 +20,15 @@ jobs:
           data=Path('.github/workflows/propose-ready-release.yml').read_text()
           assert 'workflow_dispatch:' in data
           header=data.split('permissions:',1)[0]
-          assert 'push:' not in header and 'schedule:' not in header and 'pull_request:' not in header
+          assert 'push:' in header and 'feature/drive-approval-gate-20261016' in header and "'data/staging/drive-sync-bundle.json'" in header
+          assert 'schedule:' not in header and 'pull_request:' not in header
           assert 'gh pr create' in data and '--draft' in data
           assert 'gh pr merge' not in data
           assert 'node scripts/prepare-ready-release.cjs' in data
           assert 'node scripts/check-question-release.cjs' in data
           assert 'git add -- index.html legacy-study.html' in data
           assert 'wrangler' not in data and 'cloudflare' not in data.lower()
-          print('PASS: manual proposal only, no auto merge or deploy')
+          print('PASS: staged updates propose drafts only; no auto merge or deploy')
           PY
   integration-dry-run:
     runs-on: ubuntu-latest
