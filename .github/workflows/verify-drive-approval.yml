@@ -8,6 +8,8 @@ on:
       - 'scripts/export-drive-approved.cjs'
       - 'scripts/test-drive-export.cjs'
       - 'scripts/check-drive-connection.cjs'
+      - 'scripts/check-drive-staging-bundle.cjs'
+      - 'integrations/apps-script/StudyCompassSync.gs'
       - 'scripts/test-drive-master-schema.cjs'
       - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/verify-drive-approval.yml'
@@ -28,6 +30,7 @@ jobs:
           node --check scripts/export-drive-approved.cjs
           node --check scripts/test-drive-export.cjs
           node --check scripts/check-drive-connection.cjs
+          node --check scripts/check-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
       - name: Run regression tests (synthetic fixtures only)
         run: |
