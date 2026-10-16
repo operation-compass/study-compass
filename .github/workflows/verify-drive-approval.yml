@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/check-drive-approval.cjs'
       - 'scripts/test-drive-approval.cjs'
+      - 'scripts/export-drive-approved.cjs'
       - '.github/workflows/verify-drive-approval.yml'
   workflow_dispatch:
 
@@ -20,5 +21,6 @@ jobs:
         run: |
           node --check scripts/check-drive-approval.cjs
           node --check scripts/test-drive-approval.cjs
+          node --check scripts/export-drive-approved.cjs
       - name: Run regression tests (synthetic fixtures only)
         run: node scripts/test-drive-approval.cjs
