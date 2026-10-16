@@ -25,10 +25,12 @@ try {
     assert(!allow.has(a.id), 'Duplicate approval id: '+a.id);
     allow.set(a.id,a);
   }
+  const withheld = new Set(load('data/release/withheld-ids.json').ids);
   const seen = new Set();
   for (const q of candidate.items) {
     assert(typeof q.id === 'string' && q.id, 'Blank question id');
     assert(!seen.has(q.id), 'Duplicate candidate id: '+q.id); seen.add(q.id);
+    assert(!withheld.has(q.id), 'Known withheld question cannot be released: '+q.id);
     const a=allow.get(q.id);
     assert(a, 'Missing Drive approval: '+q.id);
     assert(a.status === 'PUBLIC' && (a.publish_flag === true || a.publish_flag === 'TRUE'), 'Not public-approved: '+q.id);
