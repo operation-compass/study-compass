@@ -58,4 +58,4 @@ jobs:
           git diff --name-only -- index.html legacy-study.html
           git diff --exit-code -- worker.js home-v2.html study-v2.css
           node -e 'const r=require(process.env.RUNNER_TEMP+"/study-pr-dry-run/release-report.json"); if(r.files.length!==2||r.files.some(f=>f.edited.length+f.added.length>5))process.exit(1);console.log(JSON.stringify(r.files));'
-          echo "Integration verified with real baseline and staging; no push and no deploy."
+          echo "Integration verified with real baseline and staging (including zero-diff no-op); no push and no deploy."
