@@ -53,6 +53,11 @@ jobs:
           if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
             echo 'has_ready=true' >> "$GITHUB_OUTPUT"
           else
+            status=$?
+            if [ "$status" -ne 2 ]; then
+              echo '::error::Eligibility validation failed unexpectedly'
+              exit "$status"
+            fi
             echo 'No fully attested READY question; skipping PR generation.'
             echo 'has_ready=false' >> "$GITHUB_OUTPUT"
           fi
