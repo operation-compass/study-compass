@@ -30,7 +30,7 @@ try {
     assert(a, 'Missing Drive approval: '+q.id);
     assert(a.status === 'PUBLIC' && (a.publish_flag === true || a.publish_flag === 'TRUE'), 'Not public-approved: '+q.id);
     assert(typeof a.reviewed_by === 'string' && a.reviewed_by.trim(), 'Missing human reviewer: '+q.id);
-    assert(typeof a.approved_at === 'string' && /^\\d{4}-\\d{2}-\\d{2}/.test(a.approved_at), 'Missing approval date: '+q.id);
+    assert(typeof a.approved_at === 'string' && /^\d{4}-\d{2}-\d{2}/.test(a.approved_at), 'Missing approval date: '+q.id);
     assert(a.sha256 === hash(q), 'Approval content hash mismatch: '+q.id);
     assert(typeof q.question_text === 'string' && q.question_text.trim(), 'Blank question: '+q.id);
     assert(typeof q.correct_answer === 'string' && q.correct_answer.trim(), 'Blank answer: '+q.id);
