@@ -41,7 +41,7 @@ function studyCollect_() {
   const rows=studyRows_(book.getSheetByName(STUDY.source));
   const audit=studyAuditRecords_(book,[] ,true);
   const auditMap=new Map(audit.records.map(a=>[a.id,a]));
-  const seen=new Set(), items=[];
+  const seen=new Set(), auditedItems=[], legacyItems=[];
   for(const row of rows) {
     const id=String(row.question_id||'').trim();
     if(!id)continue;
@@ -72,9 +72,12 @@ function studyCollect_() {
       if(!pass)continue;
     }
     if(!q.question_text||!q.correct_answer||!q.explanation)throw Error('Incomplete content: '+id);
-    items.push(q);
+    (auditedCheck?auditedItems:legacyItems).push(q);
   }
-  return {items,scanned:seen.size};
+  // Audited CHECK records take precedence over already-PUBLIC records.
+  // Cap staging to one bounded release batch; all other records remain in MASTER.
+  const items=[...auditedItems,...legacyItems].slice(0,5);
+  return {items,scanned:seen.size,eligible:auditedItems.length+legacyItems.length,pending_audited:Math.max(0,auditedItems.length-items.filter(q=>auditedItems.includes(q)).length)};
 }
 
 // Read three-stage audit rows without altering the Drive source. Missing evidence stays HOLD.
@@ -111,7 +114,7 @@ function studyAuditRecords_(book,approvedItems,includeAll) {
 
 function studyPreview() {
   const c=studyCollect_();
-  const summary={scanned:c.scanned,candidates:c.items.length,mode:'preview_only',production_updated:false};
+  const summary={scanned:c.scanned,candidates:c.items.length,eligible:c.eligible,pending_audited:c.pending_audited,mode:'preview_only',production_updated:false};
   Logger.log(JSON.stringify(summary));return summary;
 }
 /**
