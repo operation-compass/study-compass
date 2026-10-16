@@ -36,6 +36,21 @@ function studyValidAuditDate_(value) {
 function studyValidV2Metadata_(q) {
   return /^中[123]$/.test(q.grade)&&!!q.unit_major.trim()&&!!q.unit_minor.trim();
 }
+function studyReviewEvidenceComplete_(audit,sha) {
+  const reviews=audit&&audit.independent_reviews;
+  if(!Array.isArray(reviews)||reviews.length!==3)return false;
+  const roles=['accuracy','quality','technical'],ids=new Set();
+  for(const role of roles){
+    const group=reviews.filter(r=>r&&r.role===role);
+    if(group.length!==1)return false;
+    const r=group[0],id=String(r.reviewer_id||'');
+    if(r.result!=='PASS'||!id.trim()||ids.has(id)||r.question_sha256!==sha||
+       !/^[a-f0-9]{64}$/.test(String(r.evidence_sha256||''))||
+       !studyValidAuditDate_(r.checked_at))return false;
+    ids.add(id);
+  }
+  return true;
+}
 function studyCollect_() {
   const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
   const rows=studyRows_(book.getSheetByName(STUDY.source));
@@ -63,7 +78,7 @@ function studyCollect_() {
       if(hashVersion!=='v1'&&hashVersion!=='v2')continue;
       if(hashVersion==='v2'&&!studyValidV2Metadata_(q))continue;
       const sha=studySha_(q,hashVersion);
-      const pass=reviewed.version===q.version&&reviewed.sha256===sha&&
+      const pass=studyReviewEvidenceComplete_(reviewed,sha)&&reviewed.version===q.version&&reviewed.sha256===sha&&
         reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&
         reviewed.risk==='LOW'&&!reviewed.exception_reason&&
         studyValidAuditDate_(reviewed.checked_at)&&studyValidAuditDate_(reviewed.accuracy_checked_at)&&
