@@ -12,7 +12,8 @@ function selectReady(bundle){
  for(const q of candidates.values()){
   const h=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
   const r=audits.get(q.id);
-  const verified=!!r&&r.version===q.version&&r.sha256===h&&r.accuracy==='PASS'&&r.quality==='PASS'&&r.technical==='PASS'&&r.final_decision==='READY'&&r.risk==='LOW'&&!r.exception_reason&&r.checked_at&&r.accuracy_checked_at&&r.quality_checked_at&&r.technical_checked_at&&typeof r.evidence_url==='string'&&/^https:\/\//.test(r.evidence_url);
+  const validDate=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(v)&&Number.isFinite(Date.parse(v));
+  const verified=!!r&&r.version===q.version&&r.sha256===h&&r.accuracy==='PASS'&&r.quality==='PASS'&&r.technical==='PASS'&&r.final_decision==='READY'&&r.risk==='LOW'&&!r.exception_reason&&validDate(r.checked_at)&&validDate(r.accuracy_checked_at)&&validDate(r.quality_checked_at)&&validDate(r.technical_checked_at)&&typeof r.evidence_url==='string'&&/^https:\/\//.test(r.evidence_url);
   (verified?ready:held).push(q.id);
  }
  return {ready,held,total:candidates.size};
