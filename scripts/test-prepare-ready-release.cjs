@@ -5,7 +5,8 @@ const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/staging/dri
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'study-safe-release-'));
 try {
  const original=JSON.parse(JSON.stringify(bundle));
- assert.throws(()=>prepare(original,dir),/Stale or invalid|Untrusted export|Expected three-stage gate/);
+ original.approval.exported_at='2020-01-01T00:00:00.000Z';
+ assert.throws(()=>prepare(original,dir),/Stale or invalid/);
  const recent=JSON.parse(JSON.stringify(bundle));
  recent.approval.exported_at=new Date().toISOString();
  assert.throws(()=>prepare({...recent,approval:{...recent.approval,export_source:'hand-edited'}},dir),/Untrusted export/);
