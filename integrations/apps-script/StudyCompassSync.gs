@@ -219,7 +219,9 @@ function studyUnpublishedBatch_(items,auditRecords,token) {
   const unpublished=[];
   for(const q of items) {
     const current=a.get(q.id),review=audits.get(q.id);
-    if(!current&&(!review||review.hash_version!=='v2'))continue;
+    // Never allow legacy PUBLIC records with missing/HOLD audits to consume release slots.
+    if(!review||review.final_decision!=='READY'||review.risk!=='LOW'||review.exception_reason)continue;
+    if(!current&&review.hash_version!=='v2')continue;
     if(studyNeedsPublication_(q,current,review))unpublished.push(q);
   }
   return {items:unpublished.slice(0,5),pending:Math.max(0,unpublished.length-5),total_unpublished:unpublished.length};
