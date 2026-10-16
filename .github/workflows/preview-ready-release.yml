@@ -20,16 +20,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Confirm checked-in staging data meets READY conditions
+        id: eligibility
         shell: bash
         run: |
           set -euo pipefail
           node --check scripts/prepare-ready-release.cjs
           node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+          node --check worker.js
+          if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
+            echo 'has_ready=true' >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then
+              echo '::error::Eligibility validation failed unexpectedly'
+              exit "$status"
+            fi
+            echo 'has_ready=false' >> "$GITHUB_OUTPUT"
+            echo "No fully attested READY question; no release artifact or deployment."
+            exit 0
+          fi
           mkdir -p /tmp/study-ready-preview
           node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json /tmp/study-ready-preview
           node --check worker.js
           echo "READY preview generated locally only; no GitHub commit and no Cloudflare deployment."
       - name: Save review-only artifact
+        if: steps.eligibility.outputs.has_ready == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: study-ready-web-preview
