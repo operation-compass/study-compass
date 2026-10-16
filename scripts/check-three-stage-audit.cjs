@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require(
 try {
  const bundle=JSON.parse(fs.readFileSync(process.argv[2]||'', 'utf8'));
  const audit=process.argv[3] ? JSON.parse(fs.readFileSync(process.argv[3], 'utf8')) : bundle.audit;
- assert(Array.isArray(bundle.candidate?.items),'Candidate items missing');
+ assert(Array.isArray(bundle.candidate?.items) && bundle.candidate.items.length>0,'Nonempty candidate items required');
  assert(Array.isArray(audit?.records),'Audit records missing');
  assert(Array.isArray(bundle.approval?.approvals),'Human approval manifest missing');
  const approved=new Map();
@@ -19,11 +19,13 @@ try {
   checks.set(a.id,a);
  }
  let ready=0,held=0;
+ const candidateIds=new Set();
  for(const q of bundle.candidate.items) {
+  assert(q.id && !candidateIds.has(q.id),'Duplicate or blank candidate ID');candidateIds.add(q.id);
   const a=checks.get(q.id),human=approved.get(q.id);
   const digest=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
   const pass=!!a && !!human && human.status==='PUBLIC' && human.publish_flag===true &&
-   human.reviewed_by && human.approved_at && human.version===q.version && human.sha256===digest &&
+   typeof human.reviewed_by==='string' && human.reviewed_by.trim() && human.reviewed_by.trim()!=='AI' && human.approved_at && human.version===q.version && human.sha256===digest &&
    a.version===q.version && a.sha256===digest &&
    a.accuracy==='PASS' && a.quality==='PASS' && a.technical==='PASS' &&
    a.final_decision==='READY' && a.checked_at && a.accuracy_checked_at && a.quality_checked_at && a.technical_checked_at &&
