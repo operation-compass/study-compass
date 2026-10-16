@@ -7,6 +7,7 @@ const fields=['id','subject','question_type','question_text','choice_a','choice_
 const q={id:'TEST-001',subject:'社会',question_type:'4択',question_text:'検証用問題',choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',correct_answer:'A',explanation:'検証用解説',version:'v1'};
 const sha=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
 const a={id:q.id,version:q.version,sha256:sha,accuracy:'PASS',quality:'PASS',technical:'PASS',accuracy_checked_at:'2026-10-16',quality_checked_at:'2026-10-16',technical_checked_at:'2026-10-16',checked_at:'2026-10-16',evidence_url:'https://example.org/evidence',risk:'LOW',final_decision:'READY',exception_reason:''};
+a.independent_reviews=['accuracy','quality','technical'].map((role,i)=>({role,result:'PASS',reviewer_id:'fixture-analyst-'+i,evidence_sha256:'0123456789abcdef'.repeat(4),question_sha256:sha,checked_at:'2026-10-16'}));
 function run(candidate,audits,override={}) {
  const filename=path.join(dir,'bundle.json');
  fs.writeFileSync(filename,JSON.stringify({candidate:{items:[candidate]},audit:{records:audits},approval:{approvals:override.approvals??[{id:q.id,status:'PUBLIC',publish_flag:true,reviewed_by:'Human reviewer',approved_at:'2026-10-16',version:q.version,sha256:sha}]}}));
@@ -14,6 +15,8 @@ function run(candidate,audits,override={}) {
 }
 try{
  assert.equal(run(q,[a]).status,0,'Complete synthetic evidence should pass read-only gate');
+ assert.equal(run(q,[{...a,independent_reviews:[]}]).status,2,'Bare three PASS labels must not pass');
+ assert.equal(run(q,[{...a,final_decision:'READY_FOR_REVIEW'}]).status,2,'Review state must not publish');
  assert.equal(run(q,[]).status,2,'Missing audit must HOLD');
  assert.equal(run(q,[{...a,risk:'UNASSESSED'}]).status,2,'Unassessed risk must HOLD');
  assert.equal(run(q,[{...a,final_decision:'HOLD'}]).status,2,'HOLD decision must stay HOLD');

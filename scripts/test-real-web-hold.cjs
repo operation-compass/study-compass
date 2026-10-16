@@ -2,7 +2,7 @@
 // Real repository fixture; no writes. Assert HOLD produces a byte-for-byte equivalent question array.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {applyToWeb}=require('./adapt-drive-to-web.cjs');
-const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/staging/drive-sync-bundle.json'),'utf8'));
+const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/audits/evidence-20261016/historical-staging-five.json'),'utf8'));
 const ids=bundle.candidate.items.map(x=>x.id);
 const auditById=new Map((bundle.audit?.records||[]).map(a=>[a.id,a]));
 const holdIds=ids.filter(id=>auditById.get(id)?.final_decision!=='READY');

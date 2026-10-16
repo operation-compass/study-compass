@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{selectReady}=require('./select-ready-candidates.cjs');
-const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/staging/drive-sync-bundle.json'),'utf8'));
+const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/audits/evidence-20261016/historical-staging-five.json'),'utf8'));
 const actual=selectReady(b);
 assert.equal(actual.total,5);assert.deepEqual(actual.ready,[]);assert.equal(actual.held.length,5);
 const clone=JSON.parse(JSON.stringify(b));
@@ -34,6 +34,12 @@ r.independent_reviews=['accuracy','quality','technical'].map((role,i)=>({
  question_sha256:r.sha256,checked_at:'2026-10-16'
 }));
 assert.deepEqual(selectReady(signedShape).ready,[q.id],'Complete synthetic role-separated review structure may pass');
+const reviewOnly=JSON.parse(JSON.stringify(signedShape));
+reviewOnly.audit.records[1].final_decision='READY_FOR_REVIEW';
+assert.deepEqual(selectReady(reviewOnly).ready,[],'Review-only state is not release authority');
+const pendingTechnical=JSON.parse(JSON.stringify(signedShape));
+pendingTechnical.audit.records[1].technical='PENDING';
+assert.deepEqual(selectReady(pendingTechnical).ready,[],'Technical PENDING must block');
 const duplicateReviewer=JSON.parse(JSON.stringify(signedShape));
 duplicateReviewer.audit.records[1].independent_reviews[1].reviewer_id='reviewer-0';
 assert.deepEqual(selectReady(duplicateReviewer).ready,[],'Repeated reviewer identity must block');

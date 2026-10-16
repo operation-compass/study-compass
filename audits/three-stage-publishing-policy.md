@@ -1,37 +1,30 @@
-# Study COMPASS: Three-stage audit release policy (draft; non-production)
+# Study COMPASS: three-stage audit and incremental release policy v2.0
 
-## Goals
-Accurate and useful entrance-exam practice, scalable auditing, and no premature publishing. Google Drive remains the source of truth. COMPASS LISTEN is out of scope.
+Canonical policy: Google Drive rulebook v2.0 addendum dated 2026-10-16. Google Sheets problem MASTER is the sole question source. This supersedes this file's former human-approval-only draft. Preserve existing questions, IDs, order, learning history, COMPASS LISTEN, Operation COMPASS templates and scheduled tasks.
 
-## Stage 1 — Factual accuracy and traceable evidence
-- Validate question wording, one unambiguous correct answer, all alternatives, explanation, context, official/primary sources or credible corroboration.
-- Record source URL and actual verification date, not merely search hits or bibliographic listings.
-- Failure, disputed wording, missing source => HOLD.
+## Independent stages for the exact question version and SHA
 
-## Stage 2 — Educational quality / editorial independence
-- Check duplicate/near-duplicate, curriculum and subject taxonomy, grade, difficulty, clear explanations, copyright/attribution, and accessibility.
-- Require a different rubric/check than stage 1. Repeating one AI response three times is not independent review.
-- Any questionable historical interpretation, ambiguous answer, original copyrighted reproduction, or high-stakes calculation => HOLD for review.
+1. Accuracy: directly inspect official/primary text supporting wording, answer, alternatives and explanation. Record source URL, reviewer identity and actual check time. Bibliographic listings or search snippets alone are insufficient.
+2. Educational quality: independently check grade, four unique alternatives and one correct answer, clarity, explanation, semantic duplicates, curriculum, difficulty and rights. Repeating one AI judgment three times is not independent review.
+3. Prepublication technical checks: verify ID/version/SHA v2, new versus existing IDs, complete metadata, both HTML banks, all three modes, scoring, narrow-screen layout, existing questions/order/history, at most five changed questions and successful CI. Bind evidence to the same question hash.
 
-## Stage 3 — Machine-enforced delivery checks
-- Exact ID uniqueness; status eligibility; choices/answer consistency; version/hash; schema and encoding; known-withheld IDs; runtime compatibility in QA, four-choice and flashcards; nonempty output and regression thresholds.
-- Validate source version/hash is unchanged since stages 1–2.
-- Never replace embedded live question banks with an empty or partial dataset.
+Require three distinct review identities and existing evidence artifacts with SHA256 digests. Any PENDING/FAIL, missing source, changed hash/version, open exception or unassessed risk remains HOLD. Never fabricate human approval. MASTER CHECK/FALSE may remain unchanged when the independent audit gate completes; PUBLIC/TRUE alone is insufficient.
 
-## Proposed automatic release eligibility
-- Only low-risk, independently sourced, objective MCQ/short recall questions; all three checks must be current for the exact content digest.
-- One ambiguous/missing field, risky item, or failed test => HOLD, not an automatic waiver.
-- Editorial human approval remains mandatory in the **currently deployed design**. A distinct policy and code change plus monitored pilot are required before permitting automated final approval for low-risk questions.
-- Maintain source-of-truth approval ledger; NEVER synthesize a fake human reviewer or falsely set approved_by.
-- New audit log (Drive tab: 'Web自動公開｜3段階監査ログ') records quality evidence and READY_FOR_REVIEW/HOLD/REJECTED; it is **not** a production authorization.
+## Audit states
 
-## Rollout stages
-1. Observe-only: classify existing questions and write audit evidence.
-2. 5–20 human-approved pilot items: verify atomic GAS staging bundle, GitHub gate, correct mode counts, no 404/blank page, rollback.
-3. Pilot risk-scoped auto approvals only after a separate explicit user decision and independent quality review.
-4. Production incremental sync at two-hour intervals after data loader migration and fail-safe deployment/rollback tests.
+| State | Meaning |
+|---|---|
+| HOLD | Required check/evidence incomplete or unresolved exception. Never release. |
+| READY_FOR_REVIEW | Review candidate only; never an alias for READY. |
+| REJECTED | Excluded from publication. |
+| READY | Same ID/version/hash has three independent PASS records, valid dates, LOW risk and no exception. Eligible for bounded preparation. |
 
-## Important current limitations
-- The Apps Script staging branch is not the production site, and staging alone cannot update Web.
-- GitHub Secrets and Apps Script Script Properties must be configured by an authorized person.
-- Existing ChatGPT 2-hour task does not automatically execute GAS.
+The audit log permits all four states. Adding READY to validation changes no existing values and waives no selector checks. GAS and the selector require READY exactly.
+
+## Release and verification
+
+Authenticated Sheets read → GAS atomic staging → strict evidence selection → maximum five-question delta against current main → both HTML banks and CI → main integration → Cloudflare deployment → published page/answer/explanation verification. READY and successful publication are separate facts. Deployment checks cannot be claimed before deployment. Stop on failure and preserve or restore the prior production state.
+
+Do not automatically merge until the manual PR route has been demonstrated. PR #12 installs proposal/verification workflows and contains no questions. Zero READY is a successful no-op; malformed input is an error. Initial rollout still requires a nonempty real release PR, production deployment and recovery verification before unattended operation can be called complete.
+
+Use the existing GAS staging trigger; never register duplicates. ChatGPT scheduled audits and GAS are separate execution mechanisms. Preserve unrelated tasks and templates.

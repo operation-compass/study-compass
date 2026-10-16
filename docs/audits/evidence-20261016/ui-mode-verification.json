@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-10-16T12:11:14.757Z",
+  "reviewer_id": "codex-root-technical-20261016",
+  "scope": "isolated local review preview, unchanged app render/scoring functions; not production",
+  "base_main": "cd24371108556d549e3645ff7276618dd613cb43",
+  "question_ids": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "files": [
+    "index.html",
+    "legacy-study.html"
+  ],
+  "profiles": [
+    {
+      "name": "desktop",
+      "viewport_width": 1280,
+      "observed_document_width": 1265
+    },
+    {
+      "name": "mobile390",
+      "viewport_width": 390,
+      "viewport_height": 844,
+      "observed_document_width": 375
+    }
+  ],
+  "modes": [
+    "mcq",
+    "question",
+    "flashcard"
+  ],
+  "mode_cases": 24,
+  "mode_result": "PASS",
+  "incorrect_answer_cases": 4,
+  "incorrect_answer_profile": "mobile390",
+  "incorrect_answer_result": "PASS",
+  "card_completion_result": "PASS",
+  "horizontal_overflow": false,
+  "checks": [
+    "question visible",
+    "answer and corrected explanation visible after interaction",
+    "MCQ correct answer scored correctly",
+    "wrong choice gives corrective answer/explanation",
+    "card completion records one known card separately from MCQ",
+    "no horizontal overflow in tested viewports"
+  ],
+  "harness": "scripts/build-reviewed-two-ui.cjs",
+  "harness_note": "App initialization selects the exact two reviewed IDs; start, render, reveal and scoring functions remain unchanged. Harness outputs are local only.",
+  "production_updated": false
+}

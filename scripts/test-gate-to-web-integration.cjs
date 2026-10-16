@@ -8,6 +8,7 @@ const source={id:'SYN-001',subject:'社会',question_type:'4択',question_text:'
 const hash=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(source[k]??'')))).digest('hex');
 const approval={id:source.id,status:'PUBLIC',publish_flag:true,reviewed_by:'Human reviewer',approved_at:'2026-10-16',version:'v1',sha256:hash};
 const audit={id:source.id,version:'v1',sha256:hash,accuracy:'PASS',quality:'PASS',technical:'PASS',accuracy_checked_at:'2026-10-16',quality_checked_at:'2026-10-16',technical_checked_at:'2026-10-16',checked_at:'2026-10-16',evidence_url:'https://example.org/evidence',risk:'LOW',final_decision:'READY',exception_reason:''};
+audit.independent_reviews=['accuracy','quality','technical'].map((role,i)=>({role,result:'PASS',reviewer_id:'fixture-analyst-'+i,evidence_sha256:'0123456789abcdef'.repeat(4),question_sha256:hash,checked_at:'2026-10-16'}));
 const existing=[{id:'SYN-001',subject:'社会',unit:'歴史・古代',grade:'中1',q:'変更前',answer:'B',options:['A','B','C','D'],ex:'変更前の解説'},{id:'KEEP-002',subject:'数学',q:'残す問題'}];
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'study-integration-'));
 function verify(a,approvals=[approval]) {
@@ -22,6 +23,7 @@ try{
  assert.equal(ok[0].q,'更新後の問題');
  assert.equal(ok[0].grade,'中1');assert.equal(ok[0].unit,'歴史・古代');
  assert.deepEqual(ok[1],existing[1]);assert.equal(ok.length,existing.length);
+ assert.deepEqual(verify({...audit,independent_reviews:[]}),existing,'Missing independent review evidence must preserve Web');
  for(const changed of [{...audit,final_decision:'HOLD'},{...audit,risk:'UNASSESSED'},{...audit,sha256:'tampered'},{...audit,exception_reason:'Open issue'}])assert.deepEqual(verify(changed),existing,'Failed audit must preserve every existing question');
  assert.equal(verify(audit,[])[0].q,'更新後の問題','Three-stage PASS does not require human approval');
  console.log('Synthetic gate-to-Web end-to-end integration passed (never deploys).');
