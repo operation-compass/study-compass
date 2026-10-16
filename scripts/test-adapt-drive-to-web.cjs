@@ -20,3 +20,7 @@ assert.throws(()=>applyToWeb(old,[{...newCandidate,grade:''}],['NEW-001']),/grad
 assert.throws(()=>applyToWeb(old,[{...newCandidate,unit_minor:''}],['NEW-001']),/unit metadata/);
 assert.deepEqual(applyToWeb(old,[newCandidate],[]),old);
 console.log('New READY question safe append and HOLD exclusion passed.');
+
+assert.throws(()=>applyToWeb(old,[candidate],['A','A']),/Duplicate READY ID/);
+assert.throws(()=>applyToWeb(old,[candidate],['A','B','C','D','E','F']),/exceeds five-question limit/);
+console.log('Release adapter batch limits and duplicate protections passed.');
