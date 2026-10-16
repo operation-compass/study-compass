@@ -208,13 +208,22 @@ function studyPutGitHub_(file,data,token) {
 }
 // Read both production snapshots BEFORE selecting a staging batch.
 // Never use a rotating cursor: failed or unmerged questions must be retried.
-function studyProductionSocial_(file,token) {
-  const url='https://api.github.com/repos/'+STUDY.repo+'/contents/'+file+'?ref=main';
-  const response=UrlFetchApp.fetch(url,{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});
+function studyProductionRevision_(token) {
+  const response=UrlFetchApp.fetch('https://api.github.com/repos/'+STUDY.repo+'/git/ref/heads/main',
+    {headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});
+  if(response.getResponseCode()!==200)throw Error('Cannot resolve production revision');
+  const sha=JSON.parse(response.getContentText()).object?.sha;
+  if(!/^[a-f0-9]{40}$/.test(String(sha||'')))throw Error('Invalid production revision');
+  return sha;
+}
+function studyProductionSocial_(file,token,revision) {
+  if(!/^[a-f0-9]{40}$/.test(String(revision||'')))throw Error('Pinned production revision required');
+  const url='https://api.github.com/repos/'+STUDY.repo+'/contents/'+file+'?ref='+revision;
+  // Contents JSON omits Base64 content above 1 MB; the actual HTML already exceeds it.
+  const response=UrlFetchApp.fetch(url,{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github.raw+json'},muteHttpExceptions:true});
   if(response.getResponseCode()!==200)throw Error('Cannot verify production '+file+': HTTP '+response.getResponseCode());
-  const data=JSON.parse(response.getContentText());
-  if(!data.content||data.encoding!=='base64')throw Error('Production content unavailable: '+file);
-  const html=Utilities.newBlob(Utilities.base64Decode(data.content.replace(/\s/g,''))).getDataAsString();
+  const html=response.getContentText();
+  if(!/^\s*<!doctype html/i.test(html))throw Error('Production HTML unavailable: '+file);
   const tag='const SOCIAL = ',begin=html.indexOf(tag);
   if(begin<0)throw Error('Production SOCIAL array missing: '+file);
   const start=begin+tag.length,end=html.indexOf(';',start);
@@ -234,7 +243,8 @@ function studyNeedsPublication_(q,current,review) {
     JSON.stringify(options)!==JSON.stringify(current.options)||q.explanation!==current.ex;
 }
 function studyUnpublishedBatch_(items,auditRecords,token) {
-  const a=studyProductionSocial_('index.html',token),b=studyProductionSocial_('legacy-study.html',token);
+  const revision=studyProductionRevision_(token);
+  const a=studyProductionSocial_('index.html',token,revision),b=studyProductionSocial_('legacy-study.html',token,revision);
   if(a.size!==b.size)throw Error('Production snapshots have different question counts');
   for(const [id,question] of a) {
     const other=b.get(id);

@@ -66,6 +66,7 @@ const web=q=>({id:q.id,subject:q.subject,q:q.question_text,answer:q.correct_answ
 production.set(next[0].id,web(next[0]));production.set(next[1].id,web(next[1]));
 context.__production=production;
 vm.runInContext("studyProductionSocial_=function(){return new Map(__production)};",context);
+vm.runInContext("studyProductionRevision_=function(){return 'a'.repeat(40)};",context);
 const ledgers=next.map(q=>({id:q.id,final_decision:'READY',risk:'LOW',exception_reason:'',hash_version:'v2'}));
 const first=context.studyUnpublishedBatch_(next,ledgers,'test');
 assert.equal(first.total_unpublished,5);
@@ -86,3 +87,5 @@ sheets['Web自動公開｜3段階監査ログ']=sheet(badAuditRows);
 assert.throws(()=>context.studyAuditRecords_({getSheetByName:name=>sheets[name]},[],true),/Invalid independent review evidence JSON/);
 sheets['Web自動公開｜3段階監査ログ']=oldAudit;
 console.log('GAS never fabricates independent reviewer evidence and rejects malformed reviewer JSON.');
+require('./test-gas-production-read.cjs');
+require('./test-live-unpublished-snapshot.cjs');
