@@ -17,3 +17,11 @@ const future=JSON.parse(JSON.stringify(b));
 future.audit.records[1].checked_at='2099-01-01';
 assert.deepEqual(selectReady(future).ready,[],'Future-dated audit cannot release');
 console.log('Real staged candidate selection: 1 READY, 4 HOLD; invalid dates blocked; no deployment.');
+
+const unknownVersion=JSON.parse(JSON.stringify(b));
+unknownVersion.audit.records[1].hash_version='v3';
+assert.deepEqual(selectReady(unknownVersion).ready,[],'Unknown hash versions cannot fall back to v1');
+const missingV2Metadata=JSON.parse(JSON.stringify(b));
+missingV2Metadata.audit.records[1].hash_version='v2';
+missingV2Metadata.candidate.items[1].unit_minor='';
+assert.deepEqual(selectReady(missingV2Metadata).ready,[],'Incomplete v2 unit metadata blocks release');
