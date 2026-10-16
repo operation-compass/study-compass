@@ -74,13 +74,19 @@ jobs:
           set -euo pipefail
           if [ -f data/staging/drive-sync-bundle.json ]; then
             node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+            set +e
+            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json
+            actual_outcome=$?
+            set -e
+            test "$actual_outcome" -eq 0 -o "$actual_outcome" -eq 2 || { echo '::error::Embedded audit malformed'; exit 1; }
+            echo 'Embedded three-stage audit checked (0=fully eligible; 2=HOLD); no deploy.'
             printf '{"records":[]}' > /tmp/study-audit-empty.json
             set +e
             node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json /tmp/study-audit-empty.json
-            outcome=$?
+            missing_outcome=$?
             set -e
-            test "$outcome" -eq 2 || { echo '::error::Missing audit evidence was not blocked'; exit 1; }
-            echo 'Missing three-stage audit evidence correctly placed on HOLD.'
+            test "$missing_outcome" -eq 2 || { echo '::error::Missing audit evidence was not blocked'; exit 1; }
+            echo 'Absent audit evidence correctly blocked.'
           else
             echo 'No GAS bundle staged: regression-only check.'
           fi
