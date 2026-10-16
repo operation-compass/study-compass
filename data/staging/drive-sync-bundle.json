@@ -69,10 +69,13 @@
       }
     ]
   },
+  "audit": {
+    "records": []
+  },
   "approval": {
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-16T03:39:06.489Z",
+    "exported_at": "2026-10-16T03:47:02.984Z",
     "approvals": [
       {
         "id": "SC-SOC-HIS-000001",
