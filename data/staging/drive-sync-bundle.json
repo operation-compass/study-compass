@@ -83,7 +83,7 @@
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
         "risk": "UNASSESSED",
-        "exception_reason": "Source and independent three-stage review not yet complete",
+        "exception_reason": "聖徳太子／厩戸皇子の呼称と摂政表現の時代的解釈について、独立した教材監修者による確認記録が未登録。出典と監査者・判断根拠を追加するまでHOLD。",
         "final_decision": "HOLD",
         "checked_at": ""
       },
@@ -99,7 +99,7 @@
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
         "risk": "UNASSESSED",
-        "exception_reason": "Source and independent three-stage review not yet complete",
+        "exception_reason": "710年の平城京遷都は既存出典あり。ただし正確性・教材品質の独立監査者と評価根拠が未記録。出典確認履歴と監査独立性を確認するまでHOLD。",
         "final_decision": "HOLD",
         "checked_at": ""
       },
@@ -115,7 +115,7 @@
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
         "risk": "UNASSESSED",
-        "exception_reason": "Source and independent three-stage review not yet complete",
+        "exception_reason": "794年平安京遷都は既存出典あり。旧監査シートと公開監査シートで参照URLが異なるため、根拠ページの整合性と独立監査記録を確認するまでHOLD。",
         "final_decision": "HOLD",
         "checked_at": ""
       },
@@ -131,7 +131,7 @@
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
         "risk": "UNASSESSED",
-        "exception_reason": "Source and independent three-stage review not yet complete",
+        "exception_reason": "鎌倉幕府の成立年代は段階的で解説が長い。1185年／1192年と源頼朝の説明について独立した教育監修と出典適合性確認が必要。HOLD。",
         "final_decision": "HOLD",
         "checked_at": ""
       },
@@ -147,62 +147,16 @@
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
         "risk": "UNASSESSED",
-        "exception_reason": "Source and independent three-stage review not yet complete",
+        "exception_reason": "元寇の襲来勢力を『元』とする四択の妥当性は既存監査で確認済みだが、元・高麗の連合軍という補足の要否と独立品質監修記録が未確定。HOLD。",
         "final_decision": "HOLD",
         "checked_at": ""
       }
     ]
   },
   "approval": {
+    "mode": "ai_three_stage",
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-16T04:22:52.749Z",
-    "approvals": [
-      {
-        "id": "SC-SOC-HIS-000001",
-        "status": "PUBLIC",
-        "publish_flag": true,
-        "reviewed_by": "ユーザー（チャットで最終承認）",
-        "approved_at": "2026-10-16",
-        "version": "v0.1",
-        "sha256": "5689e4bd6897df63cb100d5547d43040e0b33ea335c4b8f9e62bf94dce2f3765"
-      },
-      {
-        "id": "SC-SOC-HIS-000002",
-        "status": "PUBLIC",
-        "publish_flag": true,
-        "reviewed_by": "ユーザー（チャットで最終承認）",
-        "approved_at": "2026-10-16",
-        "version": "v0.1",
-        "sha256": "5185add138647e8cfc3f744039ee5f52d28767ac879de9f041de4d6c7bef1c79"
-      },
-      {
-        "id": "SC-SOC-HIS-000003",
-        "status": "PUBLIC",
-        "publish_flag": true,
-        "reviewed_by": "ユーザー（チャットで最終承認）",
-        "approved_at": "2026-10-16",
-        "version": "v0.1",
-        "sha256": "112e62b82a4d79ec76a2626e82d07d5220b6dbfc11311cabe95120d1dfb0a7b4"
-      },
-      {
-        "id": "SC-SOC-HIS-000004",
-        "status": "PUBLIC",
-        "publish_flag": true,
-        "reviewed_by": "ユーザー（チャットで最終承認）",
-        "approved_at": "2026-10-16",
-        "version": "v0.1",
-        "sha256": "263d88916beee47fa62b536e9431af75511d256e257b0e52643781cb128d7fa4"
-      },
-      {
-        "id": "SC-SOC-HIS-000005",
-        "status": "PUBLIC",
-        "publish_flag": true,
-        "reviewed_by": "ユーザー（チャットで最終承認）",
-        "approved_at": "2026-10-16",
-        "version": "v0.1",
-        "sha256": "9efbbeda09e50f9cebf640744cdce9ffbda6e2eb4878a55159650efdb72768fa"
-      }
-    ]
+    "exported_at": "2026-10-16T04:48:04.092Z"
   }
 }
