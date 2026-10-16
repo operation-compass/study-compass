@@ -259,3 +259,27 @@ function studyStageApproved() {
     return {staged:batch.items.length,unchanged:false,pending:batch.pending,production_updated:false};
   } finally {lock.releaseLock();}
 }
+
+/**
+ * One-time setup: schedules STAGING ONLY every two hours.
+ * Idempotent: repeated setup leaves exactly one studyStageApproved trigger.
+ * Never configures or authorizes production publishing.
+ */
+function studyInstallTwoHourTrigger() {
+  const handler='studyStageApproved';
+  const triggers=ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()===handler);
+  if(triggers.length===1) {
+    Logger.log('Existing staging trigger found; no duplicate created.');
+    return {installed:false,existing:1,production_updated:false};
+  }
+  // Remove only duplicate triggers for our own staging handler.
+  for(const trigger of triggers)ScriptApp.deleteTrigger(trigger);
+  ScriptApp.newTrigger(handler).timeBased().everyHours(2).create();
+  Logger.log('Study COMPASS staging trigger installed: every 2 hours; never deploys production.');
+  return {installed:true,existing:1,production_updated:false};
+}
+function studyTriggerStatus() {
+  const list=ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()==='studyStageApproved');
+  const result={handler:'studyStageApproved',count:list.length,production_updated:false};
+  Logger.log(JSON.stringify(result));return result;
+}
