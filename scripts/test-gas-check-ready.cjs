@@ -78,3 +78,11 @@ const blockedLedgers=ledgers.map(x=>x.id==='NEXT_4'?{...x,final_decision:'HOLD'}
 const blocked=context.studyUnpublishedBatch_(next,blockedLedgers,'test');
 assert(!Array.from(blocked.items,q=>q.id).includes('NEXT_4'),'HOLD must not consume staging slot');
 console.log('Successive batches skip published content, preserve pending questions, and exclude HOLD records.');
+
+const evidenceRecords=context.studyAuditRecords_({getSheetByName:name=>sheets[name]},[],true).records;
+assert(evidenceRecords.every(x=>Array.isArray(x.independent_reviews)&&x.independent_reviews.length===0),'Missing reviewer evidence stays empty');
+const badAuditRows=[{...audit(q1,true),independent_reviews_json:'{broken'}];
+sheets['Web自動公開｜3段階監査ログ']=sheet(badAuditRows);
+assert.throws(()=>context.studyAuditRecords_({getSheetByName:name=>sheets[name]},[],true),/Invalid independent review evidence JSON/);
+sheets['Web自動公開｜3段階監査ログ']=oldAudit;
+console.log('GAS never fabricates independent reviewer evidence and rejects malformed reviewer JSON.');
