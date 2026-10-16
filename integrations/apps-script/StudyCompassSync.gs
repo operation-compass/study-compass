@@ -85,10 +85,14 @@ function studyStageApproved() {
     if(!c.items.length){Logger.log('0 approvals; staging unchanged');return {staged:0,skipped:true};}
     const token=PropertiesService.getScriptProperties().getProperty('STUDY_GITHUB_TOKEN');
     if(!token)throw Error('Missing STUDY_GITHUB_TOKEN script property');
-    studyPutGitHub_('data/staging/drive-candidate.json',{items:c.items},token);
-    studyPutGitHub_('data/staging/drive-approval-manifest.json',{
-      source_spreadsheet_id:STUDY.spreadsheetId,export_source:'authenticated-drive-export',
-      exported_at:new Date().toISOString(),approvals:c.manifest
+    // Atomic staging artifact: candidate and approval snapshot cannot diverge between commits.
+    studyPutGitHub_('data/staging/drive-sync-bundle.json',{
+      schema_version:1,
+      candidate:{items:c.items},
+      approval:{
+        source_spreadsheet_id:STUDY.spreadsheetId,export_source:'authenticated-drive-export',
+        exported_at:new Date().toISOString(),approvals:c.manifest
+      }
     },token);
     Logger.log('Staged '+c.items.length+' approved items; production unchanged');
     return {staged:c.items.length,production_updated:false};
