@@ -23,6 +23,8 @@ function prepare(bundle,outDir,now=Date.now()){
  const files=['index.html','legacy-study.html'],produced=[],deltas=[];
  for(const filename of files){
   const raw=fs.readFileSync(path.join(root,filename),'utf8'),e=extract(raw);
+  const existingIds=new Set(e.questions.map(q=>q.id));
+  for(const id of selected.ready)if(!existingIds.has(id))assert(selected.hashVersionById[id]==='v2','New questions require SHA v2 including grade and units: '+id);
   const next=applyToWeb(e.questions,bundle.candidate.items,selected.ready);
   assert(next.length>=e.questions.length,'Deleted existing questions');
   assert.deepEqual(next.slice(0,e.questions.length).map(q=>q.id),e.questions.map(q=>q.id),'Reordered existing questions');
