@@ -35,10 +35,10 @@ function prepare(bundle,outDir,now=Date.now()){
  }
  assert.deepEqual(deltas[0].edited,deltas[1].edited,'HTML edit sets differ');
  assert.deepEqual(deltas[0].added,deltas[1].added,'HTML addition sets differ');
- assert(deltas[0].edited.length+deltas[0].added.length>0,'No actual Web changes');
+ const noChange=deltas[0].edited.length+deltas[0].added.length===0;
  fs.mkdirSync(outDir,{recursive:true});
  for(const f of produced)fs.writeFileSync(path.join(outDir,f.filename),f.content);
- const report={production_updated:false,source:'authenticated-drive-export',ready:selected.ready,held:selected.held,files:deltas};
+ const report={production_updated:false,no_change:noChange,source:'authenticated-drive-export',ready:selected.ready,held:selected.held,files:deltas};
  fs.writeFileSync(path.join(outDir,'release-report.json'),JSON.stringify(report,null,2));
  return report;
 }
