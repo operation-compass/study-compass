@@ -25,6 +25,7 @@ on:
       - 'scripts/prepare-ready-release.cjs'
       - 'scripts/test-prepare-ready-release.cjs'
       - 'scripts/test-real-new-ready-release.cjs'
+      - 'scripts/test-real-history-000006-web-mapping.cjs'
       - 'scripts/inspect-ready-backlog.cjs'
       - 'index.html'
       - 'legacy-study.html'
@@ -80,6 +81,7 @@ jobs:
           node --check scripts/prepare-ready-release.cjs
           node --check scripts/test-prepare-ready-release.cjs
           node --check scripts/test-real-new-ready-release.cjs
+          node --check scripts/test-real-history-000006-web-mapping.cjs
           node --check scripts/inspect-ready-backlog.cjs
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
@@ -103,6 +105,7 @@ jobs:
           node scripts/preview-approved-web-delta.cjs
           node scripts/test-prepare-ready-release.cjs
           node scripts/test-real-new-ready-release.cjs
+          node scripts/test-real-history-000006-web-mapping.cjs
           node scripts/inspect-ready-backlog.cjs
       - name: Validate real GAS staging bundle (never deploy)
         shell: bash
