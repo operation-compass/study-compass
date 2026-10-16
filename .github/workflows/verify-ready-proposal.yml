@@ -29,3 +29,33 @@ jobs:
           assert 'wrangler' not in data and 'cloudflare' not in data.lower()
           print('PASS: manual proposal only, no auto merge or deploy')
           PY
+  integration-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actual production baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+      - name: Checkout actual audited staging
+        uses: actions/checkout@v4
+        with:
+          ref: feature/drive-approval-gate-20261016
+          path: audit-source
+      - name: Generate release proposal locally without push
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
+          cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
+          cd live
+          node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json "$RUNNER_TEMP/study-pr-dry-run"
+          cp "$RUNNER_TEMP/study-pr-dry-run/index.html" index.html
+          cp "$RUNNER_TEMP/study-pr-dry-run/legacy-study.html" legacy-study.html
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
+          git diff --name-only -- index.html legacy-study.html
+          git diff --exit-code -- worker.js home-v2.html study-v2.css
+          node -e 'const r=require(process.env.RUNNER_TEMP+"/study-pr-dry-run/release-report.json"); if(r.files.length!==2||r.files.some(f=>f.edited.length+f.added.length>5))process.exit(1);console.log(JSON.stringify(r.files));'
+          echo "Integration verified with real baseline and staging; no push and no deploy."
