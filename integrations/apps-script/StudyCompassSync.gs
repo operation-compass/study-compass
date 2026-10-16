@@ -41,7 +41,7 @@ function studyCollect_() {
     const legacyPublic=status==='PUBLIC'&&enabled;
     const auditedCheck=status==='CHECK'&&reviewed&&reviewed.final_decision==='READY';
     if(!legacyPublic&&!auditedCheck)continue;
-    const q={id,subject:String(row.subject||''),question_type:String(row.question_type||''),
+    const q={id,subject:String(row.subject||''),grade:String(row.grade||''),unit_major:String(row.unit_major||''),unit_minor:String(row.unit_minor||''),question_type:String(row.question_type||''),
       question_text:String(row.question_text||''),choice_a:String(row.choice_a||''),
       choice_b:String(row.choice_b||''),choice_c:String(row.choice_c||''),
       choice_d:String(row.choice_d||''),correct_answer:String(row.correct_answer||''),
