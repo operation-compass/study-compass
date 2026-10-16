@@ -43,3 +43,17 @@ assert.equal(preview.v2,0);
 assert.equal(preview.ready_v1,2);
 assert.equal(preview.production_updated,false);
 console.log('Read-only migration preflight does not require a new sheet column or rewrite existing audit.');
+
+
+const extraReady=Array.from({length:6},(_,i)=>question('NEW_READY_'+i,'CHECK'));
+const extraAudit=extraReady.map(q=>audit(q,true));
+const oldMaster=sheets['問題MASTER'],oldAudit=sheets['Web自動公開｜3段階監査ログ'];
+sheets['問題MASTER']=sheet([q3,...extraReady,q1,q2,q4]);
+sheets['Web自動公開｜3段階監査ログ']=sheet([...extraAudit,audit(q1,true),audit(q2,false),{...audit(q4,true),content_sha256:'wrong'}]);
+const priority=context.studyCollect_();
+assert.equal(priority.items.length,5,'Staging must be capped at five');
+assert.equal(priority.eligible,8,'Eligible count must not be silently discarded');
+assert.equal(priority.pending_audited,2,'Audited backlog must be observable');
+assert.deepEqual(Array.from(priority.items,q=>q.id),extraReady.slice(0,5).map(q=>q.question_id),'CHECK READY must precede historical PUBLIC');
+sheets['問題MASTER']=oldMaster;sheets['Web自動公開｜3段階監査ログ']=oldAudit;
+console.log('Five-item staging cap and priority over legacy PUBLIC verified; remaining CHECK backlog reported.');
