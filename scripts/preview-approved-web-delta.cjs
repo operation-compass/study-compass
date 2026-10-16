@@ -31,6 +31,7 @@ for(const filename of ['index.html','legacy-study.html']){
   assert(!before.some(x=>x.id===q.id),'Duplicate new question');
   changes.push({id:q.id,changed_fields:['NEW_QUESTION']});
  }
+ assert(changes.length<=5,'More than five changed questions in one batch');
  reports.push({file:filename,existing:before.length,after:after.length,changed:changes.length,changes});
 }
 console.log(JSON.stringify({ready:selected.ready.length,hold:selected.held.length,production_updated:false,files:reports},null,2));
