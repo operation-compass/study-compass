@@ -2,7 +2,8 @@
  * Study COMPASS: read-only master → GitHub staging (never production).
  * Paste into a script bound to the Study COMPASS MASTER spreadsheet.
  * Script properties: STUDY_GITHUB_TOKEN (fine-grained token restricted to this repo).
- * Execute studyPreview() before studyStageApproved(). No trigger until explicitly enabled.\n * AI three-stage verification replaces the per-question human approval requirement.
+ * Execute studyPreview() before studyStageApproved(). No trigger until explicitly enabled.
+ * AI three-stage verification replaces the per-question human approval requirement.
  * Required permissions: Spreadsheet read, external HTTPS request.
  */
 const STUDY = Object.freeze({
@@ -26,19 +27,34 @@ function studySha_(q) {
 function studyCollect_() {
   const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
   const rows=studyRows_(book.getSheetByName(STUDY.source));
-  const audit=studyAuditRecords_(book,[] ,true);\n  const auditMap=new Map(audit.records.map(a=>[a.id,a]));\n  const seen=new Set(), items=[];
+  const audit=studyAuditRecords_(book,[] ,true);
+  const auditMap=new Map(audit.records.map(a=>[a.id,a]));
+  const seen=new Set(), items=[];
   for(const row of rows) {
     const id=String(row.question_id||'').trim();
     if(!id)continue;
     if(seen.has(id))throw Error('Duplicate MASTER ID: '+id);
     seen.add(id);
     const enabled=row.publish_flag===true||String(row.publish_flag).toUpperCase()==='TRUE';
-    const status=String(row.status||'').trim();\n    const reviewed=auditMap.get(id);\n    const legacyPublic=status==='PUBLIC'&&enabled;\n    const auditedCheck=status==='CHECK'&&reviewed&&reviewed.final_decision==='READY';\n    if(!legacyPublic&&!auditedCheck)continue;
+    const status=String(row.status||'').trim();
+    const reviewed=auditMap.get(id);
+    const legacyPublic=status==='PUBLIC'&&enabled;
+    const auditedCheck=status==='CHECK'&&reviewed&&reviewed.final_decision==='READY';
+    if(!legacyPublic&&!auditedCheck)continue;
     const q={id,subject:String(row.subject||''),question_type:String(row.question_type||''),
       question_text:String(row.question_text||''),choice_a:String(row.choice_a||''),
       choice_b:String(row.choice_b||''),choice_c:String(row.choice_c||''),
       choice_d:String(row.choice_d||''),correct_answer:String(row.correct_answer||''),
-      explanation:String(row.explanation||''),version:String(row.version||'') || (auditedCheck?reviewed.version:'')};\n    if(auditedCheck){\n      const sha=studySha_(q);\n      const pass=reviewed.version===q.version&&reviewed.sha256===sha&&\n        reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&\n        reviewed.risk==='LOW'&&!reviewed.exception_reason&&reviewed.checked_at&&\n        reviewed.accuracy_checked_at&&reviewed.quality_checked_at&&reviewed.technical_checked_at&&\n        /^https:\\/\\//.test(reviewed.evidence_url);\n      if(!pass)continue;\n    }
+      explanation:String(row.explanation||''),version:String(row.version||'') || (auditedCheck?reviewed.version:'')};
+    if(auditedCheck){
+      const sha=studySha_(q);
+      const pass=reviewed.version===q.version&&reviewed.sha256===sha&&
+        reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&
+        reviewed.risk==='LOW'&&!reviewed.exception_reason&&reviewed.checked_at&&
+        reviewed.accuracy_checked_at&&reviewed.quality_checked_at&&reviewed.technical_checked_at&&
+        String(reviewed.evidence_url||'').startsWith('https://');
+      if(!pass)continue;
+    }
     if(!q.question_text||!q.correct_answer||!q.explanation)throw Error('Incomplete content: '+id);
     items.push(q);
   }
