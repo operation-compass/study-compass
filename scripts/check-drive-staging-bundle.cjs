@@ -8,9 +8,23 @@ try {
  const bundle=JSON.parse(fs.readFileSync(input,'utf8'));
  assert.equal(bundle.schema_version,1,'Unexpected bundle schema version');
  assert(Array.isArray(bundle.candidate?.items),'Missing candidate data');
- assert(Array.isArray(bundle.approval?.approvals),'Missing approvals');
+ assert(bundle.approval?.mode==='ai_three_stage' || Array.isArray(bundle.approval?.approvals),'Missing audit mode or legacy approvals');
  // No approved records is a valid no-op in GAS, but no empty bundle may be released.
  assert(bundle.candidate.items.length>0,'Empty bundle must never replace production content');
+ if(bundle.approval?.mode==='ai_three_stage'){
+  assert.equal(bundle.approval.source_spreadsheet_id,process.env.STUDY_COMPASS_SOURCE_SHEET_ID || '1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88','Wrong Drive source');
+  assert.equal(bundle.approval.export_source,'authenticated-drive-export','Untrusted source');
+  assert(!Number.isNaN(Date.parse(bundle.approval.exported_at)),'Invalid export time');
+  assert(Array.isArray(bundle.audit?.records),'Missing three-stage audit records');
+  const seen=new Set(),audits=new Set();
+  for(const q of bundle.candidate.items){
+   assert(q.id&&!seen.has(q.id),'Missing or duplicate candidate ID');seen.add(q.id);
+   assert(q.question_text&&q.correct_answer&&q.explanation,'Incomplete candidate');
+  }
+  for(const a of bundle.audit.records){assert(a.id&&!audits.has(a.id),'Missing or duplicate audit ID');audits.add(a.id);}
+  console.log('AI three-stage staging structure valid; only READY records are release eligible; no deploy.');
+  process.exit(0);
+ }
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'study-staging-'));
  try{
   const candidate=path.join(dir,'candidate.json'),approvals=path.join(dir,'approvals.json');
