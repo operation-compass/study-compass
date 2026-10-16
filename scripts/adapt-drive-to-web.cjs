@@ -4,6 +4,8 @@
 const assert=require('node:assert/strict');
 function applyToWeb(existing, candidates, readyIds){
  assert(Array.isArray(existing)&&Array.isArray(candidates)&&Array.isArray(readyIds),'Invalid collections');
+ assert.equal(new Set(readyIds).size,readyIds.length,'Duplicate READY ID');
+ assert(readyIds.length<=5,'Release batch exceeds five-question limit');
  const ready=new Set(readyIds),incoming=new Map(),seen=new Set();
  for(const q of candidates){assert(q.id&&!incoming.has(q.id),'Duplicate candidate ID');incoming.set(q.id,q);}
  const result=existing.map(q=>{
