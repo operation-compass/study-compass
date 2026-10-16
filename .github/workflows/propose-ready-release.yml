@@ -44,7 +44,20 @@ jobs:
           set -euo pipefail
           cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
           cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
+      - name: Check if a releasable READY question exists
+        id: eligibility
+        working-directory: live
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
+            echo 'has_ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'No fully attested READY question; skipping PR generation.'
+            echo 'has_ready=false' >> "$GITHUB_OUTPUT"
+          fi
       - name: Prepare bounded READY change only
+        if: steps.eligibility.outputs.has_ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -60,6 +73,7 @@ jobs:
           # The proposal must touch only the two HTML snapshots.
           git diff --exit-code -- worker.js home-v2.html study-v2.css
       - name: Create limited review branch and draft PR
+        if: steps.eligibility.outputs.has_ready == 'true'
         working-directory: live
         env:
           GH_TOKEN: ${{ github.token }}
