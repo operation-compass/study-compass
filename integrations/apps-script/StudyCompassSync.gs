@@ -26,19 +26,19 @@ function studySha_(q) {
 function studyCollect_() {
   const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
   const rows=studyRows_(book.getSheetByName(STUDY.source));
-  const seen=new Set(), items=[];
+  const audit=studyAuditRecords_(book,[] ,true);\n  const auditMap=new Map(audit.records.map(a=>[a.id,a]));\n  const seen=new Set(), items=[];
   for(const row of rows) {
     const id=String(row.question_id||'').trim();
     if(!id)continue;
     if(seen.has(id))throw Error('Duplicate MASTER ID: '+id);
     seen.add(id);
     const enabled=row.publish_flag===true||String(row.publish_flag).toUpperCase()==='TRUE';
-    if(String(row.status).trim()!=='PUBLIC'||!enabled)continue;
+    const status=String(row.status||'').trim();\n    const reviewed=auditMap.get(id);\n    const legacyPublic=status==='PUBLIC'&&enabled;\n    const auditedCheck=status==='CHECK'&&reviewed&&reviewed.final_decision==='READY';\n    if(!legacyPublic&&!auditedCheck)continue;
     const q={id,subject:String(row.subject||''),question_type:String(row.question_type||''),
       question_text:String(row.question_text||''),choice_a:String(row.choice_a||''),
       choice_b:String(row.choice_b||''),choice_c:String(row.choice_c||''),
       choice_d:String(row.choice_d||''),correct_answer:String(row.correct_answer||''),
-      explanation:String(row.explanation||''),version:String(row.version||'')};
+      explanation:String(row.explanation||''),version:String(row.version||'') || (auditedCheck?reviewed.version:'')};\n    if(auditedCheck){\n      const sha=studySha_(q);\n      const pass=reviewed.version===q.version&&reviewed.sha256===sha&&\n        reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&\n        reviewed.risk==='LOW'&&!reviewed.exception_reason&&reviewed.checked_at&&\n        reviewed.accuracy_checked_at&&reviewed.quality_checked_at&&reviewed.technical_checked_at&&\n        /^https:\\/\\//.test(reviewed.evidence_url);\n      if(!pass)continue;\n    }
     if(!q.question_text||!q.correct_answer||!q.explanation)throw Error('Incomplete content: '+id);
     items.push(q);
   }
@@ -46,14 +46,14 @@ function studyCollect_() {
 }
 
 // Read three-stage audit rows without altering the Drive source. Missing evidence stays HOLD.
-function studyAuditRecords_(book,approvedItems) {
+function studyAuditRecords_(book,approvedItems,includeAll) {
   const sheet=book.getSheetByName(STUDY.audit);
   if(!sheet)throw Error('Missing three-stage audit sheet');
   const allowed=new Set(approvedItems.map(q=>q.id));
   const records=[], seen=new Set();
   for(const row of studyRows_(sheet)) {
     const id=String(row.question_id||'').trim();
-    if(!id||!allowed.has(id))continue;
+    if(!id||(!includeAll&&!allowed.has(id)))continue;
     if(seen.has(id))throw Error('Duplicate audit ID: '+id);
     seen.add(id);
     const date=v=>v instanceof Date?Utilities.formatDate(v,'Asia/Tokyo',"yyyy-MM-dd'T'HH:mm:ssXXX"):String(v||'').trim();
