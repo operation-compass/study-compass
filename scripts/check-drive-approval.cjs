@@ -15,7 +15,10 @@ try {
   const candidate=load(process.argv[2]), approval=load(process.argv[3]);
   assert(Array.isArray(candidate.items), 'candidate.items must be an array');
   assert(Array.isArray(approval.approvals), 'approvals.approvals must be an array');
-  assert(typeof approval.source_spreadsheet_id === 'string' && approval.source_spreadsheet_id.length > 10,'Missing Drive source spreadsheet id');
+  assert.equal(approval.source_spreadsheet_id, process.env.STUDY_COMPASS_SOURCE_SHEET_ID || '1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88', 'Unexpected Drive source');
+  assert(typeof approval.exported_at === 'string' && !Number.isNaN(Date.parse(approval.exported_at)), 'Missing valid export time');
+  assert(Date.now()-Date.parse(approval.exported_at) < 3*60*60*1000 && Date.parse(approval.exported_at)<=Date.now()+60000, 'Approval snapshot expired or future-dated');
+  assert(approval.export_source === 'authenticated-drive-export', 'Untrusted export source');
   const allow = new Map();
   for (const a of approval.approvals) {
     assert(typeof a.id === 'string' && a.id, 'Blank approval id');
@@ -29,9 +32,11 @@ try {
     const a=allow.get(q.id);
     assert(a, 'Missing Drive approval: '+q.id);
     assert(a.status === 'PUBLIC' && (a.publish_flag === true || a.publish_flag === 'TRUE'), 'Not public-approved: '+q.id);
-    assert(typeof a.reviewed_by === 'string' && a.reviewed_by.trim(), 'Missing human reviewer: '+q.id);
+    assert(typeof a.reviewed_by === 'string' && a.reviewed_by.trim() && a.reviewed_by !== 'AI', 'Missing human reviewer: '+q.id);
     assert(typeof a.approved_at === 'string' && /^\d{4}-\d{2}-\d{2}/.test(a.approved_at), 'Missing approval date: '+q.id);
     assert(a.sha256 === hash(q), 'Approval content hash mismatch: '+q.id);
+    assert(typeof a.version === 'string' && a.version.trim(), 'Missing approved version: '+q.id);
+    assert(a.version === q.version, 'Approved version mismatch: '+q.id);
     assert(typeof q.question_text === 'string' && q.question_text.trim(), 'Blank question: '+q.id);
     assert(typeof q.correct_answer === 'string' && q.correct_answer.trim(), 'Blank answer: '+q.id);
     assert(typeof q.explanation === 'string' && q.explanation.trim(), 'Blank explanation: '+q.id);
