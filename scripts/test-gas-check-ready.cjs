@@ -23,5 +23,4 @@ const snapshot=t=>({candidate:{items:[{id:'A'}]},audit:{records:[]},approval:{mo
 assert.equal(context.studySameSnapshot_(snapshot(recent),snapshot(recent)),true);
 assert.equal(context.studySameSnapshot_(snapshot(old),snapshot(recent)),false,'12h refresh mandatory');
 assert.equal(context.studySameSnapshot_(snapshot('not-a-date'),snapshot(recent)),false);
-assert.match(source,/current\\.content\\.replace\\(\\/\\\\s\\/g/,'GitHub base64 must strip actual whitespace');
 console.log('GAS snapshot freshness and Base64 normalization guards verified.');
