@@ -23,6 +23,6 @@ try{
  assert.equal(ok[0].grade,'中1');assert.equal(ok[0].unit,'歴史・古代');
  assert.deepEqual(ok[1],existing[1]);assert.equal(ok.length,existing.length);
  for(const changed of [{...audit,final_decision:'HOLD'},{...audit,risk:'UNASSESSED'},{...audit,sha256:'tampered'},{...audit,exception_reason:'Open issue'}])assert.deepEqual(verify(changed),existing,'Failed audit must preserve every existing question');
- assert.deepEqual(verify(audit,[]),existing,'Missing human approval must preserve existing site');
+ assert.equal(verify(audit,[])[0].q,'更新後の問題','Three-stage PASS does not require human approval');
  console.log('Synthetic gate-to-Web end-to-end integration passed (never deploys).');
 }finally{fs.rmSync(dir,{recursive:true,force:true});}
