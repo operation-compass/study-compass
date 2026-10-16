@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict'),{applyToWeb}=require('./adapt-drive-to-web.cjs');
+const old=[{id:'A',subject:'社会',grade:'中2',unit:'歴史・中世',q:'Original',answer:'A',options:['A','B','C','D'],ex:'Old'}, {id:'B',subject:'数学',q:'Keep',answer:'2'}];
+const candidate={id:'A',subject:'社会',question_type:'4択',question_text:'Updated',choice_a:'C',choice_b:'A',choice_c:'D',choice_d:'B',correct_answer:'A',explanation:'Explained'};
+assert.deepEqual(applyToWeb(old,[candidate],[]),old);
+const out=applyToWeb(old,[candidate],['A']);
+assert.equal(out[0].grade,'中2');assert.equal(out[0].unit,'歴史・中世');assert.equal(out[0].q,'Updated');
+assert.equal(out[1].q,'Keep');assert.equal(out.length,old.length);
+assert.throws(()=>applyToWeb(old,[{...candidate,correct_answer:'Missing'}],['A']),/Answer/);
+assert.throws(()=>applyToWeb(old,[candidate],['Unknown']),/Missing ready candidate|not found/);
+assert.throws(()=>applyToWeb(old,[{...candidate,subject:'国語'}],['A']),/Subject/);
+console.log('Drive-to-Web adapter preservation tests passed; no production changes.');
