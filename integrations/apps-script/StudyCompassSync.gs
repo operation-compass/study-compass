@@ -181,19 +181,71 @@ function studyPutGitHub_(file,data,token) {
   if(result.getResponseCode()!==200&&result.getResponseCode()!==201)throw Error('GitHub stage error HTTP '+result.getResponseCode());
   return {unchanged:false};
 }
+// Read both production snapshots BEFORE selecting a staging batch.
+// Never use a rotating cursor: failed or unmerged questions must be retried.
+function studyProductionSocial_(file,token) {
+  const url='https://api.github.com/repos/'+STUDY.repo+'/contents/'+file+'?ref=main';
+  const response=UrlFetchApp.fetch(url,{headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json'},muteHttpExceptions:true});
+  if(response.getResponseCode()!==200)throw Error('Cannot verify production '+file+': HTTP '+response.getResponseCode());
+  const data=JSON.parse(response.getContentText());
+  if(!data.content||data.encoding!=='base64')throw Error('Production content unavailable: '+file);
+  const html=Utilities.newBlob(Utilities.base64Decode(data.content.replace(/\s/g,''))).getDataAsString();
+  const tag='const SOCIAL = ',begin=html.indexOf(tag);
+  if(begin<0)throw Error('Production SOCIAL array missing: '+file);
+  const start=begin+tag.length,end=html.indexOf(';',start);
+  if(end<=start)throw Error('Production SOCIAL terminator missing: '+file);
+  const questions=JSON.parse(html.slice(start,end));
+  if(!Array.isArray(questions))throw Error('Invalid production array: '+file);
+  const map=new Map();
+  for(const q of questions){if(!q.id||map.has(q.id))throw Error('Duplicate production ID: '+file);map.set(q.id,q);}
+  return map;
+}
+function studyNeedsPublication_(q,current,review) {
+  if(!current)return review&&review.hash_version==='v2';
+  if(q.subject!==current.subject||q.question_type!=='4択')return false;
+  const options=[q.choice_a,q.choice_b,q.choice_c,q.choice_d].map(x=>String(x||'').trim());
+  if(options.some(x=>!x)||new Set(options).size!==4||!options.includes(q.correct_answer))return false;
+  return q.question_text!==current.q||q.correct_answer!==current.answer||
+    JSON.stringify(options)!==JSON.stringify(current.options)||q.explanation!==current.ex;
+}
+function studyUnpublishedBatch_(items,auditRecords,token) {
+  const a=studyProductionSocial_('index.html',token),b=studyProductionSocial_('legacy-study.html',token);
+  if(a.size!==b.size)throw Error('Production snapshots have different question counts');
+  for(const [id,question] of a) {
+    const other=b.get(id);
+    if(!other||JSON.stringify(question)!==JSON.stringify(other))throw Error('Production snapshots disagree: '+id);
+  }
+  const audits=new Map(auditRecords.map(x=>[x.id,x]));
+  const unpublished=[];
+  for(const q of items) {
+    const current=a.get(q.id),review=audits.get(q.id);
+    if(!current&&(!review||review.hash_version!=='v2'))continue;
+    if(studyNeedsPublication_(q,current,review))unpublished.push(q);
+  }
+  return {items:unpublished.slice(0,5),pending:Math.max(0,unpublished.length-5),total_unpublished:unpublished.length};
+}
+
 function studyStageApproved() {
   const lock=LockService.getScriptLock();
   if(!lock.tryLock(30000))throw Error('Another Study COMPASS stage process is running');
   try {
     const c=studyCollect_();
-    if(!c.items.length){Logger.log('0 candidates; staging unchanged');return {staged:0,skipped:true};}
-    const audit=studyAuditRecords_(SpreadsheetApp.openById(STUDY.spreadsheetId),c.items);
     const token=PropertiesService.getScriptProperties().getProperty('STUDY_GITHUB_TOKEN');
     if(!token)throw Error('Missing STUDY_GITHUB_TOKEN script property');
+    const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
+    const audit=studyAuditRecords_(book,c.items);
+    // This preflight fails closed if either production snapshot is unavailable.
+    const batch=studyUnpublishedBatch_(c.items,audit.records,token);
+    if(!batch.items.length){
+      Logger.log('No unpublished candidates in current staging selection; production unchanged');
+      return {staged:0,skipped:true,pending_audited:c.pending_audited,production_updated:false};
+    }
+    const selectedIds=new Set(batch.items.map(q=>q.id));
+    audit.records=audit.records.filter(x=>selectedIds.has(x.id));
     // Atomic staging artifact: candidate and approval snapshot cannot diverge between commits.
     const put=studyPutGitHub_('data/staging/drive-sync-bundle.json',{
       schema_version:1,
-      candidate:{items:c.items},
+      candidate:{items:batch.items},
       audit,
       approval:{
         mode:'ai_three_stage',source_spreadsheet_id:STUDY.spreadsheetId,
@@ -201,7 +253,7 @@ function studyStageApproved() {
       }
     },token);
     if(put.unchanged){Logger.log('No content changes; GitHub staging commit skipped');return {staged:0,unchanged:true,production_updated:false};}
-    Logger.log('Staged '+c.items.length+' candidate items; '+audit.records.length+' audit records; production unchanged');
-    return {staged:c.items.length,unchanged:false,production_updated:false};
+    Logger.log('Staged '+batch.items.length+' unpublished candidates; '+audit.records.length+' audit records; '+batch.pending+' pending in selection; production unchanged');
+    return {staged:batch.items.length,unchanged:false,pending:batch.pending,production_updated:false};
   } finally {lock.releaseLock();}
 }
