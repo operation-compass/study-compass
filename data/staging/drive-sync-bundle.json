@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "items": [
+      {
+        "id": "SC-SOC-HIS-000001",
+        "subject": "社会",
+        "question_type": "4択",
+        "question_text": "推古天皇のもとで政治を助けたとされる人物は？",
+        "choice_a": "聖徳太子",
+        "choice_b": "藤原道長",
+        "choice_c": "源頼朝",
+        "choice_d": "徳川家康",
+        "correct_answer": "聖徳太子",
+        "explanation": "聖徳太子は推古天皇のもとで政治を助けたとされます。",
+        "version": "v0.1"
+      },
+      {
+        "id": "SC-SOC-HIS-000002",
+        "subject": "社会",
+        "question_type": "4択",
+        "question_text": "710年に都が移された場所は？",
+        "choice_a": "藤原京",
+        "choice_b": "平城京",
+        "choice_c": "平安京",
+        "choice_d": "長岡京",
+        "correct_answer": "平城京",
+        "explanation": "710年に平城京へ都が移されました。",
+        "version": "v0.1"
+      },
+      {
+        "id": "SC-SOC-HIS-000003",
+        "subject": "社会",
+        "question_type": "4択",
+        "question_text": "平安京へ都が移された年は？",
+        "choice_a": "645年",
+        "choice_b": "710年",
+        "choice_c": "794年",
+        "choice_d": "1185年",
+        "correct_answer": "794年",
+        "explanation": "794年、桓武天皇が都を平安京へ移しました。",
+        "version": "v0.1"
+      },
+      {
+        "id": "SC-SOC-HIS-000004",
+        "subject": "社会",
+        "question_type": "4択",
+        "question_text": "鎌倉幕府を開いた人物は？",
+        "choice_a": "源義経",
+        "choice_b": "足利尊氏",
+        "choice_c": "徳川家康",
+        "choice_d": "源頼朝",
+        "correct_answer": "源頼朝",
+        "explanation": "源頼朝は鎌倉を拠点に武家政権を築きました。1185年には守護・地頭の設置を認められ、1192年には征夷大将軍に任じられました。幕府の成立は段階的に進んだため、それぞれの年代と出来事を区別しましょう。",
+        "version": "v0.1"
+      },
+      {
+        "id": "SC-SOC-HIS-000005",
+        "subject": "社会",
+        "question_type": "4択",
+        "question_text": "13世紀後半に日本へ襲来した勢力は？",
+        "choice_a": "元",
+        "choice_b": "唐",
+        "choice_c": "明",
+        "choice_d": "清",
+        "correct_answer": "元",
+        "explanation": "13世紀後半、元が日本へ襲来しました。",
+        "version": "v0.1"
+      }
+    ]
+  },
+  "approval": {
+    "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
+    "export_source": "authenticated-drive-export",
+    "exported_at": "2026-10-16T03:39:06.489Z",
+    "approvals": [
+      {
+        "id": "SC-SOC-HIS-000001",
+        "status": "PUBLIC",
+        "publish_flag": true,
+        "reviewed_by": "ユーザー（チャットで最終承認）",
+        "approved_at": "2026-10-16",
+        "version": "v0.1",
+        "sha256": "5689e4bd6897df63cb100d5547d43040e0b33ea335c4b8f9e62bf94dce2f3765"
+      },
+      {
+        "id": "SC-SOC-HIS-000002",
+        "status": "PUBLIC",
+        "publish_flag": true,
+        "reviewed_by": "ユーザー（チャットで最終承認）",
+        "approved_at": "2026-10-16",
+        "version": "v0.1",
+        "sha256": "5185add138647e8cfc3f744039ee5f52d28767ac879de9f041de4d6c7bef1c79"
+      },
+      {
+        "id": "SC-SOC-HIS-000003",
+        "status": "PUBLIC",
+        "publish_flag": true,
+        "reviewed_by": "ユーザー（チャットで最終承認）",
+        "approved_at": "2026-10-16",
+        "version": "v0.1",
+        "sha256": "112e62b82a4d79ec76a2626e82d07d5220b6dbfc11311cabe95120d1dfb0a7b4"
+      },
+      {
+        "id": "SC-SOC-HIS-000004",
+        "status": "PUBLIC",
+        "publish_flag": true,
+        "reviewed_by": "ユーザー（チャットで最終承認）",
+        "approved_at": "2026-10-16",
+        "version": "v0.1",
+        "sha256": "263d88916beee47fa62b536e9431af75511d256e257b0e52643781cb128d7fa4"
+      },
+      {
+        "id": "SC-SOC-HIS-000005",
+        "status": "PUBLIC",
+        "publish_flag": true,
+        "reviewed_by": "ユーザー（チャットで最終承認）",
+        "approved_at": "2026-10-16",
+        "version": "v0.1",
+        "sha256": "9efbbeda09e50f9cebf640744cdce9ffbda6e2eb4878a55159650efdb72768fa"
+      }
+    ]
+  }
+}
