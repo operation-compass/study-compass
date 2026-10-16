@@ -1,0 +1,21 @@
+{
+  "published_date_jst": "2026-10-17",
+  "pr": 13,
+  "merge_sha": "010e357f7a658090366648503d86fa3d3c395ea2",
+  "release_head": "61838cf040de027202a395774e60af9a13cb3523",
+  "html_blob_both": "d264e63ca7d7c08ede672b7c6af376f36e812133",
+  "deployment_run": 38980178125,
+  "result": "success",
+  "production_url": "https://study-compass.occompass-info.workers.dev/study.html?mode=qa",
+  "browser_verified": {
+    "total": 2595,
+    "social": 625
+  },
+  "new_ids": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "existing_content_preserved": true,
+  "templates_and_schedules_modified": false,
+  "unattended_auto_merge": false
+}
