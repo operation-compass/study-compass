@@ -57,7 +57,8 @@ async function main(){
     const decision=decisions.get(id);
     if(!decision || decision.status!=='APPROVED')continue;
     const reviewer=decision.reviewed_by,verified=decision.approved_at;
-    if(!reviewer||reviewer==='AI'||!verified||!get('version')){errors.push('Missing final approval metadata: '+id);continue;}
+    const approvalTime=Date.parse(verified);
+    if(!reviewer||reviewer==='AI'||!verified||!Number.isFinite(approvalTime)||approvalTime>Date.now()+60000||!get('version')){errors.push('Missing or invalid final approval metadata: '+id);continue;}
     const q={id,subject:String(get('subject')),question_type:String(get('question_type')),question_text:String(get('question_text')),choice_a:String(get('choice_a')),choice_b:String(get('choice_b')),choice_c:String(get('choice_c')),choice_d:String(get('choice_d')),correct_answer:String(get('correct_answer')),explanation:String(get('explanation')),version:String(get('version'))};
     const digest=fingerprint(q);
     if(decision.version!==q.version || decision.sha256!==digest){errors.push('Approved version/content mismatch: '+id);continue;}
