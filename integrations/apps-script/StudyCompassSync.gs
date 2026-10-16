@@ -27,6 +27,15 @@ function studySha_(q,hashVersion) {
   return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,payload,Utilities.Charset.UTF_8)
     .map(x=>('0'+(x<0?x+256:x).toString(16)).slice(-2)).join('');
 }
+function studyValidAuditDate_(value) {
+  const str=String(value||'').trim();
+  if(!/^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(str))return false;
+  const ms=Date.parse(str);
+  return Number.isFinite(ms)&&ms<=Date.now()+60000;
+}
+function studyValidV2Metadata_(q) {
+  return /^中[123]$/.test(q.grade)&&!!q.unit_major.trim()&&!!q.unit_minor.trim();
+}
 function studyCollect_() {
   const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
   const rows=studyRows_(book.getSheetByName(STUDY.source));
@@ -50,11 +59,15 @@ function studyCollect_() {
       choice_d:String(row.choice_d||''),correct_answer:String(row.correct_answer||''),
       explanation:String(row.explanation||''),version:String(row.version||'') || (auditedCheck?reviewed.version:'')};
     if(auditedCheck){
-      const sha=studySha_(q,reviewed.hash_version);
+      const hashVersion=reviewed.hash_version||'v1';
+      if(hashVersion!=='v1'&&hashVersion!=='v2')continue;
+      if(hashVersion==='v2'&&!studyValidV2Metadata_(q))continue;
+      const sha=studySha_(q,hashVersion);
       const pass=reviewed.version===q.version&&reviewed.sha256===sha&&
         reviewed.accuracy==='PASS'&&reviewed.quality==='PASS'&&reviewed.technical==='PASS'&&
-        reviewed.risk==='LOW'&&!reviewed.exception_reason&&reviewed.checked_at&&
-        reviewed.accuracy_checked_at&&reviewed.quality_checked_at&&reviewed.technical_checked_at&&
+        reviewed.risk==='LOW'&&!reviewed.exception_reason&&
+        studyValidAuditDate_(reviewed.checked_at)&&studyValidAuditDate_(reviewed.accuracy_checked_at)&&
+        studyValidAuditDate_(reviewed.quality_checked_at)&&studyValidAuditDate_(reviewed.technical_checked_at)&&
         String(reviewed.evidence_url||'').startsWith('https://');
       if(!pass)continue;
     }
