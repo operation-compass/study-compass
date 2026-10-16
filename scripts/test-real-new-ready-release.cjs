@@ -7,6 +7,7 @@ const fields=['id','subject','grade','unit_major','unit_minor','question_type','
 const q={id:'SYN-SOC-HIS-ADDITION-TEST-20261016',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'古代',question_type:'4択',question_text:'710年に遷都した都はどこか。',choice_a:'平城京',choice_b:'平安京',choice_c:'藤原京',choice_d:'長岡京',correct_answer:'平城京',explanation:'710年に平城京へ遷都した。',version:'test-1'};
 const sha=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
 const audit={id:q.id,version:q.version,hash_version:'v2',sha256:sha,accuracy:'PASS',quality:'PASS',technical:'PASS',accuracy_checked_at:'2026-10-16',quality_checked_at:'2026-10-16',technical_checked_at:'2026-10-16',checked_at:'2026-10-16',evidence_url:'https://example.org/test-only',risk:'LOW',exception_reason:'',final_decision:'READY'};
+audit.independent_reviews=['accuracy','quality','technical'].map((role,i)=>({role,result:'PASS',reviewer_id:'synthetic-reviewer-'+i,evidence_sha256:'a'.repeat(64),question_sha256:sha,checked_at:'2026-10-16'}));
 const bundle={schema_version:1,candidate:{items:[q]},audit:{records:[audit]},approval:{mode:'ai_three_stage',export_source:'authenticated-drive-export',source_spreadsheet_id:'1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88',exported_at:new Date().toISOString()}};
 function social(html){const a='const SOCIAL = ',start=html.indexOf(a)+a.length;assert(start>=a.length);return JSON.parse(html.slice(start,html.indexOf(';',start)));}
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'study-new-ready-'));
