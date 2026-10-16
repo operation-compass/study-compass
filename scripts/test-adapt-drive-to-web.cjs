@@ -10,3 +10,13 @@ assert.throws(()=>applyToWeb(old,[{...candidate,correct_answer:'Missing'}],['A']
 assert.throws(()=>applyToWeb(old,[candidate],['Unknown']),/Missing ready candidate|not found/);
 assert.throws(()=>applyToWeb(old,[{...candidate,subject:'国語'}],['A']),/Subject/);
 console.log('Drive-to-Web adapter preservation tests passed; no production changes.');
+
+const newCandidate={...candidate,id:'NEW-001',grade:'中2',unit_major:'歴史',unit_minor:'近世'};
+const expanded=applyToWeb(old,[newCandidate],['NEW-001']);
+assert.equal(expanded.length,old.length+1);
+assert.equal(expanded[2].unit,'歴史・近世');
+assert.deepEqual(expanded.slice(0,old.length),old);
+assert.throws(()=>applyToWeb(old,[{...newCandidate,grade:''}],['NEW-001']),/grade required/);
+assert.throws(()=>applyToWeb(old,[{...newCandidate,unit_minor:''}],['NEW-001']),/unit metadata/);
+assert.deepEqual(applyToWeb(old,[newCandidate],[]),old);
+console.log('New READY question safe append and HOLD exclusion passed.');
