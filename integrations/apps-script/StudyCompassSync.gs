@@ -99,7 +99,10 @@ function studyPreview() {
 }
 function studySameSnapshot_(left,right) {
   if(!left||!right)return false;
-  // Export timestamps are deliberately excluded: no data changes = no new commit.
+  // Refresh unchanged evidence at least every 12h; release snapshots expire after 24h.
+  const last=Date.parse(left.approval&&left.approval.exported_at);
+  if(!Number.isFinite(last)||Date.now()-last>=12*60*60*1000||last>Date.now()+60000)return false;
+  // Skip only when the last export is still fresh and question/audit contents match.
   return JSON.stringify(left.candidate)===JSON.stringify(right.candidate)&&
     JSON.stringify(left.audit)===JSON.stringify(right.audit)&&
     left.approval&&right.approval&&
@@ -115,7 +118,7 @@ function studyPutGitHub_(file,data,token) {
   const sha=current?current.sha:undefined;
   if(current){
     try{
-      const old=JSON.parse(Utilities.newBlob(Utilities.base64Decode(current.content.replace(/\\s/g,''))).getDataAsString());
+      const old=JSON.parse(Utilities.newBlob(Utilities.base64Decode(current.content.replace(/\s/g,''))).getDataAsString());
       if(studySameSnapshot_(old,data))return {unchanged:true};
     }catch(e){throw Error('Cannot verify previous staging snapshot: '+e.message);}
   }
