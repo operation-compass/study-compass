@@ -24,3 +24,13 @@ assert.equal(context.studySameSnapshot_(snapshot(recent),snapshot(recent)),true)
 assert.equal(context.studySameSnapshot_(snapshot(old),snapshot(recent)),false,'12h refresh mandatory');
 assert.equal(context.studySameSnapshot_(snapshot('not-a-date'),snapshot(recent)),false);
 console.log('GAS snapshot freshness and Base64 normalization guards verified.');
+
+// V2 covers learning metadata; v1 remains backward compatible.
+const v2q={id:'V2',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'古代',question_type:'4択',question_text:'Question',choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',correct_answer:'A',explanation:'Explain'};
+const hashV1=context.studySha_(v2q,'v1'),hashV2=context.studySha_(v2q,'v2');
+assert.notEqual(hashV1,hashV2);
+assert.equal(context.studySha_(v2q),hashV1);
+assert.notEqual(context.studySha_({...v2q,grade:'中2'},'v2'),hashV2);
+assert.notEqual(context.studySha_({...v2q,unit_minor:'中世'},'v2'),hashV2);
+assert.throws(()=>context.studySha_(v2q,'v3'),/Unsupported SHA version/);
+console.log('GAS v2 SHA covers grade and units; v1 historical hashes preserved.');
