@@ -5,6 +5,9 @@
       {
         "id": "SC-SOC-HIS-000001",
         "subject": "社会",
+        "grade": "中1",
+        "unit_major": "歴史",
+        "unit_minor": "古代",
         "question_type": "4択",
         "question_text": "推古天皇のもとで政治を助けたとされる人物は？",
         "choice_a": "聖徳太子",
@@ -18,6 +21,9 @@
       {
         "id": "SC-SOC-HIS-000002",
         "subject": "社会",
+        "grade": "中1",
+        "unit_major": "歴史",
+        "unit_minor": "古代",
         "question_type": "4択",
         "question_text": "710年に都が移された場所は？",
         "choice_a": "藤原京",
@@ -31,6 +37,9 @@
       {
         "id": "SC-SOC-HIS-000003",
         "subject": "社会",
+        "grade": "中1",
+        "unit_major": "歴史",
+        "unit_minor": "古代",
         "question_type": "4択",
         "question_text": "平安京へ都が移された年は？",
         "choice_a": "645年",
@@ -44,6 +53,9 @@
       {
         "id": "SC-SOC-HIS-000004",
         "subject": "社会",
+        "grade": "中2",
+        "unit_major": "歴史",
+        "unit_minor": "中世",
         "question_type": "4択",
         "question_text": "鎌倉幕府を開いた人物は？",
         "choice_a": "源義経",
@@ -57,6 +69,9 @@
       {
         "id": "SC-SOC-HIS-000005",
         "subject": "社会",
+        "grade": "中2",
+        "unit_major": "歴史",
+        "unit_minor": "中世",
         "question_type": "4択",
         "question_text": "13世紀後半に日本へ襲来した勢力は？",
         "choice_a": "元",
@@ -157,6 +172,6 @@
     "mode": "ai_three_stage",
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-16T08:26:04.196Z"
+    "exported_at": "2026-10-16T08:54:58.317Z"
   }
 }
