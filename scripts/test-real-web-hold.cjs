@@ -6,7 +6,7 @@ const bundle=JSON.parse(fs.readFileSync(path.join(__dirname,'../data/staging/dri
 const ids=bundle.candidate.items.map(x=>x.id);
 const auditById=new Map((bundle.audit?.records||[]).map(a=>[a.id,a]));
 const holdIds=ids.filter(id=>auditById.get(id)?.final_decision!=='READY');
-assert(holdIds.length>0,'Expected at least one HOLD item for preservation regression');
+assert.equal(holdIds.length,ids.length,'Safety fixture unexpectedly contains READY candidates; stop rather than silently skipping them');
 function extract(html){
  const anchor='const SOCIAL = ';
  const start=html.indexOf(anchor);assert(start>=0,'SOCIAL array missing');
@@ -18,7 +18,8 @@ for(const file of ['index.html','legacy-study.html']){
  const data=extract(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
  const byId=new Map(data.map(x=>[x.id,x]));
  for(const id of holdIds)assert(byId.has(id),'HOLD id missing from real website '+id);
- const output=applyToWeb(data,bundle.candidate.items,[]); // Never apply candidates in HOLD preservation test.
+ const eligibleIds=ids.filter(id=>auditById.get(id)?.final_decision==='READY');
+ const output=applyToWeb(data,bundle.candidate.items,eligibleIds); // Derived from actual fixture, not hard-coded [].
  assert.deepEqual(output,data,'HOLD must not change any web question');
  assert.equal(output.length,data.length,'Existing questions must remain');
  console.log(file+': '+data.length+' social questions unchanged; '+holdIds.length+' HOLD candidates preserved');
