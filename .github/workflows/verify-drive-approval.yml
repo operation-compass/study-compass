@@ -7,6 +7,7 @@ on:
       - 'data/staging/drive-sync-bundle.json'
       - 'scripts/check-drive-approval.cjs'
       - 'scripts/check-drive-staging-bundle.cjs'
+      - 'scripts/check-three-stage-audit.cjs'
       - '.github/workflows/verify-drive-approval.yml'
   pull_request:
     paths:
@@ -40,6 +41,7 @@ jobs:
           node --check scripts/test-drive-export.cjs
           node --check scripts/check-drive-connection.cjs
           node --check scripts/check-drive-staging-bundle.cjs
+          node --check scripts/check-three-stage-audit.cjs
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
       - name: Run regression tests (synthetic fixtures only)
@@ -54,6 +56,13 @@ jobs:
           set -euo pipefail
           if [ -f data/staging/drive-sync-bundle.json ]; then
             node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+            printf '{"records":[]}' > /tmp/study-audit-empty.json
+            set +e
+            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json /tmp/study-audit-empty.json
+            outcome=$?
+            set -e
+            test "$outcome" -eq 2 || { echo '::error::Missing audit evidence was not blocked'; exit 1; }
+            echo 'Missing three-stage audit evidence correctly placed on HOLD.'
           else
             echo 'No GAS bundle staged: regression-only check.'
           fi
