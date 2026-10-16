@@ -34,3 +34,12 @@ assert.notEqual(context.studySha_({...v2q,grade:'中2'},'v2'),hashV2);
 assert.notEqual(context.studySha_({...v2q,unit_minor:'中世'},'v2'),hashV2);
 assert.throws(()=>context.studySha_(v2q,'v3'),/Unsupported SHA version/);
 console.log('GAS v2 SHA covers grade and units; v1 historical hashes preserved.');
+
+const preview=context.studyAuditMigrationPreview();
+assert.equal(preview.mode,'read_only');
+assert.equal(preview.has_hash_version_column,false);
+assert.equal(preview.v1,3);
+assert.equal(preview.v2,0);
+assert.equal(preview.ready_v1,2);
+assert.equal(preview.production_updated,false);
+console.log('Read-only migration preflight does not require a new sheet column or rewrite existing audit.');
