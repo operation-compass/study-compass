@@ -53,6 +53,8 @@ jobs:
           node scripts/check-question-release.cjs
           node scripts/check-history.cjs
           node scripts/check-beta.cjs
+          # The proposal must touch only the two HTML snapshots.
+          git diff --exit-code -- worker.js home-v2.html study-v2.css
       - name: Create limited review branch and draft PR
         working-directory: live
         env:
@@ -71,6 +73,8 @@ jobs:
           git switch -c "study-ready-$(date -u +%Y%m%d%H%M%S)-$GITHUB_RUN_ID"
           git commit -m "Propose verified READY questions only"
           git push origin HEAD
+          # GitHub may disable Action-created PRs in repository settings.
+          # A failure here must not be reported as a successful proposal.
           gh pr create --base main --head "$(git branch --show-current)" --draft \
             --title "Study COMPASS: bounded READY Web delta" \
             --body "Automatically prepared from current audited staging; max 5 questions. Review required. NO AUTO-MERGE or production deployment."
