@@ -51,9 +51,9 @@ const oldMaster=sheets['問題MASTER'],oldAudit=sheets['Web自動公開｜3段�
 sheets['問題MASTER']=sheet([q3,...extraReady,q1,q2,q4]);
 sheets['Web自動公開｜3段階監査ログ']=sheet([...extraAudit,audit(q1,true),audit(q2,false),{...audit(q4,true),content_sha256:'wrong'}]);
 const priority=context.studyCollect_();
-assert.equal(priority.items.length,5,'Staging must be capped at five');
+assert.equal(priority.items.length,8,'Collect all eligible items before production comparison');
 assert.equal(priority.eligible,8,'Eligible count must not be silently discarded');
 assert.equal(priority.pending_audited,2,'Audited backlog must be observable');
-assert.deepEqual(Array.from(priority.items,q=>q.id),extraReady.slice(0,5).map(q=>q.question_id),'CHECK READY must precede historical PUBLIC');
+assert.deepEqual(Array.from(priority.items.slice(0,6),q=>q.id),extraReady.map(q=>q.question_id),'CHECK READY must precede historical PUBLIC');
 sheets['問題MASTER']=oldMaster;sheets['Web自動公開｜3段階監査ログ']=oldAudit;
-console.log('Five-item staging cap and priority over legacy PUBLIC verified; remaining CHECK backlog reported.');
+console.log('All eligible items available for production diff; READY priority and backlog reporting verified.');
