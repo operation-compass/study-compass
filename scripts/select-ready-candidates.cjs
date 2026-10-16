@@ -26,7 +26,7 @@ function selectReady(bundle){
   // timestamps may enter the release queue. Historical rows remain safely HOLD.
   const reviews=Array.isArray(r?.independent_reviews)?r.independent_reviews:[];
   const roles=['accuracy','quality','technical'];
-  const validReviews=reviews.length===3&&roles.every(role=>reviews.filter(v=>v?.role===role&&v.result==='PASS'&&typeof v.reviewer_id==='string'&&v.reviewer_id.trim()&&typeof v.evidence_sha256==='string'&&/^[a-f0-9]{64}$/.test(v.evidence_sha256)&&validDate(v.checked_at)&&v.question_sha256===(version2?h2:h)).length===1)&&new Set(reviews.map(v=>v.reviewer_id)).size===3;
+  const validReviews=reviews.length===3&&roles.every(role=>reviews.filter(v=>v?.role===role&&v.result==='PASS'&&typeof v.reviewer_id==='string'&&v.reviewer_id.trim()&&typeof v.evidence_sha256==='string'&&/^[a-f0-9]{64}$/.test(v.evidence_sha256)&&validDate(v.checked_at)&&v.question_sha256===(version2?h2:h)).length===1)&&new Set(reviews.map(v=>v.reviewer_id)).size===3&&reviews.every(v=>!/^synthetic-|^reviewer-\d+$/.test(v.reviewer_id)&&!/^([a-f0-9])\1{63}$/.test(v.evidence_sha256));
   const verified=!!r&&validReviews&&validHashVersion&&validMetadata&&r.version===q.version&&r.sha256===(version2?h2:h)&&r.accuracy==='PASS'&&r.quality==='PASS'&&r.technical==='PASS'&&r.final_decision==='READY'&&r.risk==='LOW'&&!r.exception_reason&&validDate(r.checked_at)&&validDate(r.accuracy_checked_at)&&validDate(r.quality_checked_at)&&validDate(r.technical_checked_at)&&typeof r.evidence_url==='string'&&/^https:\/\//.test(r.evidence_url);
   (verified?ready:held).push(q.id);
  }
