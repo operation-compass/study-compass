@@ -10,7 +10,8 @@ const STUDY = Object.freeze({
   repo:'operation-compass/study-compass',
   branch:'feature/drive-approval-gate-20261016',
   source:'問題MASTER',
-  ledger:'Web公開承認台帳｜人手最終承認'
+  ledger:'Web公開承認台帳｜人手最終承認',
+  audit:'Web自動公開｜3段階監査ログ'
 });
 const STUDY_FIELDS=['id','subject','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation'];
 function studyRows_(sheet) {
@@ -60,6 +61,38 @@ function studyCollect_() {
   }
   return {items,manifest,scanned:seen.size};
 }
+
+// Read three-stage audit rows without altering the Drive source. Missing evidence stays HOLD.
+function studyAuditRecords_(book,approvedItems) {
+  const sheet=book.getSheetByName(STUDY.audit);
+  if(!sheet)throw Error('Missing three-stage audit sheet');
+  const allowed=new Set(approvedItems.map(q=>q.id));
+  const records=[], seen=new Set();
+  for(const row of studyRows_(sheet)) {
+    const id=String(row.question_id||'').trim();
+    if(!id||!allowed.has(id))continue;
+    if(seen.has(id))throw Error('Duplicate audit ID: '+id);
+    seen.add(id);
+    const date=v=>v instanceof Date?Utilities.formatDate(v,'Asia/Tokyo',"yyyy-MM-dd'T'HH:mm:ssXXX"):String(v||'').trim();
+    records.push({
+      id,version:String(row.question_version||'').trim(),
+      sha256:String(row.content_sha256||'').trim(),
+      accuracy:String(row.audit_1_accuracy||'').trim(),
+      accuracy_checked_at:date(row.audit_1_checked_at),
+      evidence_url:String(row.audit_1_evidence_url||'').trim(),
+      quality:String(row.audit_2_quality||'').trim(),
+      quality_checked_at:date(row.audit_2_checked_at),
+      technical:String(row.audit_3_technical||'').trim(),
+      technical_checked_at:date(row.audit_3_checked_at),
+      risk:String(row.risk_class||'').trim(),
+      exception_reason:String(row.exception_reason||'').trim(),
+      final_decision:String(row.final_decision||'').trim(),
+      checked_at:date(row.last_reviewed_at)
+    });
+  }
+  return {records};
+}
+
 function studyPreview() {
   const c=studyCollect_();
   const summary={scanned:c.scanned,approved:c.items.length,mode:'preview_only',production_updated:false};
@@ -83,18 +116,20 @@ function studyStageApproved() {
   try {
     const c=studyCollect_();
     if(!c.items.length){Logger.log('0 approvals; staging unchanged');return {staged:0,skipped:true};}
+    const audit=studyAuditRecords_(SpreadsheetApp.openById(STUDY.spreadsheetId),c.items);
     const token=PropertiesService.getScriptProperties().getProperty('STUDY_GITHUB_TOKEN');
     if(!token)throw Error('Missing STUDY_GITHUB_TOKEN script property');
     // Atomic staging artifact: candidate and approval snapshot cannot diverge between commits.
     studyPutGitHub_('data/staging/drive-sync-bundle.json',{
       schema_version:1,
       candidate:{items:c.items},
+      audit,
       approval:{
         source_spreadsheet_id:STUDY.spreadsheetId,export_source:'authenticated-drive-export',
         exported_at:new Date().toISOString(),approvals:c.manifest
       }
     },token);
-    Logger.log('Staged '+c.items.length+' approved items; production unchanged');
+    Logger.log('Staged '+c.items.length+' approved items; '+audit.records.length+' audit records; production unchanged');
     return {staged:c.items.length,production_updated:false};
   } finally {lock.releaseLock();}
 }
