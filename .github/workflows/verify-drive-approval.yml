@@ -1,8 +1,16 @@
 name: Verify Drive approval gate (no deploy)
 
 on:
+  push:
+    branches: [feature/drive-approval-gate-20261016]
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
+      - 'scripts/check-drive-approval.cjs'
+      - 'scripts/check-drive-staging-bundle.cjs'
+      - '.github/workflows/verify-drive-approval.yml'
   pull_request:
     paths:
+      - 'data/staging/drive-sync-bundle.json'
       - 'scripts/check-drive-approval.cjs'
       - 'scripts/test-drive-approval.cjs'
       - 'scripts/export-drive-approved.cjs'
@@ -40,3 +48,13 @@ jobs:
           node scripts/test-drive-export.cjs
           node scripts/test-drive-master-schema.cjs
           node scripts/test-drive-staging-bundle.cjs
+      - name: Validate real GAS staging bundle (never deploy)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f data/staging/drive-sync-bundle.json ]; then
+            node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+          else
+            echo 'No GAS bundle staged: regression-only check.'
+          fi
+
