@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-16",
+  "release_commit": "61838cf040de027202a395774e60af9a13cb3523",
+  "html_blob_both": "d264e63ca7d7c08ede672b7c6af376f36e812133",
+  "workflow_run": 38903428620,
+  "job": 116981009337,
+  "result": "success",
+  "command": "npx --yes wrangler@4.148.0 versions upload",
+  "version_id": "f664f8fe-ddee-45e7-ad2b-857e84823a32",
+  "preview_url": "https://f664f8fe-study-compass.occompass-info.workers.dev",
+  "browser_verified": {"study_route": "qa", "total_questions": 2595, "social_questions": 625},
+  "artifact_id": 12046853741,
+  "artifact_zip_sha256": "b1d53895cd5ce7ef9cc90ce0c53c415d87ce8cb53d2b4ad7143b69b55164dd12",
+  "main_merged": false,
+  "production_activated": false,
+  "native_cloudflare_build_issue": "Saved preview command differs from command executed by native integration; explicit GitHub workflow successfully uploads pinned reviewed release."
+}
