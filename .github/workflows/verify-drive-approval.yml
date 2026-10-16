@@ -11,6 +11,8 @@ on:
       - 'scripts/test-three-stage-audit.cjs'
       - 'scripts/merge-approved-delta.cjs'
       - 'scripts/test-merge-approved-delta.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/test-adapt-drive-to-web.cjs'
       - '.github/workflows/verify-drive-approval.yml'
   pull_request:
     paths:
@@ -48,6 +50,8 @@ jobs:
           node --check scripts/test-three-stage-audit.cjs
           node --check scripts/merge-approved-delta.cjs
           node --check scripts/test-merge-approved-delta.cjs
+          node --check scripts/adapt-drive-to-web.cjs
+          node --check scripts/test-adapt-drive-to-web.cjs
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
       - name: Run regression tests (synthetic fixtures only)
@@ -58,6 +62,7 @@ jobs:
           node scripts/test-drive-staging-bundle.cjs
           node scripts/test-three-stage-audit.cjs
           node scripts/test-merge-approved-delta.cjs
+          node scripts/test-adapt-drive-to-web.cjs
       - name: Validate real GAS staging bundle (never deploy)
         shell: bash
         run: |
