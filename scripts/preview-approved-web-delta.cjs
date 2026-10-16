@@ -17,7 +17,8 @@ const reports=[];
 for(const filename of ['index.html','legacy-study.html']){
  const before=extract(fs.readFileSync(path.join(root,filename),'utf8'));
  const after=applyToWeb(before,bundle.candidate.items,selected.ready);
- assert.equal(after.length,before.length,'Question count changed');
+ assert(after.length>=before.length,'Existing questions deleted');
+ assert(after.length-before.length<=5,'More than five new questions in one batch');
  const changes=[];
  for(let i=0;i<before.length;i++){
   const a=before[i],b=after[i];
@@ -25,6 +26,11 @@ for(const filename of ['index.html','legacy-study.html']){
   assert(selected.ready.includes(a.id),'Non-READY record changed');
   changes.push({id:a.id,changed_fields:Object.keys(b).filter(k=>JSON.stringify(a[k])!==JSON.stringify(b[k]))});
  }
- reports.push({file:filename,existing:before.length,changed:changes.length,changes});
+ for(const q of after.slice(before.length)){
+  assert(selected.ready.includes(q.id),'Non-READY addition blocked');
+  assert(!before.some(x=>x.id===q.id),'Duplicate new question');
+  changes.push({id:q.id,changed_fields:['NEW_QUESTION']});
+ }
+ reports.push({file:filename,existing:before.length,after:after.length,changed:changes.length,changes});
 }
 console.log(JSON.stringify({ready:selected.ready.length,hold:selected.held.length,production_updated:false,files:reports},null,2));
