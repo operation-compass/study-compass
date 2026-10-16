@@ -13,9 +13,9 @@ const sheets={'問題MASTER':sheet([q1,q2,q3,q4]),'Web自動公開｜3段階監�
 const context={SpreadsheetApp:{openById:()=>({getSheetByName:name=>sheets[name]})},Utilities:{DigestAlgorithm:{SHA_256:'SHA_256'},Charset:{UTF_8:'UTF_8'},computeDigest:(_,s)=>[...crypto.createHash('sha256').update(s).digest()].map(x=>x>127?x-256:x)},Logger:{log:()=>{}}};
 vm.createContext(context);vm.runInContext(source,context,{filename:'StudyCompassSync.gs'});
 const found=context.studyCollect_(),ids=Array.from(found.items,x=>x.id).sort();
-assert.deepEqual(ids,['CHECK_READY','PUBLIC_EXISTING']);
+assert.deepEqual(ids,['PUBLIC_EXISTING']);
 assert.equal(found.scanned,4);
-assert.equal(found.items.find(x=>x.id==='CHECK_READY').version,'1');
+assert.equal(found.items.some(x=>x.id==='CHECK_READY'),false,'Bare 3PASS without review evidence must not stage');
 console.log('GAS CHECK status requires 3PASS, LOW, matching SHA; HOLD and invalid SHA excluded; PUBLIC retained.');
 
 const recent=new Date().toISOString(),old=new Date(Date.now()-13*3600000).toISOString();
@@ -51,10 +51,10 @@ const oldMaster=sheets['問題MASTER'],oldAudit=sheets['Web自動公開｜3段�
 sheets['問題MASTER']=sheet([q3,...extraReady,q1,q2,q4]);
 sheets['Web自動公開｜3段階監査ログ']=sheet([...extraAudit,audit(q1,true),audit(q2,false),{...audit(q4,true),content_sha256:'wrong'}]);
 const priority=context.studyCollect_();
-assert.equal(priority.items.length,8,'Collect all eligible items before production comparison');
-assert.equal(priority.eligible,8,'Eligible count must not be silently discarded');
-assert.equal(priority.pending_audited,2,'Audited backlog must be observable');
-assert.deepEqual(Array.from(priority.items.slice(0,6),q=>q.id),extraReady.map(q=>q.question_id),'CHECK READY must precede historical PUBLIC');
+assert.equal(priority.items.length,1,'Only legacy PUBLIC remains without complete review records');
+assert.equal(priority.eligible,1,'Incomplete CHECK evidence is ineligible');
+assert.equal(priority.pending_audited,0,'No audited eligible items');
+assert.deepEqual(Array.from(priority.items,q=>q.id),['PUBLIC_EXISTING']);
 sheets['問題MASTER']=oldMaster;sheets['Web自動公開｜3段階監査ログ']=oldAudit;
 console.log('All eligible items available for production diff; READY priority and backlog reporting verified.');
 
