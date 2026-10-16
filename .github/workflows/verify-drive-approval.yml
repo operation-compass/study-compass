@@ -17,6 +17,7 @@ on:
       - 'scripts/test-gate-to-web-integration.cjs'
       - 'scripts/select-ready-candidates.cjs'
       - 'scripts/test-select-ready-candidates.cjs'
+      - 'scripts/test-real-ready-to-web.cjs'
       - 'index.html'
       - 'legacy-study.html'
       - '.github/workflows/verify-drive-approval.yml'
@@ -62,6 +63,7 @@ jobs:
           node --check scripts/test-gate-to-web-integration.cjs
           node --check scripts/select-ready-candidates.cjs
           node --check scripts/test-select-ready-candidates.cjs
+          node --check scripts/test-real-ready-to-web.cjs
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
       - name: Run regression tests (synthetic fixtures only)
@@ -76,6 +78,7 @@ jobs:
           node scripts/test-real-web-hold.cjs
           node scripts/test-gate-to-web-integration.cjs
           node scripts/test-select-ready-candidates.cjs
+          node scripts/test-real-ready-to-web.cjs
       - name: Validate real GAS staging bundle (never deploy)
         shell: bash
         run: |
