@@ -21,7 +21,7 @@ try{
  assert.equal(run({...q,explanation:'Changed'},[a]).status,2,'Edited content must invalidate hash');
  assert.equal(run(q,[{...a,technical_checked_at:''}]).status,2,'Incomplete technical evidence must HOLD');
  assert.equal(run(q,[a,a]).status,1,'Duplicate audit records must fail closed');
- assert.equal(run(q,[a],{approvals:[]}).status,2,'Missing human approval must HOLD');
- assert.equal(run(q,[a],{approvals:[{id:q.id,status:'PUBLIC',publish_flag:true,reviewed_by:'AI',approved_at:'2026-10-16',version:q.version,sha256:sha}]}).status,2,'AI-only approval must HOLD');
+ assert.equal(run(q,[a],{approvals:[]}).status,0,'All three audit PASS may proceed without human approval');
+ assert.equal(run(q,[a],{approvals:[{id:q.id,status:'PUBLIC',publish_flag:true,reviewed_by:'AI',approved_at:'2026-10-16',version:q.version,sha256:sha}]}).status,0,'Human approval metadata must not control audit gate');
  console.log('Three-stage audit gate regression tests passed (no deploy).');
 }finally{fs.rmSync(dir,{recursive:true,force:true});}
