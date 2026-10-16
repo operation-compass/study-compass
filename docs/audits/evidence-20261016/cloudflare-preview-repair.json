@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-16",
+  "authorization": "User approved changing preview command and creating non-production version",
+  "token": "study-compass build token 20261016",
+  "previous_build": "140cee62-e8e5-44e0-af51-ee8db8795083",
+  "authentication": "passed initialization and repository clone",
+  "previous_error": "wrangler preview requires previews block",
+  "preview_command": "npx wrangler versions upload",
+  "saved": true,
+  "production_command_unchanged": "npx wrangler deploy",
+  "main_merged": false,
+  "validation": "A push of this evidence record to feature branch triggers non-production build."
+}
