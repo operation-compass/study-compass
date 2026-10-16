@@ -7,17 +7,19 @@ const anchor='const SOCIAL = ';
 const load=file=>{const html=fs.readFileSync(path.join(__dirname,'..',file),'utf8');const start=html.indexOf(anchor);assert(start!==-1,'Missing SOCIAL');const from=start+anchor.length,to=html.indexOf(';',from);assert(to>from,'Missing SOCIAL terminator');return JSON.parse(html.slice(from,to))};
 for(const file of ['index.html','legacy-study.html']){
  const before=load(file);
- assert(!before.some(x=>x.id===q.id),'Target already present in '+file);
+ const i=before.findIndex(x=>x.id===q.id);
+ assert(i>=0,'Target must already be present in '+file);
  const after=applyToWeb(before,[q],[q.id]);
- assert.equal(after.length,before.length+1);
- assert.deepEqual(after.slice(0,before.length),before,'Existing questions must not change');
- const added=after.at(-1);
+ assert.equal(after.length,before.length,'Existing question count must not change');
+ for(let n=0;n<before.length;n++)if(n!==i)assert.deepEqual(after[n],before[n],'Other questions must not change');
+ assert.deepEqual(after.map(x=>x.id),before.map(x=>x.id),'Question ordering must not change');
+ const added=after[i];
  assert.equal(added.id,q.id);
  assert.equal(added.grade,'中2');
  assert.equal(added.unit,'歴史・近世');
  assert.equal(added.answer,'徳川家康');
  assert.deepEqual(added.options,['豊臣秀吉','徳川家康','徳川吉宗','織田信長']);
  assert.equal(added.ex,q.explanation);
- console.log(file+': '+before.length+' existing unchanged; SC-SOC-HIS-000006 appended in memory only.');
+ console.log(file+': '+before.length+' IDs/order preserved; only SC-SOC-HIS-000006 eligible for in-memory update.');
 }
-console.log('PASS: actual question Web mapping verified. Not approved, committed or deployed.');
+console.log('PASS: actual existing question Web update mapping verified. Not approved, committed or deployed.');
