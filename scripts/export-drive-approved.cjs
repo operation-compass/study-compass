@@ -31,7 +31,7 @@ async function main(){
   const body=await response.json(),rows=body.values||[];
   const header=rows.shift();if(!header)throw Error('Empty Drive sheet');
   const indexes=Object.fromEntries(header.map((h,i)=>[String(h),i]));
-  for(const key of ['question_id','status','publish_flag','reviewer','verified_date','version','question_text','correct_answer','explanation'])if(indexes[key]===undefined)throw Error('Missing column '+key);
+  for(const key of ['question_id','status','publish_flag','reviewer','approved_at','version','question_text','correct_answer','explanation'])if(indexes[key]===undefined)throw Error('Missing column '+key);
   const approved=[],seen=new Set(),errors=[];
   for(let i=0;i<rows.length;i++){
     const row=rows[i],get=key=>row[indexes[key]]??'';
@@ -39,7 +39,7 @@ async function main(){
     if(seen.has(id)){errors.push('Duplicate ID row '+(i+2)+': '+id);continue;}seen.add(id);
     const published=get('publish_flag')===true||String(get('publish_flag')).toUpperCase()==='TRUE';
     if(String(get('status'))!=='PUBLIC'||!published)continue;
-    const reviewer=String(get('reviewer')).trim(),verified=String(get('verified_date')).trim();
+    const reviewer=String(get('reviewer')).trim(),verified=String(get('approved_at')).trim();
     if(!reviewer||reviewer==='AI'||!verified||!get('version')){errors.push('Missing human-review metadata: '+id);continue;}
     const q={id,subject:String(get('subject')),question_type:String(get('question_type')),question_text:String(get('question_text')),choice_a:String(get('choice_a')),choice_b:String(get('choice_b')),choice_c:String(get('choice_c')),choice_d:String(get('choice_d')),correct_answer:String(get('correct_answer')),explanation:String(get('explanation')),version:String(get('version'))};
     approved.push({q,a:{id,status:'PUBLIC',publish_flag:true,reviewed_by:reviewer,approved_at:verified,version:q.version,sha256:fingerprint(q)}});
