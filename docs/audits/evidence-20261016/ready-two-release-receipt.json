@@ -1,0 +1,80 @@
+{
+  "checked_at": "2026-10-16T12:18:31.546Z",
+  "status": "READY_NOT_PUBLISHED",
+  "ready_ids": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "version": "gap10-reviewed-v2",
+  "gas": {
+    "started_jst": "2026-10-16 21:14:28",
+    "finished_jst": "2026-10-16 21:14:34",
+    "staged": 2,
+    "pending": 0,
+    "production_updated": false,
+    "commit": "ab9c1cf784fb90519474fc79a9b03925d54270e8",
+    "exported_at": "2026-10-16T12:14:31.202Z"
+  },
+  "release": {
+    "pr": "https://github.com/operation-compass/study-compass/pull/13",
+    "head": "61838cf040de027202a395774e60af9a13cb3523",
+    "base": "cd24371108556d549e3645ff7276618dd613cb43",
+    "draft": true,
+    "changed_files": [
+      "index.html",
+      "legacy-study.html"
+    ],
+    "edited_existing_questions": 0,
+    "added_questions": 2,
+    "hashes": [
+      {
+        "file": "index.html",
+        "bytes": 1312816,
+        "git_blob": "d264e63ca7d7c08ede672b7c6af376f36e812133",
+        "sha256": "6699549cee3efe7508fae55df8cfc2f2d7caaa7aa3c53cd27fe956bf6afa541a"
+      },
+      {
+        "file": "legacy-study.html",
+        "bytes": 1312816,
+        "git_blob": "d264e63ca7d7c08ede672b7c6af376f36e812133",
+        "sha256": "6699549cee3efe7508fae55df8cfc2f2d7caaa7aa3c53cd27fe956bf6afa541a"
+      }
+    ],
+    "browser_verified_html_equals_authenticated_release": true
+  },
+  "validation": {
+    "mode_cases": 24,
+    "incorrect_answer_cases": 4,
+    "independent_reviews": 3,
+    "main_unchanged": true,
+    "source_checks": "CHECK/FALSE preserved",
+    "ci_success": [
+      38899158675,
+      38899152330,
+      38899152323
+    ],
+    "automatic_proposal_run": 38899152401,
+    "automatic_proposal_result": "branch and HTML validation succeeded; PR creation denied by repository Actions setting; existing connection created draft PR13"
+  },
+  "cloudflare": {
+    "release_preview": "failed: Authentication error",
+    "check_run": 116966894893,
+    "prior_main_preview": "same Authentication error",
+    "prior_main_actions_deploy": {
+      "run": 38853191012,
+      "result": "success"
+    },
+    "new_production_deploy": "not attempted"
+  },
+  "remaining": [
+    "Integrate verified release PR to main within authorized scope",
+    "Verify resulting Cloudflare deployment and actual published question modes",
+    "Resolve Actions PR creation permission for unattended proposals; do not silently change security settings",
+    "Verify recovery before declaring fully unattended publication complete"
+  ],
+  "protected": [
+    "existing questions/order/history",
+    "Operation COMPASS templates/tasks",
+    "existing GAS trigger"
+  ]
+}
