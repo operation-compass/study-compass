@@ -22,6 +22,8 @@ on:
       - 'scripts/test-select-ready-candidates.cjs'
       - 'scripts/test-real-ready-to-web.cjs'
       - 'scripts/preview-approved-web-delta.cjs'
+      - 'scripts/prepare-ready-release.cjs'
+      - 'scripts/test-prepare-ready-release.cjs'
       - 'index.html'
       - 'legacy-study.html'
       - '.github/workflows/verify-drive-approval.yml'
@@ -73,6 +75,8 @@ jobs:
           node --check scripts/test-select-ready-candidates.cjs
           node --check scripts/test-real-ready-to-web.cjs
           node --check scripts/preview-approved-web-delta.cjs
+          node --check scripts/prepare-ready-release.cjs
+          node --check scripts/test-prepare-ready-release.cjs
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
           node --check scripts/test-gas-check-ready.cjs
@@ -93,6 +97,7 @@ jobs:
           node scripts/test-select-ready-candidates.cjs
           node scripts/test-real-ready-to-web.cjs
           node scripts/preview-approved-web-delta.cjs
+          node scripts/test-prepare-ready-release.cjs
       - name: Validate real GAS staging bundle (never deploy)
         shell: bash
         run: |
