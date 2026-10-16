@@ -16,7 +16,10 @@ function social(html){
 for(const file of ['index.html','legacy-study.html']){
  const before=social(fs.readFileSync(path.join(root,file),'utf8'));
  const after=applyToWeb(before,bundle.candidate.items,selection.ready);
- assert.equal(after.length,before.length,'Unexpected deletion or addition');
+ assert(after.length>=before.length,'Unexpected deletion');
+ assert(after.length-before.length<=5,'Oversized new-question batch');
+ assert.deepEqual(after.slice(0,before.length).map(q=>q.id),before.map(q=>q.id),'Existing question order changed');
+ for(const q of after.slice(before.length))assert(selection.ready.includes(q.id),'HOLD question added');
  const ready=new Set(selection.ready);
  for(let i=0;i<before.length;i++)if(!ready.has(before[i].id))assert.deepEqual(after[i],before[i],'Unapproved or HOLD question changed');
  console.log(file+': total='+before.length+', ready='+selection.ready.length+', held='+selection.held.length+', no deploy');
