@@ -1,0 +1,24 @@
+name: Verify Drive approval gate (no deploy)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-drive-approval.cjs'
+      - 'scripts/test-drive-approval.cjs'
+      - '.github/workflows/verify-drive-approval.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  approval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check syntax
+        run: |
+          node --check scripts/check-drive-approval.cjs
+          node --check scripts/test-drive-approval.cjs
+      - name: Run regression tests (synthetic fixtures only)
+        run: node scripts/test-drive-approval.cjs
