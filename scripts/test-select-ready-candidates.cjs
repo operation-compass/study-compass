@@ -30,7 +30,7 @@ const signedShape=JSON.parse(JSON.stringify(b));
 const q=signedShape.candidate.items.find(x=>x.id==='SC-SOC-HIS-000002');
 const r=signedShape.audit.records.find(x=>x.id===q.id);
 r.independent_reviews=['accuracy','quality','technical'].map((role,i)=>({
- role,result:'PASS',reviewer_id:'reviewer-'+i,evidence_sha256:'f'.repeat(64),
+ role,result:'PASS',reviewer_id:'fixture-analyst-'+i,evidence_sha256:'0123456789abcdef'.repeat(4),
  question_sha256:r.sha256,checked_at:'2026-10-16'
 }));
 assert.deepEqual(selectReady(signedShape).ready,[q.id],'Complete synthetic role-separated review structure may pass');
