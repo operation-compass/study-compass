@@ -101,6 +101,38 @@ function studyPreview() {
   const summary={scanned:c.scanned,candidates:c.items.length,mode:'preview_only',production_updated:false};
   Logger.log(JSON.stringify(summary));return summary;
 }
+/**
+ * Read-only migration preflight. Does not change any cells, hashes, or publish flags.
+ * Before SHA v2 rollout, inspect these counts. Never auto-promote v1 to v2.
+ */
+function studyAuditMigrationPreview() {
+  const book=SpreadsheetApp.openById(STUDY.spreadsheetId);
+  const sheet=book.getSheetByName(STUDY.audit);
+  if(!sheet)throw Error('Missing three-stage audit sheet');
+  const values=sheet.getDataRange().getValues();
+  if(!values.length)throw Error('Empty audit sheet');
+  const headers=values[0].map(v=>String(v).trim());
+  const required=['question_id','question_version','content_sha256','audit_1_accuracy','audit_2_quality','audit_3_technical','risk_class','final_decision'];
+  const missing=required.filter(x=>!headers.includes(x));
+  if(missing.length)throw Error('Missing audit columns: '+missing.join(', '));
+  const hasV2Column=headers.includes('hash_version');
+  const rows=studyRows_(sheet);
+  const summary={mode:'read_only',production_updated:false,source_rows:rows.length,has_hash_version_column:hasV2Column,v1:0,v2:0,unknown:0,ready_v1:0,ready_v2:0,hold:0};
+  for(const row of rows) {
+    if(!String(row.question_id||'').trim())continue;
+    const version=hasV2Column?String(row.hash_version||'v1').trim():'v1';
+    if(version==='v1')summary.v1++;
+    else if(version==='v2')summary.v2++;
+    else summary.unknown++;
+    if(String(row.final_decision||'').trim()==='READY'){
+      if(version==='v1')summary.ready_v1++;
+      else if(version==='v2')summary.ready_v2++;
+    }else summary.hold++;
+  }
+  Logger.log(JSON.stringify(summary));
+  return summary;
+}
+
 function studySameSnapshot_(left,right) {
   if(!left||!right)return false;
   // Refresh unchanged evidence at least every 12h; release snapshots expire after 24h.
