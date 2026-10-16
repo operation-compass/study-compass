@@ -19,5 +19,8 @@ run({items:[]},manifest,1);
 run(candidate,{...manifest,exported_at:'2020-01-01T00:00:00Z'},1);
 run(candidate,{...manifest,source_spreadsheet_id:'untrusted'},1);
 run(candidate,{...manifest,approvals:[{...entry,version:'v2'}]},1);
-console.log('Approval gate: 9 positive/negative scenarios passed');
+const withheld={...q,id:'SC-SOC-HIS-GAP17-000004'};
+const withheldHash=crypto.createHash('sha256').update(JSON.stringify(keys.map(k=>String(withheld[k]??'')))).digest('hex');
+run({items:[withheld]},{...manifest,approvals:[{...entry,id:withheld.id,sha256:withheldHash}]},1);
+console.log('Approval gate: 10 positive/negative scenarios passed');
 }finally{fs.rmSync(dir,{recursive:true,force:true});}
