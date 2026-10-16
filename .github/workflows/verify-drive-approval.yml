@@ -6,6 +6,7 @@ on:
       - 'scripts/check-drive-approval.cjs'
       - 'scripts/test-drive-approval.cjs'
       - 'scripts/export-drive-approved.cjs'
+      - 'scripts/test-drive-export.cjs'
       - '.github/workflows/verify-drive-approval.yml'
   workflow_dispatch:
 
@@ -22,5 +23,8 @@ jobs:
           node --check scripts/check-drive-approval.cjs
           node --check scripts/test-drive-approval.cjs
           node --check scripts/export-drive-approved.cjs
+          node --check scripts/test-drive-export.cjs
       - name: Run regression tests (synthetic fixtures only)
-        run: node scripts/test-drive-approval.cjs
+        run: |
+          node scripts/test-drive-approval.cjs
+          node scripts/test-drive-export.cjs
