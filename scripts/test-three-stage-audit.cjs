@@ -9,7 +9,7 @@ const sha=crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String
 const a={id:q.id,version:q.version,sha256:sha,accuracy:'PASS',quality:'PASS',technical:'PASS',accuracy_checked_at:'2026-10-16',quality_checked_at:'2026-10-16',technical_checked_at:'2026-10-16',checked_at:'2026-10-16',evidence_url:'https://example.org/evidence',risk:'LOW',final_decision:'READY',exception_reason:''};
 function run(candidate,audits) {
  const filename=path.join(dir,'bundle.json');
- fs.writeFileSync(filename,JSON.stringify({candidate:{items:[candidate]},audit:{records:audits}}));
+ fs.writeFileSync(filename,JSON.stringify({candidate:{items:[candidate]},audit:{records:audits},approval:{approvals:[{id:q.id,status:'PUBLIC',publish_flag:true,reviewed_by:'Human reviewer',approved_at:'2026-10-16',version:q.version,sha256:sha}]}}));
  return cp.spawnSync(process.execPath,[path.join(__dirname,'check-three-stage-audit.cjs'),filename],{encoding:'utf8'});
 }
 try{
