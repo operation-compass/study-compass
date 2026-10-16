@@ -75,9 +75,9 @@ function studyCollect_() {
     (auditedCheck?auditedItems:legacyItems).push(q);
   }
   // Audited CHECK records take precedence over already-PUBLIC records.
-  // Cap staging to one bounded release batch; all other records remain in MASTER.
-  const items=[...auditedItems,...legacyItems].slice(0,5);
-  return {items,scanned:seen.size,eligible:auditedItems.length+legacyItems.length,pending_audited:Math.max(0,auditedItems.length-items.filter(q=>auditedItems.includes(q)).length)};
+  // Keep every candidate for production comparison; only the final GitHub batch is limited to five.
+  const items=[...auditedItems,...legacyItems];
+  return {items,scanned:seen.size,eligible:items.length,pending_audited:Math.max(0,auditedItems.length-5)};
 }
 
 // Read three-stage audit rows without altering the Drive source. Missing evidence stays HOLD.
@@ -114,7 +114,7 @@ function studyAuditRecords_(book,approvedItems,includeAll) {
 
 function studyPreview() {
   const c=studyCollect_();
-  const summary={scanned:c.scanned,candidates:c.items.length,eligible:c.eligible,pending_audited:c.pending_audited,mode:'preview_only',production_updated:false};
+  const summary={scanned:c.scanned,candidates:Math.min(5,c.items.length),eligible:c.eligible,pending_audited:c.pending_audited,mode:'preview_only',production_updated:false};
   Logger.log(JSON.stringify(summary));return summary;
 }
 /**
