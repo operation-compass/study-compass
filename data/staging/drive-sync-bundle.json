@@ -70,12 +70,93 @@
     ]
   },
   "audit": {
-    "records": []
+    "records": [
+      {
+        "id": "SC-SOC-HIS-000001",
+        "version": "v0.1",
+        "sha256": "5689e4bd6897df63cb100d5547d43040e0b33ea335c4b8f9e62bf94dce2f3765",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16",
+        "evidence_url": "https://jpsearch.go.jp/gallery/ndl-19olgvG91dN",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16",
+        "risk": "UNASSESSED",
+        "exception_reason": "Source and independent three-stage review not yet complete",
+        "final_decision": "HOLD",
+        "checked_at": ""
+      },
+      {
+        "id": "SC-SOC-HIS-000002",
+        "version": "v0.1",
+        "sha256": "5185add138647e8cfc3f744039ee5f52d28767ac879de9f041de4d6c7bef1c79",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16",
+        "evidence_url": "https://www.city.nara.lg.jp/soshiki/3/148230.html",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16",
+        "risk": "UNASSESSED",
+        "exception_reason": "Source and independent three-stage review not yet complete",
+        "final_decision": "HOLD",
+        "checked_at": ""
+      },
+      {
+        "id": "SC-SOC-HIS-000003",
+        "version": "v0.1",
+        "sha256": "112e62b82a4d79ec76a2626e82d07d5220b6dbfc11311cabe95120d1dfb0a7b4",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16",
+        "evidence_url": "https://shugakuryoko.kyoto.travel/study/history/",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16",
+        "risk": "UNASSESSED",
+        "exception_reason": "Source and independent three-stage review not yet complete",
+        "final_decision": "HOLD",
+        "checked_at": ""
+      },
+      {
+        "id": "SC-SOC-HIS-000004",
+        "version": "v0.1",
+        "sha256": "263d88916beee47fa62b536e9431af75511d256e257b0e52643781cb128d7fa4",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16",
+        "evidence_url": "https://www.archives.go.jp/exhibition/digital/rekishitomonogatari/history01.html",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16",
+        "risk": "UNASSESSED",
+        "exception_reason": "Source and independent three-stage review not yet complete",
+        "final_decision": "HOLD",
+        "checked_at": ""
+      },
+      {
+        "id": "SC-SOC-HIS-000005",
+        "version": "v0.1",
+        "sha256": "9efbbeda09e50f9cebf640744cdce9ffbda6e2eb4878a55159650efdb72768fa",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16",
+        "evidence_url": "https://www.archives.go.jp/about/activity/international/jp_mn50/ch01.html",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16",
+        "risk": "UNASSESSED",
+        "exception_reason": "Source and independent three-stage review not yet complete",
+        "final_decision": "HOLD",
+        "checked_at": ""
+      }
+    ]
   },
   "approval": {
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-16T03:47:02.984Z",
+    "exported_at": "2026-10-16T04:03:40.529Z",
     "approvals": [
       {
         "id": "SC-SOC-HIS-000001",
