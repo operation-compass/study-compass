@@ -9,6 +9,7 @@ on:
       - 'scripts/check-drive-staging-bundle.cjs'
       - 'integrations/apps-script/StudyCompassSync.gs'
       - 'scripts/test-gas-check-ready.cjs'
+      - 'scripts/test-historical-105-preview.cjs'
       - 'scripts/check-three-stage-audit.cjs'
       - 'scripts/test-three-stage-audit.cjs'
       - 'scripts/merge-approved-delta.cjs'
@@ -36,6 +37,7 @@ on:
       - 'scripts/test-drive-staging-bundle.cjs'
       - 'integrations/apps-script/StudyCompassSync.gs'
       - 'scripts/test-gas-check-ready.cjs'
+      - 'scripts/test-historical-105-preview.cjs'
       - 'scripts/test-drive-master-schema.cjs'
       - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/verify-drive-approval.yml'
@@ -74,12 +76,14 @@ jobs:
           node --check scripts/test-drive-staging-bundle.cjs
           node --check scripts/test-drive-master-schema.cjs
           node --check scripts/test-gas-check-ready.cjs
+          node --check scripts/test-historical-105-preview.cjs
       - name: Run regression tests (synthetic fixtures only)
         run: |
           node scripts/test-drive-approval.cjs
           node scripts/test-drive-export.cjs
           node scripts/test-drive-master-schema.cjs
           node scripts/test-gas-check-ready.cjs
+          node scripts/test-historical-105-preview.cjs
           node scripts/test-drive-staging-bundle.cjs
           node scripts/test-three-stage-audit.cjs
           node scripts/test-merge-approved-delta.cjs
