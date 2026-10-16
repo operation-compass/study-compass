@@ -7,6 +7,7 @@ on:
       - 'data/staging/drive-sync-bundle.json'
       - 'scripts/check-drive-approval.cjs'
       - 'scripts/check-drive-staging-bundle.cjs'
+      - 'integrations/apps-script/StudyCompassSync.gs'
       - 'scripts/check-three-stage-audit.cjs'
       - 'scripts/test-three-stage-audit.cjs'
       - 'scripts/merge-approved-delta.cjs'
@@ -54,6 +55,8 @@ jobs:
           node --check scripts/test-drive-export.cjs
           node --check scripts/check-drive-connection.cjs
           node --check scripts/check-drive-staging-bundle.cjs
+          cp integrations/apps-script/StudyCompassSync.gs /tmp/study-gas-verify.js
+          node --check /tmp/study-gas-verify.js
           node --check scripts/check-three-stage-audit.cjs
           node --check scripts/test-three-stage-audit.cjs
           node --check scripts/merge-approved-delta.cjs
