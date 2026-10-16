@@ -13,4 +13,7 @@ assert.deepEqual(selectReady(corrupt).ready,[],'Malformed audit dates cannot rel
 const corrupt2=JSON.parse(JSON.stringify(b));
 corrupt2.audit.records[1].technical_checked_at='2026-99-99';
 assert.deepEqual(selectReady(corrupt2).ready,[],'Impossible audit dates cannot release');
+const future=JSON.parse(JSON.stringify(b));
+future.audit.records[1].checked_at='2099-01-01';
+assert.deepEqual(selectReady(future).ready,[],'Future-dated audit cannot release');
 console.log('Real staged candidate selection: 1 READY, 4 HOLD; invalid dates blocked; no deployment.');
