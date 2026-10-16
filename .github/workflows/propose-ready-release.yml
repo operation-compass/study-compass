@@ -1,6 +1,10 @@
 name: Propose READY Web delta for review (never auto-merge)
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/drive-approval-gate-20261016]
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
 
 permissions:
   contents: write
