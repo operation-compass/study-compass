@@ -1,0 +1,40 @@
+name: Preview READY Web release (no production deployment)
+on:
+  push:
+    branches: [feature/drive-approval-gate-20261016]
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
+      - 'scripts/prepare-ready-release.cjs'
+      - 'scripts/select-ready-candidates.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - '.github/workflows/preview-ready-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  safe-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm checked-in staging data meets READY conditions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check scripts/prepare-ready-release.cjs
+          node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+          mkdir -p /tmp/study-ready-preview
+          node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json /tmp/study-ready-preview
+          node --check worker.js
+          echo "READY preview generated locally only; no GitHub commit and no Cloudflare deployment."
+      - name: Save review-only artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: study-ready-web-preview
+          retention-days: 3
+          path: |
+            /tmp/study-ready-preview/index.html
+            /tmp/study-ready-preview/legacy-study.html
+            /tmp/study-ready-preview/release-report.json
