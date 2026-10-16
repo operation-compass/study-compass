@@ -98,10 +98,10 @@
         "quality_checked_at": "2026-10-16",
         "technical": "PASS",
         "technical_checked_at": "2026-10-16",
-        "risk": "UNASSESSED",
-        "exception_reason": "710年の平城京遷都は既存出典あり。ただし正確性・教材品質の独立監査者と評価根拠が未記録。出典確認履歴と監査独立性を確認するまでHOLD。",
-        "final_decision": "HOLD",
-        "checked_at": ""
+        "risk": "LOW",
+        "exception_reason": "",
+        "final_decision": "READY",
+        "checked_at": "2026-10-16"
       },
       {
         "id": "SC-SOC-HIS-000003",
@@ -157,6 +157,6 @@
     "mode": "ai_three_stage",
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-16T04:48:04.092Z"
+    "exported_at": "2026-10-16T04:50:45.136Z"
   }
 }
