@@ -92,7 +92,17 @@ function studyAuditRecords_(book,approvedItems,includeAll) {
     if(seen.has(id))throw Error('Duplicate audit ID: '+id);
     seen.add(id);
     const date=v=>v instanceof Date?Utilities.formatDate(v,'Asia/Tokyo',"yyyy-MM-dd'T'HH:mm:ssXXX"):String(v||'').trim();
+    // Optional signed-review evidence JSON column; missing or invalid stays unreleasable.
+    let independentReviews=[];
+    const rawReviews=String(row.independent_reviews_json||'').trim();
+    if(rawReviews){
+      try {
+        independentReviews=JSON.parse(rawReviews);
+        if(!Array.isArray(independentReviews))throw Error('Expected JSON array');
+      }catch(e){throw Error('Invalid independent review evidence JSON for '+id+': '+e.message);}
+    }
     records.push({
+      independent_reviews:independentReviews,
       id,version:String(row.question_version||'').trim(),
       hash_version:String(row.hash_version||'v1').trim(),
       sha256:String(row.content_sha256||'').trim(),
