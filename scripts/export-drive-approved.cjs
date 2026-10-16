@@ -40,13 +40,13 @@ async function main(){
   const decisions=new Map();
   for(const row of approvalRows){
     const val=k=>String(row[approvalIndex[k]]??'').trim();
-    const id=val('question_id');if(!id)continue;
+    const id=val('question_id');if(!id || id.startsWith('【運用ルール】'))continue;
     if(decisions.has(id))throw Error('Duplicate approval ledger question: '+id);
     decisions.set(id,{status:val('approval_status'),version:val('approved_version'),sha256:val('approved_sha256'),reviewed_by:val('approved_by'),approved_at:val('approved_at')});
   }
   const header=rows.shift();if(!header)throw Error('Empty Drive sheet');
   const indexes=Object.fromEntries(header.map((h,i)=>[String(h),i]));
-  for(const key of ['question_id','status','publish_flag','reviewer','approved_at','version','question_text','correct_answer','explanation'])if(indexes[key]===undefined)throw Error('Missing column '+key);
+  for(const key of ['question_id','status','publish_flag','reviewer','version','question_text','correct_answer','explanation'])if(indexes[key]===undefined)throw Error('Missing column '+key);
   const approved=[],seen=new Set(),errors=[];
   for(let i=0;i<rows.length;i++){
     const row=rows[i],get=key=>row[indexes[key]]??'';
