@@ -57,3 +57,24 @@ assert.equal(priority.pending_audited,2,'Audited backlog must be observable');
 assert.deepEqual(Array.from(priority.items.slice(0,6),q=>q.id),extraReady.map(q=>q.question_id),'CHECK READY must precede historical PUBLIC');
 sheets['問題MASTER']=oldMaster;sheets['Web自動公開｜3段階監査ログ']=oldAudit;
 console.log('All eligible items available for production diff; READY priority and backlog reporting verified.');
+
+
+const production=new Map();
+const makeQ=(i)=>({id:'NEXT_'+i,subject:'社会',question_type:'4択',grade:'中1',unit_major:'歴史',unit_minor:'古代',question_text:'問題'+i,choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',correct_answer:'A',explanation:'解説'+i});
+const next=Array.from({length:7},(_,i)=>makeQ(i));
+const web=q=>({id:q.id,subject:q.subject,q:q.question_text,answer:q.correct_answer,options:[q.choice_a,q.choice_b,q.choice_c,q.choice_d],ex:q.explanation});
+production.set(next[0].id,web(next[0]));production.set(next[1].id,web(next[1]));
+context.__production=production;
+vm.runInContext("studyProductionSocial_=function(){return new Map(__production)};",context);
+const ledgers=next.map(q=>({id:q.id,final_decision:'READY',risk:'LOW',exception_reason:'',hash_version:'v2'}));
+const first=context.studyUnpublishedBatch_(next,ledgers,'test');
+assert.equal(first.total_unpublished,5);
+assert.deepEqual(Array.from(first.items,q=>q.id),['NEXT_2','NEXT_3','NEXT_4','NEXT_5','NEXT_6']);
+production.set(next[2].id,web(next[2]));
+const second=context.studyUnpublishedBatch_(next,ledgers,'test');
+assert.equal(second.total_unpublished,4,'Published question must not be restaged');
+assert.deepEqual(Array.from(second.items,q=>q.id),['NEXT_3','NEXT_4','NEXT_5','NEXT_6']);
+const blockedLedgers=ledgers.map(x=>x.id==='NEXT_4'?{...x,final_decision:'HOLD'}:x);
+const blocked=context.studyUnpublishedBatch_(next,blockedLedgers,'test');
+assert(!Array.from(blocked.items,q=>q.id).includes('NEXT_4'),'HOLD must not consume staging slot');
+console.log('Successive batches skip published content, preserve pending questions, and exclude HOLD records.');
