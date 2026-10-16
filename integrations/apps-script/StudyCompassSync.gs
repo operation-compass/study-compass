@@ -97,17 +97,34 @@ function studyPreview() {
   const summary={scanned:c.scanned,candidates:c.items.length,mode:'preview_only',production_updated:false};
   Logger.log(JSON.stringify(summary));return summary;
 }
+function studySameSnapshot_(left,right) {
+  if(!left||!right)return false;
+  // Export timestamps are deliberately excluded: no data changes = no new commit.
+  return JSON.stringify(left.candidate)===JSON.stringify(right.candidate)&&
+    JSON.stringify(left.audit)===JSON.stringify(right.audit)&&
+    left.approval&&right.approval&&
+    left.approval.mode===right.approval.mode&&
+    left.approval.source_spreadsheet_id===right.approval.source_spreadsheet_id;
+}
 function studyPutGitHub_(file,data,token) {
   const url='https://api.github.com/repos/'+STUDY.repo+'/contents/'+file;
   const opts={headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},muteHttpExceptions:true};
   const existing=UrlFetchApp.fetch(url+'?ref='+encodeURIComponent(STUDY.branch),opts);
   if(existing.getResponseCode()!==200 && existing.getResponseCode()!==404)throw Error('GitHub lookup error: '+existing.getResponseCode());
-  const sha=existing.getResponseCode()===200?JSON.parse(existing.getContentText()).sha:undefined;
+  const current=existing.getResponseCode()===200?JSON.parse(existing.getContentText()):null;
+  const sha=current?current.sha:undefined;
+  if(current){
+    try{
+      const old=JSON.parse(Utilities.newBlob(Utilities.base64Decode(current.content.replace(/\\s/g,''))).getDataAsString());
+      if(studySameSnapshot_(old,data))return {unchanged:true};
+    }catch(e){throw Error('Cannot verify previous staging snapshot: '+e.message);}
+  }
   const content=Utilities.base64Encode(Utilities.newBlob(JSON.stringify(data,null,2),'application/json').getBytes());
   const body={message:'Stage audited Drive snapshot (NOT production)',content,branch:STUDY.branch};
   if(sha)body.sha=sha;
   const result=UrlFetchApp.fetch(url,{method:'put',contentType:'application/json',payload:JSON.stringify(body),headers:opts.headers,muteHttpExceptions:true});
   if(result.getResponseCode()!==200&&result.getResponseCode()!==201)throw Error('GitHub stage error HTTP '+result.getResponseCode());
+  return {unchanged:false};
 }
 function studyStageApproved() {
   const lock=LockService.getScriptLock();
@@ -119,7 +136,7 @@ function studyStageApproved() {
     const token=PropertiesService.getScriptProperties().getProperty('STUDY_GITHUB_TOKEN');
     if(!token)throw Error('Missing STUDY_GITHUB_TOKEN script property');
     // Atomic staging artifact: candidate and approval snapshot cannot diverge between commits.
-    studyPutGitHub_('data/staging/drive-sync-bundle.json',{
+    const put=studyPutGitHub_('data/staging/drive-sync-bundle.json',{
       schema_version:1,
       candidate:{items:c.items},
       audit,
@@ -128,7 +145,8 @@ function studyStageApproved() {
         export_source:'authenticated-drive-export',exported_at:new Date().toISOString()
       }
     },token);
+    if(put.unchanged){Logger.log('No content changes; GitHub staging commit skipped');return {staged:0,unchanged:true,production_updated:false};}
     Logger.log('Staged '+c.items.length+' candidate items; '+audit.records.length+' audit records; production unchanged');
-    return {staged:c.items.length,production_updated:false};
+    return {staged:c.items.length,unchanged:false,production_updated:false};
   } finally {lock.releaseLock();}
 }
