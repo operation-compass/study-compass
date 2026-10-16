@@ -7,4 +7,10 @@ const clone=JSON.parse(JSON.stringify(b));
 clone.audit.records[0].final_decision='READY'; // HOLD must still be enforced by risk, exception, evidence time
 assert.deepEqual(selectReady(clone).ready,actual.ready);
 assert.throws(()=>selectReady({...b,audit:{records:[...b.audit.records,b.audit.records[0]]}}),/Duplicate/);
-console.log('Real staged candidate selection: 1 READY, 4 HOLD; no deployment.');
+const corrupt=JSON.parse(JSON.stringify(b));
+corrupt.audit.records[1].accuracy_checked_at='not-a-date';
+assert.deepEqual(selectReady(corrupt).ready,[],'Malformed audit dates cannot release');
+const corrupt2=JSON.parse(JSON.stringify(b));
+corrupt2.audit.records[1].technical_checked_at='2026-99-99';
+assert.deepEqual(selectReady(corrupt2).ready,[],'Impossible audit dates cannot release');
+console.log('Real staged candidate selection: 1 READY, 4 HOLD; invalid dates blocked; no deployment.');
