@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "items": [
+      {
+        "id": "SC-SOC-HIS-GAP10-000001",
+        "subject": "社会",
+        "grade": "中1",
+        "unit_major": "歴史",
+        "unit_minor": "律令・税制",
+        "question_type": "4択",
+        "question_text": "律令制で、収穫した稲の一部を納める税は？",
+        "choice_a": "租",
+        "choice_b": "庸",
+        "choice_c": "調",
+        "choice_d": "雑徭",
+        "correct_answer": "租",
+        "explanation": "律令制の「租」は、口分田などの田の面積に応じて稲を納める税で、収穫量の約3％に相当するとされます。「調」は布などの特産物、「庸」は都での労役またはその代わりの布で納める税でした。",
+        "version": "gap10-reviewed-v2"
+      },
+      {
+        "id": "SC-SOC-HIS-GAP10-000005",
+        "subject": "社会",
+        "grade": "中1",
+        "unit_major": "歴史",
+        "unit_minor": "平安・地方制度",
+        "question_type": "4択",
+        "question_text": "平安時代、地方の政治を担当するため朝廷から派遣された役人は？",
+        "choice_a": "国司",
+        "choice_b": "守護",
+        "choice_c": "執権",
+        "choice_d": "老中",
+        "correct_answer": "国司",
+        "explanation": "国司は中央の朝廷から国ごとに派遣され、地方行政や租税徴収などを担当した役人です。郡司は郡を治める地方の役人、守護は鎌倉幕府が設置した役職なので区別しましょう。",
+        "version": "gap10-reviewed-v2"
+      }
+    ]
+  },
+  "audit": {
+    "records": [
+      {
+        "independent_reviews": [
+          {
+            "id": "SC-SOC-HIS-GAP10-000001",
+            "version": "gap10-reviewed-v2",
+            "hash_version": "v2",
+            "reviewer_id": "codex-agent-accuracy-20261016",
+            "role": "accuracy",
+            "result": "PASS",
+            "checked_at": "2026-10-16T11:11:21.115Z",
+            "question_sha256": "330e2398ff97979b59f5d44bb0ece42b42221ff70ae74df2c34e1bfe9b572917",
+            "evidence_file": "accuracy-revised-two.md",
+            "evidence_sha256": "7a798e72f63b32226217500fe2f99cb76f71e98ddd3ef1a1a7f1c65d890db8c0"
+          },
+          {
+            "id": "SC-SOC-HIS-GAP10-000001",
+            "version": "gap10-reviewed-v2",
+            "reviewer_id": "codex-agent-quality-20261016",
+            "role": "quality",
+            "result": "PASS",
+            "question_sha256": "330e2398ff97979b59f5d44bb0ece42b42221ff70ae74df2c34e1bfe9b572917",
+            "checked_at": "2026-10-16T11:11:19.812Z",
+            "evidence_file": "docs/audits/evidence-20261016/quality-revised-two.md",
+            "evidence_sha256": "1fce72996f1c0f17b3633915c7c3869e563cf2bb72a705c31dbd529ae8752ab1"
+          },
+          {
+            "id": "SC-SOC-HIS-GAP10-000001",
+            "version": "gap10-reviewed-v2",
+            "role": "technical",
+            "result": "PASS",
+            "reviewer_id": "codex-root-technical-20261016",
+            "checked_at": "2026-10-16T12:13:23.385Z",
+            "question_sha256": "330e2398ff97979b59f5d44bb0ece42b42221ff70ae74df2c34e1bfe9b572917",
+            "evidence_file": "docs/audits/evidence-20261016/technical-publication-preflight.md",
+            "evidence_sha256": "64c215f9d37280c7550d0405477041bf437afaddc3bef5ed709e526f5cb870b4"
+          }
+        ],
+        "id": "SC-SOC-HIS-GAP10-000001",
+        "version": "gap10-reviewed-v2",
+        "hash_version": "v2",
+        "sha256": "330e2398ff97979b59f5d44bb0ece42b42221ff70ae74df2c34e1bfe9b572917",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16T11:11:21.115Z",
+        "evidence_url": "https://www.town.onga.lg.jp/site/choshi/26900.html",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16T11:11:19.812Z",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16T12:13:23.385Z",
+        "risk": "LOW",
+        "exception_reason": "",
+        "final_decision": "READY",
+        "checked_at": "2026-10-16T12:13:58.969Z"
+      },
+      {
+        "independent_reviews": [
+          {
+            "id": "SC-SOC-HIS-GAP10-000005",
+            "version": "gap10-reviewed-v2",
+            "hash_version": "v2",
+            "reviewer_id": "codex-agent-accuracy-20261016",
+            "role": "accuracy",
+            "result": "PASS",
+            "checked_at": "2026-10-16T11:11:21.115Z",
+            "question_sha256": "fe4511b1789567d17eab42166195bdac6af8bacdc4e5daaf7eba006be6349d65",
+            "evidence_file": "accuracy-revised-two.md",
+            "evidence_sha256": "7a798e72f63b32226217500fe2f99cb76f71e98ddd3ef1a1a7f1c65d890db8c0"
+          },
+          {
+            "id": "SC-SOC-HIS-GAP10-000005",
+            "version": "gap10-reviewed-v2",
+            "reviewer_id": "codex-agent-quality-20261016",
+            "role": "quality",
+            "result": "PASS",
+            "question_sha256": "fe4511b1789567d17eab42166195bdac6af8bacdc4e5daaf7eba006be6349d65",
+            "checked_at": "2026-10-16T11:11:19.812Z",
+            "evidence_file": "docs/audits/evidence-20261016/quality-revised-two.md",
+            "evidence_sha256": "1fce72996f1c0f17b3633915c7c3869e563cf2bb72a705c31dbd529ae8752ab1"
+          },
+          {
+            "id": "SC-SOC-HIS-GAP10-000005",
+            "version": "gap10-reviewed-v2",
+            "role": "technical",
+            "result": "PASS",
+            "reviewer_id": "codex-root-technical-20261016",
+            "checked_at": "2026-10-16T12:13:23.385Z",
+            "question_sha256": "fe4511b1789567d17eab42166195bdac6af8bacdc4e5daaf7eba006be6349d65",
+            "evidence_file": "docs/audits/evidence-20261016/technical-publication-preflight.md",
+            "evidence_sha256": "64c215f9d37280c7550d0405477041bf437afaddc3bef5ed709e526f5cb870b4"
+          }
+        ],
+        "id": "SC-SOC-HIS-GAP10-000005",
+        "version": "gap10-reviewed-v2",
+        "hash_version": "v2",
+        "sha256": "fe4511b1789567d17eab42166195bdac6af8bacdc4e5daaf7eba006be6349d65",
+        "accuracy": "PASS",
+        "accuracy_checked_at": "2026-10-16T11:11:21.115Z",
+        "evidence_url": "https://www.library-archives.pref.fukui.lg.jp/fukui/07/kenshi/T1/4-01-01-03-10.htm",
+        "quality": "PASS",
+        "quality_checked_at": "2026-10-16T11:11:19.812Z",
+        "technical": "PASS",
+        "technical_checked_at": "2026-10-16T12:13:23.385Z",
+        "risk": "LOW",
+        "exception_reason": "",
+        "final_decision": "READY",
+        "checked_at": "2026-10-16T12:13:58.969Z"
+      }
+    ]
+  },
+  "approval": {
+    "mode": "ai_three_stage",
+    "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
+    "export_source": "authenticated-drive-export",
+    "exported_at": "2026-10-16T12:14:31.202Z"
+  }
+}

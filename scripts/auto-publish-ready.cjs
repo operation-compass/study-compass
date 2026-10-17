@@ -6,7 +6,7 @@ const {sha256,gitBlob,files,questions,evidenceIndex,verifyEvidence,verifyDiff,ve
 const repo='operation-compass/study-compass',sourceBranch='feature/drive-approval-gate-20261016',bundlePath='data/staging/drive-sync-bundle.json';
 const origin='https://study-compass.occompass-info.workers.dev';
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-function git(args,cwd){return cp.execFileSync('git',args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();}
+function git(args,cwd){return cp.execFileSync('git',args,{cwd,encoding:'utf8',maxBuffer:8*1024*1024,stdio:['ignore','pipe','pipe']}).trim();}
 async function api(route,{method='GET',body}={}){const r=await fetch('https://api.github.com/repos/'+repo+'/'+route,{method,headers:{Authorization:'Bearer '+process.env.GH_TOKEN,Accept:'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(30000)});assert(r.ok,'GitHub request failed: '+method+' '+route.split('?')[0]+' HTTP '+r.status);return r.status===204?null:r.json();}
 async function dispatchAndWait(sha){
  const after=Date.now()-10000;await api('actions/workflows/deploy-cloudflare.yml/dispatches',{method:'POST',body:{ref:'main'}});
@@ -70,4 +70,3 @@ async function main(){
 }
 if(require.main===module)main().catch(e=>{console.error('AUTO PUBLICATION STOPPED: '+e.message);process.exitCode=1;});
 module.exports={main};
-
