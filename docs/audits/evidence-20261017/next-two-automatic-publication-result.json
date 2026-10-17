@@ -1,0 +1,51 @@
+{
+  "verified_date_jst": "2026-10-17",
+  "result": "success",
+  "repeat_gas_sync": "2026-10-17 18:40 JST: No unpublished candidates in current staging selection; production unchanged",
+  "spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
+  "master_range": "問題MASTER!A2257:X2258",
+  "audit_range": "Web自動公開｜3段階監査ログ!A30:P31",
+  "published_ids": [
+    "SC-SOC-HIS-GAP10-000002",
+    "SC-SOC-HIS-GAP10-000003"
+  ],
+  "held_id": "SC-SOC-HIS-GAP10-000004",
+  "held_reason": "Independent accuracy FAIL: 孝謙天皇 also donated relics to 東大寺, so current draft lacks a unique answer; quality HOLD for learning-target change.",
+  "authenticated_staging_commit": "f58daa6c500aeabd027766c631cc3d29b24f580b",
+  "source_adapter_aligned": "aea0a4216338f039379db7a6549c28cae97701ad",
+  "pull_request": 19,
+  "merge_sha": "87d23429c4208e0b2ab2cc3b3b3d5c024bbebb26",
+  "released_files": [
+    "index.html",
+    "legacy-study.html"
+  ],
+  "released_blob": "8a74f4d9258465b931bdc4883ca69e0b5fc95166",
+  "checks": {
+    "drive_gate": 39021842261,
+    "preview": 39021842308,
+    "proposal": 39021873479,
+    "automatic_publication": 39021889917,
+    "production_deployment": 39021906452
+  },
+  "checks_conclusion": "all success",
+  "published_bank_verified_by_controller": true,
+  "production_ui_total_questions": 2597,
+  "social_questions": 627,
+  "previous_total": 2595,
+  "previous_social": 625,
+  "publication_artifact": {
+    "id": 12096318746,
+    "zip_sha256": "d0ca777664b4a30bf6af5ff649eacf24daaa1a75391be9775ead120b5a6068d6",
+    "url": "https://github.com/operation-compass/study-compass/actions/runs/39021889917/artifacts/12096318746"
+  },
+  "existing_questions_and_order_preserved": true,
+  "unrelated_templates_tasks_gas_triggers_changed": false,
+  "paid_ai_api_used": false,
+  "live_failure_recovery_exercised": false,
+  "notes": [
+    "First real nonempty automatic publication verified; no manual PR merge performed.",
+    "Initial proposal failed safely because staging adapter lagged main; aligned with tested main routing, gate/preview/proposal then succeeded.",
+    "Evidence ID shorthand was mechanically expanded and evidence digests recalculated without altering independent review decisions.",
+    "Existing Sheet column widths and formatting preserved; long fields remain clipped in fixed cells, full values verified via connector readback."
+  ]
+}

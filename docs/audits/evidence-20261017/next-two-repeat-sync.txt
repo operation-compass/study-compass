@@ -1,0 +1,28 @@
+Browser tab: 7, Title: "無題のプロジェクト - プロジェクト編集者 - Apps Script", URL: "https://script.google.com/home/projects/1lL9te-Z_9WkmeboRxEIWHXPJWvfoD0EOyRm2KKZoe5HpsA7-McHnD0Rr/edit".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 87-88, 90-91
+~						50 button 選択した関数を実行
+~						51 button 選択した関数をデバッグ
+~						53 list 実行する関数を選択
+~							86 (selected) studyStageApproved
++								90 container ログ 1。 18:40:10. お知らせ. 実行開始.
++									91 text 18:40:10
++									92 text お知らせ
++									93 text 実行開始
++								94 container ログ 2。 18:40:14. 情報. No unpublished candidates in current staging selection; production unchanged.
++									95 text 18:40:14
++									96 text 情報
++									97 text No unpublished candidates in current staging selection; production unchanged
++								98 container ログ 3。 18:40:14. お知らせ. 実行完了.
++									99 text 18:40:14
++									100 text お知らせ
++									101 text 実行完了
+The focused UI element is 60 ã¨ãã£ã¿ã¼ (settable) Description: エディターのコンテンツ;アクティビティ オプションを表示するには、Alt+F1 キーを押します。, Value: /**
+ * Study COMPASS: read-only master → GitHub staging (never production).
+ * Paste into a script bound to the Study COMPASS MASTER spreadsheet.
+ * Script properties: STUDY_GITHUB_TOKEN (fine-grained token restricted to this repo).
+ * Execute studyPreview() before studyStageApproved(). No trigger until explicitly enabled.
+ * AI three-stage verification replaces the per-question human approval requirement.
+ * Required permissions: Spreadsheet read, external HTTPS request.
+ */
+const STUDY = Objec
