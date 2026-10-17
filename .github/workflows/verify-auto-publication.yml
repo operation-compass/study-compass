@@ -11,6 +11,7 @@ on:
       - 'test/fixtures/audited-release-20261016/**'
       - 'scripts/select-ready-candidates.cjs'
       - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/test-adapt-drive-to-web.cjs'
       - 'scripts/prepare-ready-release.cjs'
       - 'data/publishing/auto-publication.json'
 permissions:
@@ -27,5 +28,6 @@ jobs:
       - name: Check verifier, recovery and publication boundaries
         run: |
           node --check scripts/auto-publish-ready.cjs
+          node scripts/test-adapt-drive-to-web.cjs
           node scripts/test-auto-publication.cjs
           node scripts/test-auto-publication-controller.cjs
