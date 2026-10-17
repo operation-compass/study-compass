@@ -1,0 +1,24 @@
+name: Verify independent content audit runner (offline, no API)
+on:
+  pull_request:
+    paths:
+      - 'scripts/run-independent-content-audits.cjs'
+      - 'scripts/test-independent-content-audits.cjs'
+      - '.github/workflows/verify-content-audit-runner.yml'
+  push:
+    branches: [feature/independent-content-audits-20261017]
+permissions:
+  contents: read
+jobs:
+  offline-audit-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax and fail-closed review behavior without credentials
+        run: |
+          node --check scripts/run-independent-content-audits.cjs
+          node scripts/test-independent-content-audits.cjs
+
