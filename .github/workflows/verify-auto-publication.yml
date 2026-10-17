@@ -1,0 +1,27 @@
+name: Verify automatic publication safety (offline)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/auto-publish-ready.yml'
+      - '.github/workflows/verify-auto-publication.yml'
+      - 'scripts/auto-publish-ready.cjs'
+      - 'scripts/verify-auto-publication.cjs'
+      - 'scripts/test-auto-publication.cjs'
+      - 'scripts/select-ready-candidates.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/prepare-ready-release.cjs'
+permissions:
+  contents: read
+jobs:
+  release-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check verifier, recovery and publication boundaries
+        run: |
+          node --check scripts/auto-publish-ready.cjs
+          node scripts/test-auto-publication.cjs
+
