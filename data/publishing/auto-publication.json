@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "enabled": true,
-  "reason": "Explicit user activation approval on 2026-10-17 after seven isolated controller scenarios passed; real nonempty publication/recovery and native preview limitations disclosed.",
+  "enabled": false,
+  "reason": "SAFETY HOLD 2026-10-18: staging AI READY does not verify Drive problem MASTER PUBLIC/TRUE, individual human APPROVED, version and SHA. Do not re-enable until authenticated per-question approval gate and negative tests are connected to main release workflow.",
   "activation_approval": "docs/audits/evidence-20261017/automatic-publication-activation-approval.json"
 }
