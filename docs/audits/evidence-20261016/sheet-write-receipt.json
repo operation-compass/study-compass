@@ -1,0 +1,165 @@
+{
+  "checked_at": "2026-10-16T11:15:32.719Z",
+  "changes": [
+    {
+      "row": 2256,
+      "column": 4,
+      "before": {
+        "stringValue": "中1〜中3"
+      },
+      "after": {
+        "stringValue": "中1"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 14,
+      "before": {
+        "stringValue": "律令制の「租」は、口分田の収穫に対して稲で納める税で、目安は収穫の約3％です。「調」は布などの特産物、「庸」は労役またはその代わりの布で納める税でした。"
+      },
+      "after": {
+        "stringValue": "律令制の「租」は、口分田などの田の面積に応じて稲を納める税で、収穫量の約3％に相当するとされます。「調」は布などの特産物、「庸」は都での労役またはその代わりの布で納める税でした。"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 18,
+      "before": {
+        "stringValue": "A：国税庁"
+      },
+      "after": {
+        "stringValue": "A：自治体史本文"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 19,
+      "before": {
+        "stringValue": "https://www.nta.go.jp/about/introduction/torikumi/week/download/r05zeishukan_all.pdf"
+      },
+      "after": {
+        "stringValue": "https://www.town.onga.lg.jp/site/choshi/26900.html"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 20,
+      "before": {
+        "stringValue": "2026-10-12"
+      },
+      "after": {
+        "stringValue": "2026-10-16"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 21,
+      "before": {},
+      "after": {
+        "stringValue": "codex-agent-accuracy-20261016 / codex-agent-quality-20261016"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 22,
+      "before": {
+        "stringValue": "gap10-draft-v1"
+      },
+      "after": {
+        "stringValue": "gap10-reviewed-v2"
+      }
+    },
+    {
+      "row": 2256,
+      "column": 24,
+      "before": {
+        "stringValue": "2026-10-12 出典照合済。ただし意味上の類題・Web既存IDとの照合未完了、公開未承認。"
+      },
+      "after": {
+        "stringValue": "2026-10-16 改訂版の独立正確性・品質PASS。SHA v2と証拠は3段階監査ログ参照。審査用2HTML差分/回帰成功。公開技術はPENDING、CHECK/FALSE維持・本番未公開。"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 4,
+      "before": {
+        "stringValue": "中1〜中3"
+      },
+      "after": {
+        "stringValue": "中1"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 18,
+      "before": {
+        "stringValue": "C：研究書書誌（国立国会図書館）"
+      },
+      "after": {
+        "stringValue": "A：自治体史本文"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 19,
+      "before": {
+        "stringValue": "https://ndlsearch.ndl.go.jp/books/R100000002-I025769130"
+      },
+      "after": {
+        "stringValue": "https://www.library-archives.pref.fukui.lg.jp/fukui/07/kenshi/T1/4-01-01-03-10.htm"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 20,
+      "before": {
+        "stringValue": "2026-10-12"
+      },
+      "after": {
+        "stringValue": "2026-10-16"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 21,
+      "before": {},
+      "after": {
+        "stringValue": "codex-agent-accuracy-20261016 / codex-agent-quality-20261016"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 22,
+      "before": {
+        "stringValue": "gap10-draft-v1"
+      },
+      "after": {
+        "stringValue": "gap10-reviewed-v2"
+      }
+    },
+    {
+      "row": 2260,
+      "column": 24,
+      "before": {
+        "stringValue": "2026-10-12 出典照合済。ただし意味上の類題・Web既存IDとの照合未完了、公開未承認。"
+      },
+      "after": {
+        "stringValue": "2026-10-16 改訂版の独立正確性・品質PASS。SHA v2と証拠は3段階監査ログ参照。審査用2HTML差分/回帰成功。公開技術はPENDING、CHECK/FALSE維持・本番未公開。"
+      }
+    }
+  ],
+  "only_unpublished_ids": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "status": "CHECK",
+  "publish_flag": false,
+  "audit_rows": [
+    28,
+    29
+  ],
+  "final_decision": "HOLD",
+  "independent_accuracy_and_quality": "PASS",
+  "technical": "PENDING",
+  "production_updated": false
+}

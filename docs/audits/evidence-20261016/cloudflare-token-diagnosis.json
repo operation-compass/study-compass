@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-16",
+  "original_failure": "Workers Builds selected token deleted or rolled",
+  "production_token": "study-compass build token 20261016",
+  "preview_token_was": "study-compass build token",
+  "preview_repair": "Select same newly created dedicated token; retain npx wrangler preview",
+  "production_unchanged": true,
+  "pr13_unmerged": true,
+  "retry_warning": "Build retry from production context changed preview command to deploy; cancel requested before cloning. Do not use production retry to test previews."
+}

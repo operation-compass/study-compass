@@ -1,0 +1,43 @@
+{
+  "hash_version": "v2",
+  "fields": [
+    "id",
+    "subject",
+    "grade",
+    "unit_major",
+    "unit_minor",
+    "question_type",
+    "question_text",
+    "choice_a",
+    "choice_b",
+    "choice_c",
+    "choice_d",
+    "correct_answer",
+    "explanation"
+  ],
+  "checked_at": "2026-10-16T11:11:19.812Z",
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000001",
+      "version": "gap10-reviewed-v2",
+      "reviewer_id": "codex-agent-quality-20261016",
+      "role": "quality",
+      "result": "PASS",
+      "question_sha256": "330e2398ff97979b59f5d44bb0ece42b42221ff70ae74df2c34e1bfe9b572917",
+      "checked_at": "2026-10-16T11:11:19.812Z",
+      "evidence_file": "docs/audits/evidence-20261016/quality-revised-two.md",
+      "evidence_sha256": "1fce72996f1c0f17b3633915c7c3869e563cf2bb72a705c31dbd529ae8752ab1"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000005",
+      "version": "gap10-reviewed-v2",
+      "reviewer_id": "codex-agent-quality-20261016",
+      "role": "quality",
+      "result": "PASS",
+      "question_sha256": "fe4511b1789567d17eab42166195bdac6af8bacdc4e5daaf7eba006be6349d65",
+      "checked_at": "2026-10-16T11:11:19.812Z",
+      "evidence_file": "docs/audits/evidence-20261016/quality-revised-two.md",
+      "evidence_sha256": "1fce72996f1c0f17b3633915c7c3869e563cf2bb72a705c31dbd529ae8752ab1"
+    }
+  ]
+}

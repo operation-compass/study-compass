@@ -1,0 +1,91 @@
+{
+  "checked_at": "2026-10-16T11:03:57.247Z",
+  "reviewer_id": "codex-root-session-20261016",
+  "independent_review_complete": false,
+  "production_updated": false,
+  "main_commit": "cd24371108556d549e3645ff7276618dd613cb43",
+  "staging_commit": "9e6381b70e974692aaac8a7f0a788b498988d596",
+  "published_delta": 0,
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000001",
+      "accuracy": "PENDING",
+      "quality": "PENDING",
+      "technical": "BLOCKED",
+      "final_decision": "HOLD",
+      "source_url": "https://www.nta.go.jp/about/introduction/torikumi/week/download/r05zeishukan_all.pdf",
+      "notes": "国税庁PDFは14.7MBのため本文取得失敗。税率と庸の説明の直接再照合未了。",
+      "technical_blockers": [
+        "grade 中1〜中3 is rejected by current v2 metadata schema",
+        "independent review evidence absent",
+        "semantic duplicate review incomplete",
+        "live GAS revision and trigger state not verified"
+      ],
+      "question_sha256_v2": "187ea09b6dc56f971b759aeda7397c19d9b8279142e54d15afeda3acf6cdb07e"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000002",
+      "accuracy": "PENDING",
+      "quality": "FAIL",
+      "technical": "BLOCKED",
+      "final_decision": "HOLD",
+      "source_url": "https://www.nta.go.jp/about/introduction/torikumi/week/download/r05zeishukan_all.pdf",
+      "notes": "国税庁PDF本文取得失敗。口分田・防人は税名ではなく誤答肢の型が不均一。",
+      "technical_blockers": [
+        "grade 中1〜中3 is rejected by current v2 metadata schema",
+        "independent review evidence absent",
+        "semantic duplicate review incomplete",
+        "live GAS revision and trigger state not verified"
+      ],
+      "question_sha256_v2": "f0411cc5eb9cfe1f659e2b01a036180cc77adbc64361c340f3a3312c6089a8c9"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000003",
+      "accuracy": "PARTIAL",
+      "quality": "PENDING",
+      "technical": "BLOCKED",
+      "final_decision": "HOLD",
+      "source_url": "https://www.kyuhaku.jp/dazaifu/d-map/kaisetu01.html",
+      "notes": "九州国立博物館『大宰府政庁の創設と大宰府の防衛』本文で663年敗戦後の防人設置と防衛強化を確認。制度全体の定義は追加照合待ち。",
+      "technical_blockers": [
+        "grade 中1〜中3 is rejected by current v2 metadata schema",
+        "independent review evidence absent",
+        "semantic duplicate review incomplete",
+        "live GAS revision and trigger state not verified"
+      ],
+      "question_sha256_v2": "5ed08c9628175b846f73436d38bb77fe7f0fbf6e838389654090049f4e8b37bb"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000004",
+      "accuracy": "PENDING",
+      "quality": "FAIL",
+      "technical": "BLOCKED",
+      "final_decision": "HOLD",
+      "source_url": "https://www.narahaku.go.jp/exhibition/special/special_exhibition/202410_shosoin/",
+      "notes": "指定された奈良国立博物館ページは403。蒸気機関車・地券・戦後憲法は時代差が大きく消去が容易。",
+      "technical_blockers": [
+        "grade 中1〜中3 is rejected by current v2 metadata schema",
+        "independent review evidence absent",
+        "semantic duplicate review incomplete",
+        "live GAS revision and trigger state not verified"
+      ],
+      "question_sha256_v2": "e59ae9a7e67820d02cefce8f5b47ebc33010cf7cfd6c7ab72bc428af79512b0e"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000005",
+      "accuracy": "PENDING",
+      "quality": "PENDING",
+      "technical": "BLOCKED",
+      "final_decision": "HOLD",
+      "source_url": "https://ndlsearch.ndl.go.jp/books/R100000002-I025769130",
+      "notes": "NDLは研究書の目次・書誌。国司の任務を直接裏付ける本文ではない。",
+      "technical_blockers": [
+        "grade 中1〜中3 is rejected by current v2 metadata schema",
+        "independent review evidence absent",
+        "semantic duplicate review incomplete",
+        "live GAS revision and trigger state not verified"
+      ],
+      "question_sha256_v2": "95e7dda513c67c6d99ed399c976f32b7cc2b52bc6424c3dffedde4bd26ff5d3b"
+    }
+  ]
+}

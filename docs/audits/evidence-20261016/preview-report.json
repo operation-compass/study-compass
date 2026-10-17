@@ -1,0 +1,36 @@
+{
+  "mode": "review_preview_only",
+  "production_updated": false,
+  "release_authorized": false,
+  "questions": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "files": [
+    {
+      "file": "index.html",
+      "before": 623,
+      "after": 625,
+      "added": [
+        "SC-SOC-HIS-GAP10-000001",
+        "SC-SOC-HIS-GAP10-000005"
+      ],
+      "edited": []
+    },
+    {
+      "file": "legacy-study.html",
+      "before": 623,
+      "after": 625,
+      "added": [
+        "SC-SOC-HIS-GAP10-000001",
+        "SC-SOC-HIS-GAP10-000005"
+      ],
+      "edited": []
+    }
+  ],
+  "checks": [
+    "question structure and withheld IDs",
+    "existing and withdrawn history",
+    "scoring and storage regression"
+  ]
+}

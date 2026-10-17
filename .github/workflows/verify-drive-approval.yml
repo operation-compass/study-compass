@@ -1,0 +1,132 @@
+name: Verify Drive approval gate (no deploy)
+
+on:
+  push:
+    branches: [feature/drive-approval-gate-20261016]
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
+      - 'scripts/check-drive-approval.cjs'
+      - 'scripts/check-drive-staging-bundle.cjs'
+      - 'integrations/apps-script/StudyCompassSync.gs'
+      - 'scripts/test-gas-check-ready.cjs'
+      - 'scripts/test-historical-105-preview.cjs'
+      - 'scripts/check-three-stage-audit.cjs'
+      - 'scripts/test-three-stage-audit.cjs'
+      - 'scripts/merge-approved-delta.cjs'
+      - 'scripts/test-merge-approved-delta.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/test-adapt-drive-to-web.cjs'
+      - 'scripts/test-real-web-hold.cjs'
+      - 'scripts/test-gate-to-web-integration.cjs'
+      - 'scripts/select-ready-candidates.cjs'
+      - 'scripts/test-select-ready-candidates.cjs'
+      - 'scripts/test-real-ready-to-web.cjs'
+      - 'scripts/preview-approved-web-delta.cjs'
+      - 'scripts/prepare-ready-release.cjs'
+      - 'scripts/test-prepare-ready-release.cjs'
+      - 'scripts/test-real-new-ready-release.cjs'
+      - 'scripts/test-real-history-000006-web-mapping.cjs'
+      - 'scripts/inspect-ready-backlog.cjs'
+      - 'index.html'
+      - 'legacy-study.html'
+      - '.github/workflows/verify-drive-approval.yml'
+  pull_request:
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
+      - 'scripts/check-drive-approval.cjs'
+      - 'scripts/test-drive-approval.cjs'
+      - 'scripts/export-drive-approved.cjs'
+      - 'scripts/test-drive-export.cjs'
+      - 'scripts/check-drive-connection.cjs'
+      - 'scripts/check-drive-staging-bundle.cjs'
+      - 'scripts/test-drive-staging-bundle.cjs'
+      - 'integrations/apps-script/StudyCompassSync.gs'
+      - 'scripts/test-gas-check-ready.cjs'
+      - 'scripts/test-historical-105-preview.cjs'
+      - 'scripts/test-drive-master-schema.cjs'
+      - '.github/workflows/check-drive-connection.yml'
+      - '.github/workflows/verify-drive-approval.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  approval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check syntax
+        run: |
+          node --check scripts/check-drive-approval.cjs
+          node --check scripts/test-drive-approval.cjs
+          node --check scripts/export-drive-approved.cjs
+          node --check scripts/test-drive-export.cjs
+          node --check scripts/check-drive-connection.cjs
+          node --check scripts/check-drive-staging-bundle.cjs
+          cp integrations/apps-script/StudyCompassSync.gs /tmp/study-gas-verify.js
+          node --check /tmp/study-gas-verify.js
+          node --check scripts/check-three-stage-audit.cjs
+          node --check scripts/test-three-stage-audit.cjs
+          node --check scripts/merge-approved-delta.cjs
+          node --check scripts/test-merge-approved-delta.cjs
+          node --check scripts/adapt-drive-to-web.cjs
+          node --check scripts/test-adapt-drive-to-web.cjs
+          node --check scripts/test-real-web-hold.cjs
+          node --check scripts/test-gate-to-web-integration.cjs
+          node --check scripts/select-ready-candidates.cjs
+          node --check scripts/test-select-ready-candidates.cjs
+          node --check scripts/test-real-ready-to-web.cjs
+          node --check scripts/preview-approved-web-delta.cjs
+          node --check scripts/prepare-ready-release.cjs
+          node --check scripts/test-prepare-ready-release.cjs
+          node --check scripts/test-real-new-ready-release.cjs
+          node --check scripts/test-real-history-000006-web-mapping.cjs
+          node --check scripts/inspect-ready-backlog.cjs
+          node --check scripts/test-drive-staging-bundle.cjs
+          node --check scripts/test-drive-master-schema.cjs
+          node --check scripts/test-gas-check-ready.cjs
+          node --check scripts/test-historical-105-preview.cjs
+      - name: Run regression tests (synthetic fixtures only)
+        run: |
+          node scripts/test-drive-approval.cjs
+          node scripts/test-drive-export.cjs
+          node scripts/test-drive-master-schema.cjs
+          node scripts/test-gas-check-ready.cjs
+          node scripts/test-historical-105-preview.cjs
+          node scripts/test-drive-staging-bundle.cjs
+          node scripts/test-three-stage-audit.cjs
+          node scripts/test-merge-approved-delta.cjs
+          node scripts/test-adapt-drive-to-web.cjs
+          node scripts/test-real-web-hold.cjs
+          node scripts/test-gate-to-web-integration.cjs
+          node scripts/test-select-ready-candidates.cjs
+          node scripts/test-real-ready-to-web.cjs
+          node scripts/preview-approved-web-delta.cjs
+          node scripts/test-prepare-ready-release.cjs
+          node scripts/test-real-new-ready-release.cjs
+          node scripts/test-real-history-000006-web-mapping.cjs
+          node scripts/inspect-ready-backlog.cjs
+      - name: Validate real GAS staging bundle (never deploy)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f data/staging/drive-sync-bundle.json ]; then
+            node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
+            set +e
+            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json
+            actual_outcome=$?
+            set -e
+            test "$actual_outcome" -eq 0 -o "$actual_outcome" -eq 2 || { echo '::error::Embedded audit malformed'; exit 1; }
+            echo 'Embedded three-stage audit checked (0=fully eligible; 2=HOLD); no deploy.'
+            printf '{"records":[]}' > /tmp/study-audit-empty.json
+            set +e
+            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json /tmp/study-audit-empty.json
+            missing_outcome=$?
+            set -e
+            test "$missing_outcome" -eq 2 || { echo '::error::Missing audit evidence was not blocked'; exit 1; }
+            echo 'Absent audit evidence correctly blocked.'
+          else
+            echo 'No GAS bundle staged: regression-only check.'
+          fi
+

@@ -1,0 +1,32 @@
+{
+  "production_updated": false,
+  "no_change": false,
+  "source": "authenticated-drive-export",
+  "ready": [
+    "SC-SOC-HIS-GAP10-000001",
+    "SC-SOC-HIS-GAP10-000005"
+  ],
+  "held": [],
+  "files": [
+    {
+      "filename": "index.html",
+      "before": 623,
+      "after": 625,
+      "edited": [],
+      "added": [
+        "SC-SOC-HIS-GAP10-000001",
+        "SC-SOC-HIS-GAP10-000005"
+      ]
+    },
+    {
+      "filename": "legacy-study.html",
+      "before": 623,
+      "after": 625,
+      "edited": [],
+      "added": [
+        "SC-SOC-HIS-GAP10-000001",
+        "SC-SOC-HIS-GAP10-000005"
+      ]
+    }
+  ]
+}
