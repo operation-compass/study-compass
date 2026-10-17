@@ -1,0 +1,28 @@
+'use strict';
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),assert=require('node:assert/strict'),cp=require('node:child_process');
+const {sha256,gitBlob,verifyEvidence,verifyDiff,verifyPublished,evidenceIndex}=require('./verify-auto-publication.cjs');
+const {digest,v2Fields}=require('./select-ready-candidates.cjs');
+function fixture(){
+ const q={id:'offline-fixture-never-publish',version:'test-v2',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'古代',question_type:'4択',question_text:'Test fixture question',choice_a:'a',choice_b:'b',choice_c:'c',choice_d:'d',correct_answer:'a',explanation:'Test fixture explanation'};
+ const h=digest(q,v2Fields),time=new Date().toISOString(),index=[];
+ const reviews=['accuracy','quality','technical'].map(role=>{const reviewer='offline-fixture-'+role,md=q.id+' '+reviewer+' actual test evidence '+role,sha=sha256(md),r={id:q.id,version:q.version,role,result:'PASS',reviewer_id:reviewer,checked_at:time,question_sha256:h,evidence_sha256:sha,evidence_file:'docs/audits/fixture/'+role+'.md'};index.push({path:r.evidence_file,text:md,sha},{path:'docs/audits/fixture/'+role+'.json',text:JSON.stringify({records:[r]}),sha:'unused'});return r;});
+ return {index,bundle:{candidate:{items:[q]},audit:{records:[{id:q.id,version:q.version,hash_version:'v2',sha256:h,accuracy:'PASS',quality:'PASS',technical:'PASS',final_decision:'READY',risk:'LOW',exception_reason:'',checked_at:time,accuracy_checked_at:time,quality_checked_at:time,technical_checked_at:time,evidence_url:'https://example.com/test-fixture-only',independent_reviews:reviews}]}}};
+}
+let f=fixture();assert.equal(verifyEvidence(f.bundle,f.index).ready.length,1);
+f=fixture();f.index.shift();assert.throws(()=>verifyEvidence(f.bundle,f.index),/artifact/);
+f=fixture();f.bundle.audit.records[0].independent_reviews[0].version='changed';assert.throws(()=>verifyEvidence(f.bundle,f.index),/version/);
+f=fixture();f.index=f.index.filter(x=>!x.path.endsWith('technical.json'));assert.throws(()=>verifyEvidence(f.bundle,f.index),/record/);
+f=fixture();f.bundle.candidate.items[0].explanation+='changed';assert.deepEqual(verifyEvidence(f.bundle,f.index).ready,[]);
+f=fixture();f.bundle.audit.records[0].independent_reviews[0].evidence_file='../../secret';assert.throws(()=>verifyEvidence(f.bundle,f.index),/path/);
+const expected={'index.html':'<!doctype html>const SOCIAL = [{"id":"new","answer":"a","ex":"ex"}];','legacy-study.html':'<!doctype html>const SOCIAL = [{"id":"new","answer":"a","ex":"ex"}];'};
+const report={files:[{added:['new'],edited:[]},{added:['new'],edited:[]}]};const changed=Object.entries(expected).map(([filename,content])=>({filename,sha:gitBlob(content)}));
+assert.deepEqual(verifyDiff(report,expected,changed),['new']);assert.throws(()=>verifyDiff(report,expected,[...changed,{filename:'worker.js',sha:'bad'}]),/non-question/);assert.throws(()=>verifyDiff(report,expected,changed.map(x=>({...x,sha:'bad'}))),/regenerated/);
+assert.throws(()=>verifyDiff({files:[{added:['1','2','3','4','5','6'],edited:[]},{added:['1','2','3','4','5','6'],edited:[]}]},expected,changed),/batch/);
+verifyPublished(expected['index.html'],expected['legacy-study.html']);assert.throws(()=>verifyPublished(expected['index.html'],expected['index.html'].replace('"answer":"a"','"answer":"wrong"')),/Published/);
+// Exercise the exact file-scoped recovery operation on a disposable local Git repository.
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'study-recovery-test-'));const git=(...args)=>cp.execFileSync('git',args,{cwd:tmp,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
+git('init');git('config','user.name','Offline Test');git('config','user.email','offline@example.invalid');for(const p of ['index.html','legacy-study.html','unrelated.txt'])fs.writeFileSync(path.join(tmp,p),'original');git('add','.');git('commit','-m','baseline');const base=git('rev-parse','HEAD');for(const p of ['index.html','legacy-study.html'])fs.writeFileSync(path.join(tmp,p),'new questions');fs.writeFileSync(path.join(tmp,'unrelated.txt'),'preserve newer unrelated work');git('add','.');git('commit','-m','publication');git('restore','--source='+base,'--','index.html','legacy-study.html');git('add','--','index.html','legacy-study.html');assert.equal(fs.readFileSync(path.join(tmp,'unrelated.txt'),'utf8'),'preserve newer unrelated work');assert.equal(fs.readFileSync(path.join(tmp,'index.html'),'utf8'),'original');assert.deepEqual(git('diff','--cached','--name-only').split('\n').sort(),['index.html','legacy-study.html']);
+const workflow=fs.readFileSync(path.join(__dirname,'../.github/workflows/auto-publish-ready.yml'),'utf8'),controller=fs.readFileSync(path.join(__dirname,'auto-publish-ready.cjs'),'utf8');assert(workflow.includes('ref: main')&&workflow.includes('persist-credentials: false'));assert(!controller.includes('git reset')&&!controller.includes('--force'));assert(controller.includes('Newer main changes exist; automatic rollback stopped'));assert(controller.includes("sha:head,merge_method:'merge'"));assert(controller.includes('dispatchAndWait(mergeSha)'));
+assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../data/publishing/auto-publication.json'),'utf8')).enabled,false,'Unattended publication must remain disabled pending activation approval');assert(controller.indexOf("if(config.enabled!==true)")<controller.indexOf("const open=await api('pulls?"),'Disabled mode must stop before creating or modifying a PR');
+console.log('PASS: evidence files and sidecars, changed versions/content, extra PR files, wrong blobs, max five, published answer mismatch, isolated Git recovery preserves unrelated work, trusted-main execution and deployment dispatch');
+

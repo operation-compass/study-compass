@@ -1,0 +1,51 @@
+name: Publish independently audited READY questions
+on:
+  workflow_run:
+    workflows: ['Propose READY Web delta for review (never auto-merge)']
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: study-compass-audited-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'operation-compass/study-compass' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Checkout trusted current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          fetch-depth: 0
+      - name: Checkout staging data and evidence only
+        uses: actions/checkout@v4
+        with:
+          ref: feature/drive-approval-gate-20261016
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild, verify, publish and verify delivery
+        working-directory: live
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STUDY_SOURCE_ROOT: ../audit-source
+        run: node scripts/auto-publish-ready.cjs
+      - name: Preserve publication or recovery receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audited-publication-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: ${{ runner.temp }}/study-auto-release/
+
