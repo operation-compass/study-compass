@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout audited staging and release code
+      - name: Checkout audited staging data only
         uses: actions/checkout@v4
         with:
           ref: feature/drive-approval-gate-20261016
@@ -38,11 +38,10 @@ jobs:
           test "$(git -C live branch --show-current)" = main
           test "$(git -C audit-source branch --show-current)" = feature/drive-approval-gate-20261016
           test -f audit-source/data/staging/drive-sync-bundle.json
-      - name: Stage the audited scripts and bundle outside live tree
+      - name: Stage only the audited bundle; retain trusted main release code
         shell: bash
         run: |
           set -euo pipefail
-          cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
           cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
       - name: Check if a releasable READY question exists
         id: eligibility
