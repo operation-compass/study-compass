@@ -1,0 +1,32 @@
+[
+  {
+    "mode": "mcq",
+    "before": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-mcq.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-mcq.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION\n\t\t\t9 heading 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？, Value: 1\n\t\t\t\t10 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t11 text 一番近い答えを1つ選んでください。\n\t\t\t12 container answer\n\t\t\t\t13 button A 奈良時代の皇室と仏教寺院の関わり\n\t\t\t\t\t14 text A\n\t\t\t\t\t15 text 奈良時代の皇室と仏教寺院の関わり\n\t\t\t\t16 button B 奈良時代の班田収授法による土地の配分\n\t\t\t\t\t17 text B\n\t\t\t\t\t18 text 奈良時代の班田収授法による土地の配分\n\t\t\t\t19 button C 奈良時代の国司による地方行政のしくみ\n\t\t\t\t\t20 text C\n\t\t\t\t\t21 text 奈良時代の国司による地方行政のしくみ\n\t\t\t\t22 button D 奈良時代の農民にかかった税の負担\n\t\t\t\t\t23 text D\n\t\t\t\t\t24 text 奈良時代の農民にかかった税の負担\n\t\t\t25 button わからない\n\t\t\t26 button あとで解く\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-mcq.html",
+    "after": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-mcq.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-mcq.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION\n\t\t\t9 heading 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？, Value: 1\n\t\t\t\t10 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t11 text 一番近い答えを1つ選んでください。\n\t\t\t12 container answer\n\t\t\t\t13 button (disabled) A 奈良時代の皇室と仏教寺院の関わり\n\t\t\t\t\t14 text A 奈良時代の皇室と仏教寺院の関わり\n\t\t\t\t16 button (disabled) B 奈良時代の班田収授法による土地の配分\n\t\t\t\t\t17 text B 奈良時代の班田収授法による土地の配分\n\t\t\t\t19 button (disabled) C 奈良時代の国司による地方行政のしくみ\n\t\t\t\t\t20 text C 奈良時代の国司による地方行政のしくみ\n\t\t\t\t22 button (disabled) D 奈良時代の農民にかかった税の負担\n\t\t\t\t\t23 text D 奈良時代の農民にかかった税の負担\n\t\t\t25 button (disabled) わからない\n\t\t\t26 button (disabled) あとで解く\n\t\t\t27 container\n\t\t\t\t28 heading 正解。その調子！, Value: 2\n\t\t\t\t\t29 text 正解。その調子！\n\t\t\t\t30 text 正解：奈良時代の皇室と仏教寺院の関わり 天皇に関係する品が仏教寺院へ納められたことから、この資料は皇室と仏教寺院の関わりを調べる手がかりになります。農民の税や国司の仕事、土地の配分は、この資料だけでは分かりません。正倉院の宝物の一部は、こうした献納に由来します。\n\t\t\t\t31 button 結果を見る →\n\t\t\t\t\t32 text 結果を見る\n\t\t\t\t\t33 text →\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-mcq.html",
+    "layout": {
+      "scrollHeight": 1410,
+      "scrollWidth": 375,
+      "width": 390
+    }
+  },
+  {
+    "mode": "question",
+    "before": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？, Value: 1\n\t\t\t\t10 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container answer\n\t\t\t\t13 button 答えを見る →\n\t\t\t\t\t14 text 答えを見る\n\t\t\t\t\t15 text →\n\t\t\t\t16 button あとで復習する\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-question.html",
+    "after": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？, Value: 1\n\t\t\t\t10 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container\n\t\t\t\t13 heading 答えを確認, Value: 2\n\t\t\t\t\t14 text 答えを確認\n\t\t\t\t15 text 正解：奈良時代の皇室と仏教寺院の関わり 天皇に関係する品が仏教寺院へ納められたことから、この資料は皇室と仏教寺院の関わりを調べる手がかりになります。農民の税や国司の仕事、土地の配分は、この資料だけでは分かりません。正倉院の宝物の一部は、こうした献納に由来します。\n\t\t\t\t16 button 確認を終える →\n\t\t\t\t\t17 text 確認を終える\n\t\t\t\t\t18 text →\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-question.html",
+    "layout": {
+      "scrollHeight": 1030,
+      "scrollWidth": 375,
+      "width": 390
+    }
+  },
+  {
+    "mode": "flashcard",
+    "before": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 奈良・文化 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t\t12 text タップして答えを見る\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-flashcard.html",
+    "after": "Browser tab: 13, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8767/test-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8767/test-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 奈良・文化 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？\n\t\t\t\t12 text ANSWER\n\t\t\t13 container flashBack\n\t\t\t\t14 text 奈良時代の皇室と仏教寺院の関わり\n\t\t\t\t15 text 天皇に関係する品が仏教寺院へ納められたことから、この資料は皇室と仏教寺院の関わりを調べる手がかりになります。農民の税や国司の仕事、土地の配分は、この資料だけでは分かりません。正倉院の宝物の一部は、こうした献納に由来します。\n\t\t\t16 container flashActions\n\t\t\t\t17 button まだ\n\t\t\t\t18 button 覚えた\n\nThe focused UI element is 9 button カードをめくる",
+    "layout": {
+      "scrollHeight": 961,
+      "scrollWidth": 375,
+      "width": 390
+    }
+  }
+]
