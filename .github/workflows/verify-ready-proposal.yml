@@ -1,0 +1,77 @@
+name: Verify READY proposal workflow safety (no deploy)
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/propose-ready-release.yml'
+      - '.github/workflows/verify-ready-proposal.yml'
+permissions:
+  contents: read
+jobs:
+  verify-no-auto-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dispatch-only, PR-only release mechanism
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          data=Path('.github/workflows/propose-ready-release.yml').read_text()
+          assert 'workflow_dispatch:' in data
+          header=data.split('permissions:',1)[0]
+          assert 'push:' in header and 'feature/drive-approval-gate-20261016' in header and "'data/staging/drive-sync-bundle.json'" in header
+          assert 'schedule:' not in header and 'pull_request:' not in header
+          assert 'gh pr create' in data and '--draft' in data
+          assert 'gh pr merge' not in data
+          assert 'node scripts/prepare-ready-release.cjs' in data
+          assert 'node scripts/check-question-release.cjs' in data
+          assert 'git add -- index.html legacy-study.html' in data
+          assert 'wrangler' not in data and 'cloudflare' not in data.lower()
+          print('PASS: staged updates propose drafts only; no auto merge or deploy')
+          PY
+  integration-dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actual production baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+      - name: Checkout actual audited staging
+        uses: actions/checkout@v4
+        with:
+          ref: feature/drive-approval-gate-20261016
+          path: audit-source
+      - name: Generate release proposal locally without push
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
+          cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
+          cd live
+          # Zero READY is a valid no-op; malformed evidence remains an error.
+          if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
+            echo "Fully attested READY question found; running proposal dry-run."
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then
+              echo '::error::Eligibility validation failed unexpectedly'
+              exit "$status"
+            fi
+            node scripts/check-question-release.cjs
+            node scripts/check-history.cjs
+            node scripts/check-beta.cjs
+            echo "No fully attested READY question; baseline checks passed. No proposal, push or deploy."
+            exit 0
+          fi
+          node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json "$RUNNER_TEMP/study-pr-dry-run"
+          cp "$RUNNER_TEMP/study-pr-dry-run/index.html" index.html
+          cp "$RUNNER_TEMP/study-pr-dry-run/legacy-study.html" legacy-study.html
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
+          git diff --name-only -- index.html legacy-study.html
+          git diff --exit-code -- worker.js home-v2.html study-v2.css
+          node -e 'const r=require(process.env.RUNNER_TEMP+"/study-pr-dry-run/release-report.json"); if(r.files.length!==2||r.files.some(f=>f.edited.length+f.added.length>5))process.exit(1);console.log(JSON.stringify(r.files));'
+          echo "Integration verified with real baseline and staging (including zero-diff no-op); no push and no deploy."

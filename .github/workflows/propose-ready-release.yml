@@ -1,0 +1,103 @@
+name: Propose READY Web delta for review (never auto-merge)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/drive-approval-gate-20261016]
+    paths:
+      - 'data/staging/drive-sync-bundle.json'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: study-ready-proposal
+  cancel-in-progress: false
+
+jobs:
+  propose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout audited staging and release code
+        uses: actions/checkout@v4
+        with:
+          ref: feature/drive-approval-gate-20261016
+          path: audit-source
+          persist-credentials: false
+      - name: Checkout live main as safe baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          fetch-depth: 0
+      - name: Validate source and target revisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C live branch --show-current)" = main
+          test "$(git -C audit-source branch --show-current)" = feature/drive-approval-gate-20261016
+          test -f audit-source/data/staging/drive-sync-bundle.json
+      - name: Stage the audited scripts and bundle outside live tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
+          cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
+      - name: Check if a releasable READY question exists
+        id: eligibility
+        working-directory: live
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
+            echo 'has_ready=true' >> "$GITHUB_OUTPUT"
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then
+              echo '::error::Eligibility validation failed unexpectedly'
+              exit "$status"
+            fi
+            echo 'No fully attested READY question; skipping PR generation.'
+            echo 'has_ready=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Prepare bounded READY change only
+        if: steps.eligibility.outputs.has_ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/study-release"
+          cd live
+          node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json "$RUNNER_TEMP/study-release"
+          node -e 'const x=require(process.env.RUNNER_TEMP+"/study-release/release-report.json");if(x.files.length!==2||!x.files.every(f=>f.edited.length+f.added.length<=5))process.exit(1)'
+          cp "$RUNNER_TEMP/study-release/index.html" index.html
+          cp "$RUNNER_TEMP/study-release/legacy-study.html" legacy-study.html
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
+          # The proposal must touch only the two HTML snapshots.
+          git diff --exit-code -- worker.js home-v2.html study-v2.css
+      - name: Create limited review branch and draft PR
+        if: steps.eligibility.outputs.has_ready == 'true'
+        working-directory: live
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- index.html legacy-study.html
+          if git diff --cached --quiet; then
+            echo "No Web delta. No PR."
+            exit 0
+          fi
+          test "$(git diff --cached --name-only | wc -l)" -eq 2
+          git switch -c "study-ready-$(date -u +%Y%m%d%H%M%S)-$GITHUB_RUN_ID"
+          git commit -m "Propose verified READY questions only"
+          git push origin HEAD
+          # GitHub may disable Action-created PRs in repository settings.
+          # A failure here must not be reported as a successful proposal.
+          gh pr create --base main --head "$(git branch --show-current)" --draft \
+            --title "Study COMPASS: bounded READY Web delta" \
+            --body "Automatically prepared from current audited staging; max 5 questions. Review required. NO AUTO-MERGE or production deployment."
