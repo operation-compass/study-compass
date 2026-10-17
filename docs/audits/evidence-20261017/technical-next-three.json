@@ -23,7 +23,7 @@
       "role": "technical",
       "reviewer_id": "codex-independent-technical-next-three-20261017",
       "checked_at": "2026-10-17T08:14:11.320Z",
-      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "evidence_sha256": "a8607f0b8b59359846bc8ee87920000e2346b770d006585a89e5c1995007a9c1",
       "result": "PASS",
       "reason": "Exact draft SHA; source blob, append preservation, routing, regressions, 3 modes and mobile evidence verified",
       "evidence_file": "docs/audits/evidence-20261017/technical-next-three.md"
@@ -37,7 +37,7 @@
       "role": "technical",
       "reviewer_id": "codex-independent-technical-next-three-20261017",
       "checked_at": "2026-10-17T08:14:11.320Z",
-      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "evidence_sha256": "a8607f0b8b59359846bc8ee87920000e2346b770d006585a89e5c1995007a9c1",
       "result": "PASS",
       "reason": "Exact draft SHA; source blob, append preservation, routing, regressions, 3 modes and mobile evidence verified",
       "evidence_file": "docs/audits/evidence-20261017/technical-next-three.md"
@@ -51,9 +51,10 @@
       "role": "technical",
       "reviewer_id": "codex-independent-technical-next-three-20261017",
       "checked_at": "2026-10-17T08:14:11.320Z",
-      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "evidence_sha256": "a8607f0b8b59359846bc8ee87920000e2346b770d006585a89e5c1995007a9c1",
       "result": "HOLD",
-      "reason": "Excluded after independent factual/quality hold; not a technical release approval"
+      "reason": "Excluded after independent factual/quality hold; not a technical release approval",
+      "evidence_file": "docs/audits/evidence-20261017/technical-next-three.md"
     }
   ],
   "regressions": [
@@ -82,7 +83,7 @@
     "GAP10-000004 excluded due content FAIL/quality HOLD",
     "Authenticated release delta CI and production deployment must still be verified"
   ],
-  "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+  "evidence_sha256": "a8607f0b8b59359846bc8ee87920000e2346b770d006585a89e5c1995007a9c1",
   "browser_attempt": {
     "iab": "Browser is not available: iab",
     "available_browsers": []
@@ -124,5 +125,6 @@
       "file": "mobile-000003-flashcard.jpg",
       "sha256": "640f59991f4269331a466d9ea3269baf808ad0e009caa4d3a15fc771c9b537d6"
     }
-  ]
+  ],
+  "format_note": "Root added full question IDs corresponding to the shorthand IDs in the unchanged independent review, and recalculated evidence digests; no review decision changed."
 }

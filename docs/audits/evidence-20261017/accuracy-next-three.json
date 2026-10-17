@@ -28,8 +28,8 @@
       "checked_at": "2026-10-17T08:10:11.915Z",
       "question_sha256": "d1a7d3d609ad5e946fe27855b68b8015bcd09f538631e7b4ed7c274be345403e",
       "source_url": "https://www.town.onga.lg.jp/site/choshi/26900.html",
-      "evidence_file": "accuracy-next-three.md",
-      "evidence_sha256": "d2c231be5875b092e0c7d6663cc8ca038efa7e661ca291c55dd5fdfb9746010f",
+      "evidence_file": "docs/audits/evidence-20261017/accuracy-next-three.md",
+      "evidence_sha256": "eb49533e3ae05fc9222340b99b7820e02428a4a3c06b3fd48d6e5587752df453",
       "notes": "公的本文を直接取得して設問・解説・各選択肢を独立照合済み。"
     },
     {
@@ -42,8 +42,8 @@
       "checked_at": "2026-10-17T08:10:11.915Z",
       "question_sha256": "ad25599848c06c1fc7e5d43fce93794aea33c94e7b35428c9218f8739e74d13a",
       "source_url": "https://www.town.onga.lg.jp/site/choshi/26900.html",
-      "evidence_file": "accuracy-next-three.md",
-      "evidence_sha256": "d2c231be5875b092e0c7d6663cc8ca038efa7e661ca291c55dd5fdfb9746010f",
+      "evidence_file": "docs/audits/evidence-20261017/accuracy-next-three.md",
+      "evidence_sha256": "eb49533e3ae05fc9222340b99b7820e02428a4a3c06b3fd48d6e5587752df453",
       "notes": "公的本文を直接取得して設問・解説・各選択肢を独立照合済み。"
     },
     {
@@ -56,9 +56,10 @@
       "checked_at": "2026-10-17T08:10:11.915Z",
       "question_sha256": "92faa918b711ec3cc0d2037e02a53d51e898b81f1c7430de96dfc7d1851b0b64",
       "source_url": "https://www.kunaicho.go.jp/visit/event/shosoin/shososeibi/nenpyo.html",
-      "evidence_file": "accuracy-next-three.md",
-      "evidence_sha256": "d2c231be5875b092e0c7d6663cc8ca038efa7e661ca291c55dd5fdfb9746010f",
+      "evidence_file": "docs/audits/evidence-20261017/accuracy-next-three.md",
+      "evidence_sha256": "eb49533e3ae05fc9222340b99b7820e02428a4a3c06b3fd48d6e5587752df453",
       "notes": "e国宝本文が孝謙天皇の遺愛品献納も記載。四十九日等を限定しない設問ではAとDを一意に区別できない。"
     }
-  ]
+  ],
+  "format_note": "Root added full question IDs corresponding to the shorthand IDs in the unchanged independent review, and recalculated evidence digests; no review decision changed."
 }
