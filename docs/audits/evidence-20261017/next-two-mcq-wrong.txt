@@ -1,0 +1,32 @@
+Browser tab: 8, Title: "Study COMPASS | 高校受験 α v0.3", URL: "http://127.0.0.1:8766/test-000003-mcq.html".
+1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-mcq.html
+	2 container
+		3 text STUDY COMPASS
+		4 text 高校受験の、その先へ。
+		5 text α v0.3
+		6 container
+			7 button ← 戻る
+			8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION
+			9 heading 律令制の『防人』について正しい説明は？, Value: 1
+				10 text 律令制の『防人』について正しい説明は？
+			11 text 一番近い答えを1つ選んでください。
+			12 container answer
+				13 button (disabled) A 九州北部などの防備にあたった兵士
+					14 text A 九州北部などの防備にあたった兵士
+				16 button (disabled) B 国ごとの地方政治を担当した役人
+					17 text B 国ごとの地方政治を担当した役人
+				19 button (disabled) C 郡の政治を担当した地方の役人
+					20 text C 郡の政治を担当した地方の役人
+				22 button (disabled) D 地方の産物を都へ運ぶ役目の人々
+					23 text D 地方の産物を都へ運ぶ役目の人々
+			25 button (disabled) わからない
+			26 button (disabled) あとで解く
+			27 container
+				28 heading ここで覚えていこう。, Value: 2
+					29 text ここで覚えていこう。
+				30 text あなたの回答：郡の政治を担当した地方の役人 正解：九州北部などの防備にあたった兵士 防人は、壱岐・対馬や九州各地の防備にあたった兵士です。白村江の戦いの敗戦後、防衛体制が強化されました。国司・郡司は地方政治を担う役人で、防人とは役割が異なります。
+				31 button 結果を見る →
+					32 text 結果を見る
+					33 text →
+
+The focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-mcq.html

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "000002",
+    "mode": "mcq",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-mcq.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION\n\t\t\t9 heading 律令制で、布などの地方の特産物を納める税は？, Value: 1\n\t\t\t\t10 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t11 text 一番近い答えを1つ選んでください。\n\t\t\t12 container answer\n\t\t\t\t13 button A 雑徭\n\t\t\t\t\t14 text A\n\t\t\t\t\t15 text 雑徭\n\t\t\t\t16 button B 調\n\t\t\t\t\t17 text B\n\t\t\t\t\t18 text 調\n\t\t\t\t19 button C 租\n\t\t\t\t\t20 text C\n\t\t\t\t\t21 text 租\n\t\t\t\t22 button D 庸\n\t\t\t\t\t23 text D\n\t\t\t\t\t24 text 庸\n\t\t\t25 button わからない\n\t\t\t26 button あとで解く\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-mcq.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION\n\t\t\t9 heading 律令制で、布などの地方の特産物を納める税は？, Value: 1\n\t\t\t\t10 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t11 text 一番近い答えを1つ選んでください。\n\t\t\t12 container answer\n\t\t\t\t13 button A 雑徭\n\t\t\t\t\t14 text A\n\t\t\t\t\t15 text 雑徭\n\t\t\t\t16 button B 調\n\t\t\t\t\t17 text B\n\t\t\t\t\t18 text 調\n\t\t\t\t19 button C 租\n\t\t\t\t\t20 text C\n\t\t\t\t\t21 text 租\n\t\t\t\t22 button D 庸\n\t\t\t\t\t23 text D\n\t\t\t\t\t24 text 庸\n\t\t\t25 button わからない\n\t\t\t26 button あとで解く\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html"
+  },
+  {
+    "id": "000002",
+    "mode": "question",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 律令制で、布などの地方の特産物を納める税は？, Value: 1\n\t\t\t\t10 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container answer\n\t\t\t\t13 button 答えを見る →\n\t\t\t\t\t14 text 答えを見る\n\t\t\t\t\t15 text →\n\t\t\t\t16 button あとで復習する\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-question.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 律令制で、布などの地方の特産物を納める税は？, Value: 1\n\t\t\t\t10 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container\n\t\t\t\t13 heading 答えを確認, Value: 2\n\t\t\t\t\t14 text 答えを確認\n\t\t\t\t15 text 正解：調 律令制の「調」は、布・絹・糸などの地方の産物を納める税です。「租」は田にかかる稲の税、「庸」は都での労役の代わりに納める布など、「雑徭」は地方での土木工事などの労役です。\n\t\t\t\t16 button 確認を終える →\n\t\t\t\t\t17 text 確認を終える\n\t\t\t\t\t18 text →\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-question.html"
+  },
+  {
+    "id": "000002",
+    "mode": "flashcard",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 律令・税制 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t\t12 text タップして答えを見る\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-flashcard.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000002-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 律令・税制 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 律令制で、布などの地方の特産物を納める税は？\n\t\t\t\t12 text ANSWER\n\t\t\t13 container flashBack\n\t\t\t\t14 text 調\n\t\t\t\t15 text 律令制の「調」は、布・絹・糸などの地方の産物を納める税です。「租」は田にかかる稲の税、「庸」は都での労役の代わりに納める布など、「雑徭」は地方での土木工事などの労役です。\n\t\t\t16 container flashActions\n\t\t\t\t17 button まだ\n\t\t\t\t18 button 覚えた\n\nThe focused UI element is 9 button カードをめくる"
+  },
+  {
+    "id": "000003",
+    "mode": "mcq",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-mcq.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-mcq.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION\n\t\t\t9 heading 律令制の『防人』について正しい説明は？, Value: 1\n\t\t\t\t10 text 律令制の『防人』について正しい説明は？\n\t\t\t11 text 一番近い答えを1つ選んでください。\n\t\t\t12 container answer\n\t\t\t\t13 button A 地方の産物を都へ運ぶ役目の人々\n\t\t\t\t\t14 text A\n\t\t\t\t\t15 text 地方の産物を都へ運ぶ役目の人々\n\t\t\t\t16 button B 郡の政治を担当した地方の役人\n\t\t\t\t\t17 text B\n\t\t\t\t\t18 text 郡の政治を担当した地方の役人\n\t\t\t\t19 button C 九州北部などの防備にあたった兵士\n\t\t\t\t\t20 text C\n\t\t\t\t\t21 text 九州北部などの防備にあたった兵士\n\t\t\t\t22 button D 国ごとの地方政治を担当した役人\n\t\t\t\t\t23 text D\n\t\t\t\t\t24 text 国ごとの地方政治を担当した役人\n\t\t\t25 button わからない\n\t\t\t26 button あとで解く\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-mcq.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-mcq.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-mcq.html"
+  },
+  {
+    "id": "000003",
+    "mode": "question",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 律令制の『防人』について正しい説明は？, Value: 1\n\t\t\t\t10 text 律令制の『防人』について正しい説明は？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container answer\n\t\t\t\t13 button 答えを見る →\n\t\t\t\t\t14 text 答えを見る\n\t\t\t\t\t15 text →\n\t\t\t\t16 button あとで復習する\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-question.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-question.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-question.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text QUESTION 01 / 1 社会 / 歴史・古代 · 問題だけ確認 QUESTION\n\t\t\t9 heading 律令制の『防人』について正しい説明は？, Value: 1\n\t\t\t\t10 text 律令制の『防人』について正しい説明は？\n\t\t\t11 text 選択肢は表示しません。頭の中か紙に答えを出してから確認してください。\n\t\t\t12 container\n\t\t\t\t13 heading 答えを確認, Value: 2\n\t\t\t\t\t14 text 答えを確認\n\t\t\t\t15 text 正解：九州北部などの防備にあたった兵士 防人は、壱岐・対馬や九州各地の防備にあたった兵士です。白村江の戦いの敗戦後、防衛体制が強化されました。国司・郡司は地方政治を担う役人で、防人とは役割が異なります。\n\t\t\t\t16 button 確認を終える →\n\t\t\t\t\t17 text 確認を終える\n\t\t\t\t\t18 text →\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-question.html"
+  },
+  {
+    "id": "000003",
+    "mode": "flashcard",
+    "layout": {
+      "scrollWidth": 375,
+      "width": 390
+    },
+    "before": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 律令・軍事 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 律令制の『防人』について正しい説明は？\n\t\t\t\t12 text タップして答えを見る\n\nThe focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-flashcard.html",
+    "after": "Browser tab: 8, Title: \"Study COMPASS | 高校受験 α v0.3\", URL: \"http://127.0.0.1:8766/test-000003-flashcard.html\".\n1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000003-flashcard.html\n\t2 container\n\t\t3 text STUDY COMPASS\n\t\t4 text 高校受験の、その先へ。\n\t\t5 text α v0.3\n\t\t6 container\n\t\t\t7 button ← 戻る\n\t\t\t8 text CARD 01 / 1 社会 / 歴史 / 律令・軍事 · 未学習\n\t\t\t9 button カードをめくる\n\t\t\t\t10 text QUESTION\n\t\t\t\t11 text 律令制の『防人』について正しい説明は？\n\t\t\t\t12 text ANSWER\n\t\t\t13 container flashBack\n\t\t\t\t14 text 九州北部などの防備にあたった兵士\n\t\t\t\t15 text 防人は、壱岐・対馬や九州各地の防備にあたった兵士です。白村江の戦いの敗戦後、防衛体制が強化されました。国司・郡司は地方政治を担う役人で、防人とは役割が異なります。\n\t\t\t16 container flashActions\n\t\t\t\t17 button まだ\n\t\t\t\t18 button 覚えた\n\nThe focused UI element is 9 button カードをめくる"
+  }
+]

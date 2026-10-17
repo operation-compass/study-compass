@@ -1,0 +1,128 @@
+{
+  "checked_at": "2026-10-17T08:14:11.320Z",
+  "reviewer_id": "codex-independent-technical-next-three-20261017",
+  "mode": "draft_review_only",
+  "production_updated": false,
+  "master_updated": false,
+  "source_commit": "edea98d8d793d233dff6abcd27e4acd89bda7d2c",
+  "source_blob": "d264e63ca7d7c08ede672b7c6af376f36e812133",
+  "base_social_count": 625,
+  "preview_social_count": 627,
+  "added": [
+    "SC-SOC-HIS-GAP10-000002",
+    "SC-SOC-HIS-GAP10-000003"
+  ],
+  "existing_data_and_order_preserved": true,
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000002",
+      "question_sha256": "d1a7d3d609ad5e946fe27855b68b8015bcd09f538631e7b4ed7c274be345403e",
+      "version": "gap10-review-draft-v2",
+      "hash_version": "v2",
+      "structural_answer_uniqueness": true,
+      "role": "technical",
+      "reviewer_id": "codex-independent-technical-next-three-20261017",
+      "checked_at": "2026-10-17T08:14:11.320Z",
+      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "result": "PASS",
+      "reason": "Exact draft SHA; source blob, append preservation, routing, regressions, 3 modes and mobile evidence verified",
+      "evidence_file": "docs/audits/evidence-20261017/technical-next-three.md"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000003",
+      "question_sha256": "ad25599848c06c1fc7e5d43fce93794aea33c94e7b35428c9218f8739e74d13a",
+      "version": "gap10-review-draft-v2",
+      "hash_version": "v2",
+      "structural_answer_uniqueness": true,
+      "role": "technical",
+      "reviewer_id": "codex-independent-technical-next-three-20261017",
+      "checked_at": "2026-10-17T08:14:11.320Z",
+      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "result": "PASS",
+      "reason": "Exact draft SHA; source blob, append preservation, routing, regressions, 3 modes and mobile evidence verified",
+      "evidence_file": "docs/audits/evidence-20261017/technical-next-three.md"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000004",
+      "question_sha256": "92faa918b711ec3cc0d2037e02a53d51e898b81f1c7430de96dfc7d1851b0b64",
+      "version": "gap10-review-draft-v2",
+      "hash_version": "v2",
+      "structural_answer_uniqueness": true,
+      "role": "technical",
+      "reviewer_id": "codex-independent-technical-next-three-20261017",
+      "checked_at": "2026-10-17T08:14:11.320Z",
+      "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+      "result": "HOLD",
+      "reason": "Excluded after independent factual/quality hold; not a technical release approval"
+    }
+  ],
+  "regressions": [
+    {
+      "script": "check-question-release.cjs",
+      "result": "PASS",
+      "output": "legacy-study.html: 2597 items; structure and known-withheld checks passed\nindex.html: 2597 items; structure and known-withheld checks passed"
+    },
+    {
+      "script": "check-history.cjs",
+      "result": "PASS",
+      "output": "PASS retained current and withdrawn history: legacy-study.html\nPASS retained current and withdrawn history: index.html"
+    },
+    {
+      "script": "check-beta.cjs",
+      "result": "PASS",
+      "output": "PASS written-practice.html normal\nPASS written-practice.html malformed\nPASS written-practice.html bad-shape\nPASS written-practice.html read-denied\nPASS written-practice.html write-denied\nPASS written-practice.html legacy\nPASS generated-practice.html normal\nPASS generated-practice.html malformed\nPASS generated-practice.html bad-shape\nPASS generated-practice.html read-denied\nPASS generated-practice.html write-denied\nPASS generated-practice.html legacy"
+    }
+  ],
+  "ui_modes": "PASS: mcq, question, flashcard for 000002/000003",
+  "mobile_dom": "PASS: saved 390px viewport AX and 6 screenshots independently reviewed",
+  "result": "PASS_FOR_000002_000003_ONLY",
+  "final_decision": "HOLD",
+  "limitations": [
+    "Draft is not authenticated MASTER export",
+    "GAP10-000004 excluded due content FAIL/quality HOLD",
+    "Authenticated release delta CI and production deployment must still be verified"
+  ],
+  "evidence_sha256": "84ef8f5adba22eafa503fc113b38fbd367981cc0380864f549c04a4a65870b36",
+  "browser_attempt": {
+    "iab": "Browser is not available: iab",
+    "available_browsers": []
+  },
+  "ui_evidence": [
+    {
+      "file": "next-two-browser-observations.json",
+      "sha256": "54bd9fe5a0929fa929fd343b95478571d22d10c374574002f52e22b08780fafa"
+    },
+    {
+      "file": "next-two-mcq-correct.txt",
+      "sha256": "9e3c8b71c02cc48887ec2f0f62c120ad322604e3b6e0ed739b38df762114a1a8"
+    },
+    {
+      "file": "next-two-mcq-wrong.txt",
+      "sha256": "cbf126f55bf0cc5a3ddcf23a1e021950045dd34df9feb24541e3cf5c5af0f4d9"
+    },
+    {
+      "file": "mobile-000002-mcq.jpg",
+      "sha256": "5e2396bc568ed947a4b9fd915511a0b64989c759a1c2eea0f350df0eca623b10"
+    },
+    {
+      "file": "mobile-000002-question.jpg",
+      "sha256": "438e4f2533dd0d47ebb5f9cf0b2706e73c677301a30949440ec02eea433150ab"
+    },
+    {
+      "file": "mobile-000002-flashcard.jpg",
+      "sha256": "d8776b7c380ae2914354d701c39767cc4b4a7ad5b3672e56b059426208fbdd1e"
+    },
+    {
+      "file": "mobile-000003-mcq.jpg",
+      "sha256": "359dd3d83323d980acc95cbe1c47fd1c9cdd4529ecd91af8934b53d8ce1b24c7"
+    },
+    {
+      "file": "mobile-000003-question.jpg",
+      "sha256": "c428f2ddabb4367a3d8b697b8917b07fcc5689fa0fa0fb338601f4dad7dcc869"
+    },
+    {
+      "file": "mobile-000003-flashcard.jpg",
+      "sha256": "640f59991f4269331a466d9ea3269baf808ad0e009caa4d3a15fc771c9b537d6"
+    }
+  ]
+}

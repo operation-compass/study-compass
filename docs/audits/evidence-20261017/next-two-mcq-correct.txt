@@ -1,0 +1,32 @@
+Browser tab: 8, Title: "Study COMPASS | 高校受験 α v0.3", URL: "http://127.0.0.1:8766/test-000002-mcq.html".
+1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html
+	2 container
+		3 text STUDY COMPASS
+		4 text 高校受験の、その先へ。
+		5 text α v0.3
+		6 container
+			7 button ← 戻る
+			8 text QUESTION 01 / 1 社会 / 歴史・古代 QUESTION
+			9 heading 律令制で、布などの地方の特産物を納める税は？, Value: 1
+				10 text 律令制で、布などの地方の特産物を納める税は？
+			11 text 一番近い答えを1つ選んでください。
+			12 container answer
+				13 button (disabled) A 租
+					14 text A 租
+				16 button (disabled) B 調
+					17 text B 調
+				19 button (disabled) C 庸
+					20 text C 庸
+				22 button (disabled) D 雑徭
+					23 text D 雑徭
+			25 button (disabled) わからない
+			26 button (disabled) あとで解く
+			27 container
+				28 heading 正解。その調子！, Value: 2
+					29 text 正解。その調子！
+				30 text 正解：調 律令制の「調」は、布・絹・糸などの地方の産物を納める税です。「租」は田にかかる稲の税、「庸」は都での労役の代わりに納める布など、「雑徭」は地方での土木工事などの労役です。
+				31 button 結果を見る →
+					32 text 結果を見る
+					33 text →
+
+The focused UI element is 1 AXWebArea Study COMPASS | 高校受験 α v0.3, URL: 127.0.0.1:8766/test-000002-mcq.html

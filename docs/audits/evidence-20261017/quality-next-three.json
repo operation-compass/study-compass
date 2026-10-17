@@ -1,0 +1,59 @@
+{
+  "hash_version": "v2",
+  "fields": [
+    "id",
+    "subject",
+    "grade",
+    "unit_major",
+    "unit_minor",
+    "question_type",
+    "question_text",
+    "choice_a",
+    "choice_b",
+    "choice_c",
+    "choice_d",
+    "correct_answer",
+    "explanation"
+  ],
+  "checked_at": "2026-10-17T08:10:04.354Z",
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000002",
+      "version": "gap10-review-draft-v2",
+      "reviewer_id": "codex-agent-quality-next-three-20261017",
+      "role": "quality",
+      "result": "PASS",
+      "question_sha256": "d1a7d3d609ad5e946fe27855b68b8015bcd09f538631e7b4ed7c274be345403e",
+      "checked_at": "2026-10-17T08:10:04.354Z",
+      "evidence_file": "docs/audits/evidence-20261017/quality-next-three.md",
+      "evidence_sha256": "32464f48dd47557e4fc05888953bb5ddb0690c4b4d89f68586d7883c66b5f68d",
+      "notes": "同時代の同型誤答肢、正答一意、学年形式、既存類題との到達目標差を確認。正確性・技術監査は別途必要。"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000003",
+      "version": "gap10-review-draft-v2",
+      "reviewer_id": "codex-agent-quality-next-three-20261017",
+      "role": "quality",
+      "result": "PASS",
+      "question_sha256": "ad25599848c06c1fc7e5d43fce93794aea33c94e7b35428c9218f8739e74d13a",
+      "checked_at": "2026-10-17T08:10:04.354Z",
+      "evidence_file": "docs/audits/evidence-20261017/quality-next-three.md",
+      "evidence_sha256": "32464f48dd47557e4fc05888953bb5ddb0690c4b4d89f68586d7883c66b5f68d",
+      "notes": "同時代の同型誤答肢、正答一意、学年形式、既存類題との到達目標差を確認。正確性・技術監査は別途必要。"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000004",
+      "version": "gap10-review-draft-v2",
+      "reviewer_id": "codex-agent-quality-next-three-20261017",
+      "role": "quality",
+      "result": "HOLD",
+      "question_sha256": "92faa918b711ec3cc0d2037e02a53d51e898b81f1c7430de96dfc7d1851b0b64",
+      "checked_at": "2026-10-17T08:10:04.354Z",
+      "evidence_file": "docs/audits/evidence-20261017/quality-next-three.md",
+      "evidence_sha256": "32464f48dd47557e4fc05888953bb5ddb0690c4b4d89f68586d7883c66b5f68d",
+      "notes": "学習目標を献納者の人名暗記へ変更した根拠と基礎教材の重要度A・難度2の適合根拠が未整備。直接重複ではないが公開品質HOLD。"
+    }
+  ],
+  "master_updated": false,
+  "production_updated": false
+}
