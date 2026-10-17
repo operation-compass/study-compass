@@ -24,3 +24,15 @@ console.log('New READY question safe append and HOLD exclusion passed.');
 assert.throws(()=>applyToWeb(old,[candidate],['A','A']),/Duplicate READY ID/);
 assert.throws(()=>applyToWeb(old,[candidate],['A','B','C','D','E','F']),/exceeds five-question limit/);
 console.log('Release adapter batch limits and duplicate protections passed.');
+
+for(const topic of ['律令・軍事','奈良・文化']){
+ const q={...newCandidate,unit_minor:topic};
+ assert.deepEqual(applyToWeb(old,[q],[]),old,'Unapproved topic must remain excluded');
+ const mapped=applyToWeb(old,[q],[q.id]);
+ assert.equal(mapped.at(-1).unit,'歴史・古代');
+ assert.equal(mapped.at(-1).topic_name,topic);
+ assert.deepEqual(mapped.slice(0,old.length),old);
+ assert.throws(()=>applyToWeb(old,[{...q,unit_major:'地理'}],[q.id]),/Unsupported new question Web unit/);
+}
+assert.throws(()=>applyToWeb(old,[{...newCandidate,unit_minor:'未対応単元'}],[newCandidate.id]),/Unsupported new question Web unit/);
+console.log('Ancient military and Nara culture route correctly; approval and subject boundaries remain enforced.');
