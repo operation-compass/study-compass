@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "enabled": false,
-  "reason": "Pending explicit activation approval after nonempty-batch publication/recovery review. Verification only; no automatic merge, deploy or rollback."
+  "enabled": true,
+  "reason": "Explicit user activation approval on 2026-10-17 after seven isolated controller scenarios passed; real nonempty publication/recovery and native preview limitations disclosed.",
+  "activation_approval": "docs/audits/evidence-20261017/automatic-publication-activation-approval.json"
 }
-
