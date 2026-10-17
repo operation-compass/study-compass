@@ -16,7 +16,7 @@ async function dispatchAndWait(sha){
 async function main(){
  assert(process.env.GH_TOKEN,'Missing workflow token');const root=path.resolve(process.env.STUDY_LIVE_ROOT||'.'),source=path.resolve(process.env.STUDY_SOURCE_ROOT||'../audit-source'),out=path.resolve(process.env.RUNNER_TEMP||'../tmp','study-auto-release');fs.mkdirSync(out,{recursive:true});
  const receipt={production_updated:false,source_branch:sourceBranch};const save=()=>fs.writeFileSync(path.join(out,'publication-receipt.json'),JSON.stringify(receipt,null,2));
- let mergeSha,base;
+ let mergeSha,base,recoveryBase;
  try{
   const event=JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH,'utf8'));
   if(process.env.GITHUB_EVENT_NAME==='workflow_run'){
@@ -47,16 +47,17 @@ async function main(){
   if(pr.draft){const r=await fetch('https://api.github.com/graphql',{method:'POST',headers:{Authorization:'Bearer '+process.env.GH_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({query:'mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{isDraft}}}',variables:{id:pr.node_id}}),signal:AbortSignal.timeout(30000)});assert(r.ok,'Cannot mark verified PR ready');const b=await r.json();assert(!b.errors&&b.data.markPullRequestReadyForReview.pullRequest.isDraft===false,'Draft transition failed');}
   assert.equal((await api('branches/main')).commit.sha,base,'main advanced before merge; retry with latest baseline');assert.equal((await api('branches/'+encodeURIComponent(sourceBranch))).commit.sha,sourceSha,'Staging advanced before merge');
   const merged=await api('pulls/'+pr.number+'/merge',{method:'PUT',body:{sha:head,merge_method:'merge'}});assert(merged.merged,'Merge rejected');mergeSha=merged.sha;receipt.merge_sha=mergeSha;receipt.production_updated=true;save();
+  const mergedCommit=await api('commits/'+mergeSha);assert.equal(mergedCommit.parents.length,2,'Unexpected merge topology');assert.equal(mergedCommit.parents[1].sha,head,'Unexpected merged head');recoveryBase=mergedCommit.parents[0].sha;receipt.recovery_base=recoveryBase;assert.equal(recoveryBase,base,'main advanced during merge; restore actual first parent');
   receipt.deployment_run=await dispatchAndWait(mergeSha);
   const r=await fetch(origin+'/legacy-study.html?release='+mergeSha,{signal:AbortSignal.timeout(30000),cache:'no-store'});assert(r.ok,'Published bank unavailable');verifyPublished(expected['legacy-study.html'],await r.text());receipt.published_bank_verified=true;receipt.result='success';save();
  }catch(error){
   receipt.result='failure';receipt.reason=String(error.message).slice(0,500);save();
   if(mergeSha){
    try{
-    assert.equal((await api('branches/main')).commit.sha,mergeSha,'Newer main changes exist; automatic rollback stopped');git(['fetch','origin','main'],root);git(['checkout','-B','study-auto-recovery','origin/main'],root);git(['config','user.name','github-actions[bot]'],root);git(['config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],root);
+    assert(recoveryBase,'Merge first parent unverified; automatic rollback stopped');assert.equal((await api('branches/main')).commit.sha,mergeSha,'Newer main changes exist; automatic rollback stopped');git(['fetch','origin','main'],root);git(['checkout','-B','study-auto-recovery','origin/main'],root);git(['config','user.name','github-actions[bot]'],root);git(['config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],root);
     // Restore only the two question snapshots; never reset main or overwrite other files.
-    git(['restore','--source='+base,'--',...files],root);git(['add','--',...files],root);const changed=git(['diff','--cached','--name-only'],root).split('\n').filter(Boolean);assert(changed.every(f=>files.includes(f)),'Recovery contains unrelated files');
-    if(changed.length){git(['commit','-m','Restore question snapshots after failed automated publication'],root);git(['push','origin','HEAD:main'],root);const recovery=git(['rev-parse','HEAD'],root);receipt.recovery_sha=recovery;receipt.recovery_deployment_run=await dispatchAndWait(recovery);const r=await fetch(origin+'/legacy-study.html?recovery='+recovery,{signal:AbortSignal.timeout(30000),cache:'no-store'});assert(r.ok,'Recovery bank unavailable');verifyPublished(git(['show',base+':legacy-study.html'],root),await r.text());receipt.recovery_verified=true;}
+    git(['restore','--source='+recoveryBase,'--',...files],root);git(['add','--',...files],root);const changed=git(['diff','--cached','--name-only'],root).split('\n').filter(Boolean);assert(changed.every(f=>files.includes(f)),'Recovery contains unrelated files');
+    if(changed.length){git(['commit','-m','Restore question snapshots after failed automated publication'],root);git(['push','origin','HEAD:main'],root);const recovery=git(['rev-parse','HEAD'],root);receipt.recovery_sha=recovery;receipt.recovery_deployment_run=await dispatchAndWait(recovery);const r=await fetch(origin+'/legacy-study.html?recovery='+recovery,{signal:AbortSignal.timeout(30000),cache:'no-store'});assert(r.ok,'Recovery bank unavailable');verifyPublished(git(['show',recoveryBase+':legacy-study.html'],root),await r.text());receipt.recovery_verified=true;}
    }catch(recoveryError){receipt.recovery_verified=false;receipt.recovery_reason=String(recoveryError.message).slice(0,500);}
    save();
   }

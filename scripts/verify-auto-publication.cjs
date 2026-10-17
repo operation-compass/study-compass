@@ -8,6 +8,7 @@ function questions(html){const tag='const SOCIAL = ',i=html.indexOf(tag);assert(
 function evidenceIndex(root){
  const result=[];let total=0;
  function walk(dir){for(const name of fs.readdirSync(dir)){const full=path.join(dir,name),s=fs.lstatSync(full);assert(!s.isSymbolicLink(),'Evidence symlink rejected');if(s.isDirectory())walk(full);else if(/\.(json|md)$/.test(name)){assert(s.size<=1024*1024,'Oversized evidence');total+=s.size;assert(total<=32*1024*1024,'Evidence set too large');const bytes=fs.readFileSync(full);result.push({path:path.relative(root,full).replaceAll('\\','/'),sha:sha256(bytes),text:bytes.toString('utf8')});}}}
+ for(const dir of [path.join(root,'docs'),path.join(root,'docs/audits')])assert(!fs.lstatSync(dir).isSymbolicLink(),'Evidence root symlink rejected');
  walk(path.join(root,'docs/audits'));return result;
 }
 function verifyEvidence(bundle,index){
