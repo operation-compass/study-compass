@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "reason": "Pending explicit activation approval after nonempty-batch publication/recovery review. Verification only; no automatic merge, deploy or rollback."
+}
+

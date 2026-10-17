@@ -37,6 +37,10 @@ async function main(){
   for(const f of files)fs.writeFileSync(path.join(root,f),expected[f]);
   for(const script of ['check-question-release.cjs','check-history.cjs','check-beta.cjs'])cp.execFileSync(process.execPath,[path.join(root,'scripts',script)],{cwd:root,stdio:'inherit'});
   const changedPaths=git(['diff','--name-only'],root).split('\n').filter(Boolean).sort();assert.deepEqual(changedPaths,files.slice().sort(),'Unexpected live-tree change');
+  // Fail closed: only a separately reviewed change on main may activate publication.
+  const config=JSON.parse(fs.readFileSync(path.join(root,'data/publishing/auto-publication.json'),'utf8'));
+  assert.equal(config.schema_version,1,'Invalid automatic publication config');
+  if(config.enabled!==true){receipt.mode='verify-only';receipt.verified_blobs=Object.fromEntries(files.map(f=>[f,gitBlob(expected[f])]));receipt.result='verified-not-published';save();return;}
   const open=await api('pulls?state=open&base=main&per_page=100');let pr;
   for(const p of open){if(p.user.login!=='github-actions[bot]'||!/^study-ready-/.test(p.head.ref))continue;const f=await api('pulls/'+p.number+'/files');try{verifyDiff(report,expected,f);const c=await api('commits/'+p.head.sha);if(c.parents.length===1&&c.parents[0].sha===base){pr=p;break;}}catch{/* Unrelated/stale PR remains unchanged. */}}
   if(!pr){

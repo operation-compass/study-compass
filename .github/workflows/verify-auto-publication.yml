@@ -10,6 +10,7 @@ on:
       - 'scripts/select-ready-candidates.cjs'
       - 'scripts/adapt-drive-to-web.cjs'
       - 'scripts/prepare-ready-release.cjs'
+      - 'data/publishing/auto-publication.json'
 permissions:
   contents: read
 jobs:
