@@ -24,6 +24,8 @@ jobs:
           assert 'schedule:' not in header and 'pull_request:' not in header
           assert 'gh pr create' in data and '--draft' in data
           assert 'gh pr merge' not in data
+          assert 'audit-source/scripts/' not in data
+          assert 'ref: main' in data and 'path: live' in data
           assert 'node scripts/prepare-ready-release.cjs' in data
           assert 'node scripts/check-question-release.cjs' in data
           assert 'git add -- index.html legacy-study.html' in data
@@ -47,7 +49,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cp audit-source/scripts/{prepare-ready-release,select-ready-candidates,adapt-drive-to-web}.cjs live/scripts/
+          # Deliberately broken source helpers must never override trusted main code.
+          mkdir -p audit-source/scripts
+          for helper in prepare-ready-release select-ready-candidates adapt-drive-to-web; do
+            echo "throw new Error('stale staging helper executed')" > "audit-source/scripts/$helper.cjs"
+          done
           cp audit-source/data/staging/drive-sync-bundle.json live/data/staging/drive-sync-bundle.json
           cd live
           # Zero READY is a valid no-op; malformed evidence remains an error.
