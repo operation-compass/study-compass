@@ -5,6 +5,8 @@ on:
       - '.github/workflows/auto-publish-ready.yml'
       - '.github/workflows/verify-auto-publication.yml'
       - 'scripts/auto-publish-ready.cjs'
+      - 'scripts/verify-publication-candidate.cjs'
+      - '.github/workflows/verify-publication-candidate.yml'
       - 'scripts/verify-auto-publication.cjs'
       - 'scripts/test-auto-publication.cjs'
       - 'scripts/test-auto-publication-controller.cjs'
