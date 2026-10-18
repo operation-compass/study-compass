@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "/root/codex_quality_v2",
+      "checked_at": "2026-10-18T01:45:29.7450885+00:00",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-quality-v3.md",
+      "evidence_sha256": "86c88a63c463116f055f841e9ea0e1c9ddd4b9e8d37429fb813bf8098f677eb3",
+      "risk": "LOW",
+      "exceptions": []
+    }
+  ]
+}

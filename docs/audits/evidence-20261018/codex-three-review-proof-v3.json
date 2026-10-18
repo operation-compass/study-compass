@@ -1,0 +1,44 @@
+{
+  "purpose": "Independent three-agent audit proof; not authenticated staging or publication receipt",
+  "candidate_id": "SC-SOC-HIS-GAP10-000008",
+  "version": "gap10-codex-proof-v3",
+  "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "accuracy",
+      "result": "PASS",
+      "reviewer_id": "/root/codex_accuracy_v2",
+      "checked_at": "2026-10-18T01:44:58Z",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-accuracy-v3.md",
+      "evidence_sha256": "17739f8de3e9304c74c17d37d1d5ce5957ae761d37decc793c972e306c7a8efd"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "/root/codex_quality_v2",
+      "checked_at": "2026-10-18T01:45:29.7450885+00:00",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-quality-v3.md",
+      "evidence_sha256": "86c88a63c463116f055f841e9ea0e1c9ddd4b9e8d37429fb813bf8098f677eb3",
+      "risk": "LOW",
+      "exceptions": []
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "technical",
+      "result": "PASS",
+      "reviewer_id": "/root/codex_technical_v2",
+      "checked_at": "2026-10-18T07:38:12Z",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-technical-v3-r2.md",
+      "evidence_sha256": "acd633c991e7f55b29ab02f083678f76a541412020f9b35ca6690f19e7fb7a98"
+    }
+  ],
+  "technical_scope": "Candidate and PR23 routing code; requires merge and separate publication gates"
+}

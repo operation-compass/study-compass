@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "accuracy",
+      "result": "PASS",
+      "reviewer_id": "/root/codex_accuracy_v2",
+      "checked_at": "2026-10-18T01:44:58Z",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-accuracy-v3.md",
+      "evidence_sha256": "17739f8de3e9304c74c17d37d1d5ce5957ae761d37decc793c972e306c7a8efd"
+    }
+  ]
+}

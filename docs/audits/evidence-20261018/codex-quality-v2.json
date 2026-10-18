@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v2",
+      "role": "quality",
+      "result": "HOLD",
+      "reviewer_id": "/root/codex_quality_v2",
+      "checked_at": "2026-10-18T10:43:54.4834083+09:00",
+      "question_sha256": "e290ab71fa4993d56292b34c85c347b2189dc7bc38d2c957d4b68a1c7c455a59",
+      "evidence_file": "docs/audits/evidence-20261018/codex-quality-v2.md",
+      "evidence_sha256": "1d6ed70e34214905a250358eea9ed985a42969d91c6022a8f9964660635cdbe1",
+      "risk": "MEDIUM",
+      "reason": "機関を問う4肢に管領という役職が混在。同型のもっともらしい誤答肢へ修正して全役割再監査。"
+    }
+  ]
+}

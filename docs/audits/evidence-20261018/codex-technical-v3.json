@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000008",
+      "version": "gap10-codex-proof-v3",
+      "role": "technical",
+      "result": "FAIL",
+      "reviewer_id": "/root/codex_technical_v2",
+      "checked_at": "2026-10-18T01:45:07Z",
+      "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+      "evidence_file": "docs/audits/evidence-20261018/codex-technical-v3.md",
+      "evidence_sha256": "8cfc01003271599641cdfff211d41c097ebc755ec3eb80531527b3304a8d0517"
+    }
+  ]
+}

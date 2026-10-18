@@ -1,0 +1,32 @@
+{
+  "purpose": "Independent audit candidate; not READY, not authenticated staging export",
+  "source_row": 2263,
+  "source_version": "gap10-draft-v1",
+  "source_grade": "中1〜中3",
+  "proposed_changes": [
+    "grade: 中1〜中3 → 中1 (same default as existing reviewed historical items; reviewer must assess suitability)",
+    "version: gap10-draft-v1 → gap10-codex-proof-v2",
+    "choice_c: 管領 → 政所（機関に揃える。独立品質監査HOLDの是正）"
+  ],
+  "question": {
+    "id": "SC-SOC-HIS-GAP10-000008",
+    "subject": "社会",
+    "grade": "中1",
+    "unit_major": "歴史",
+    "unit_minor": "鎌倉・統治",
+    "question_type": "4択",
+    "question_text": "承久の乱の後、幕府が京都に置いた朝廷の監視などを担う機関は？",
+    "choice_a": "六波羅探題",
+    "choice_b": "鎮西探題",
+    "choice_c": "政所",
+    "choice_d": "評定衆",
+    "correct_answer": "六波羅探題",
+    "explanation": "六波羅探題は1221年の承久の乱後、鎌倉幕府が京都に置いた出先機関です。朝廷の監視や京都の警備、西国の御家人の統制などを担当しました。",
+    "version": "gap10-codex-proof-v3"
+  },
+  "source_url": "https://ja.kyoto.travel/tourism/single01.php?category_id=8&tourism_id=909",
+  "production_commit": "ac1be611c0da43261e1fbcad624ccf7312b55ddd",
+  "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+  "previous_version": "gap10-codex-proof-v2",
+  "previous_sha256": "e290ab71fa4993d56292b34c85c347b2189dc7bc38d2c957d4b68a1c7c455a59"
+}
