@@ -46,16 +46,39 @@ on:
       - 'scripts/test-drive-master-schema.cjs'
       - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/verify-drive-approval.yml'
+      - 'scripts/check-three-stage-audit.cjs'
+      - 'scripts/test-three-stage-audit.cjs'
+      - 'scripts/merge-approved-delta.cjs'
+      - 'scripts/test-merge-approved-delta.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/test-adapt-drive-to-web.cjs'
+      - 'scripts/test-real-web-hold.cjs'
+      - 'scripts/test-gate-to-web-integration.cjs'
+      - 'scripts/select-ready-candidates.cjs'
+      - 'scripts/test-select-ready-candidates.cjs'
+      - 'scripts/test-real-ready-to-web.cjs'
+      - 'scripts/preview-approved-web-delta.cjs'
+      - 'scripts/prepare-ready-release.cjs'
+      - 'scripts/test-prepare-ready-release.cjs'
+      - 'scripts/test-real-new-ready-release.cjs'
+      - 'scripts/test-real-history-000006-web-mapping.cjs'
+      - 'scripts/inspect-ready-backlog.cjs'
+      - 'index.html'
+      - 'legacy-study.html'
+      - '.github/workflows/preview-ready-release.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  approval-gate:
+  source-regression:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Check syntax
         run: |
           node --check scripts/check-drive-approval.cjs
@@ -101,32 +124,72 @@ jobs:
           node scripts/test-real-web-hold.cjs
           node scripts/test-gate-to-web-integration.cjs
           node scripts/test-select-ready-candidates.cjs
-          node scripts/test-real-ready-to-web.cjs
-          node scripts/preview-approved-web-delta.cjs
           node scripts/test-prepare-ready-release.cjs
           node scripts/test-real-new-ready-release.cjs
           node scripts/test-real-history-000006-web-mapping.cjs
           node scripts/inspect-ready-backlog.cjs
-      - name: Validate real GAS staging bundle (never deploy)
+  approval-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted main release code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          persist-credentials: false
+      - name: Checkout immutable event data
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate evidence and prepare read-only preview with trusted main
+        id: eligibility
+        working-directory: live
         shell: bash
         run: |
           set -euo pipefail
-          if [ -f data/staging/drive-sync-bundle.json ]; then
-            node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
-            set +e
-            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json
-            actual_outcome=$?
-            set -e
-            test "$actual_outcome" -eq 0 -o "$actual_outcome" -eq 2 || { echo '::error::Embedded audit malformed'; exit 1; }
-            echo 'Embedded three-stage audit checked (0=fully eligible; 2=HOLD); no deploy.'
-            printf '{"records":[]}' > /tmp/study-audit-empty.json
-            set +e
-            node scripts/check-three-stage-audit.cjs data/staging/drive-sync-bundle.json /tmp/study-audit-empty.json
-            missing_outcome=$?
-            set -e
-            test "$missing_outcome" -eq 2 || { echo '::error::Missing audit evidence was not blocked'; exit 1; }
-            echo 'Absent audit evidence correctly blocked.'
-          else
-            echo 'No GAS bundle staged: regression-only check.'
+          # Never import or execute audit-source scripts.
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+          const {verifyEvidence,evidenceIndex}=require('./scripts/verify-auto-publication.cjs');
+          const {prepare}=require('./scripts/prepare-ready-release.cjs');
+          const source=path.resolve('../audit-source');
+          const bundlePath=path.join(source,'data/staging/drive-sync-bundle.json');
+          for(const p of [source,path.join(source,'data'),path.join(source,'data/staging'),bundlePath])assert(!fs.lstatSync(p).isSymbolicLink(),'Bundle symlink rejected');
+          const b=JSON.parse(fs.readFileSync(bundlePath,'utf8'));
+          assert.equal(b.schema_version,1);
+          assert.equal(b.approval?.mode,'ai_three_stage');
+          assert.equal(b.approval?.export_source,'authenticated-drive-export');
+          assert.equal(b.approval?.source_spreadsheet_id,'1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88');
+          const at=Date.parse(b.approval.exported_at),now=Date.now();
+          assert(Number.isFinite(at)&&at<=now+60000&&now-at<86400000,'Stale or invalid snapshot');
+          const selected=verifyEvidence(b,evidenceIndex(source));
+          assert(selected.ready.length<=5,'Excess READY candidates');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'has_ready='+Boolean(selected.ready.length)+'\n');
+          if(selected.ready.length){
+            const report=prepare(b,path.join(process.env.RUNNER_TEMP,'study-ready-preview'));
+            console.log(JSON.stringify(report));
+          }else console.log('No READY questions; verified HOLD no-op. No deployment.');
+          NODE
+          if [ "$(grep '^has_ready=' "$GITHUB_OUTPUT" | tail -1)" = 'has_ready=true' ]; then
+            cp "$RUNNER_TEMP/study-ready-preview/index.html" index.html
+            cp "$RUNNER_TEMP/study-ready-preview/legacy-study.html" legacy-study.html
           fi
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
+      - name: Run current main publication regressions
+        working-directory: live
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/test-adapt-drive-to-web.cjs
+          node scripts/test-auto-publication.cjs
+          node scripts/test-auto-publication-controller.cjs
+
 
