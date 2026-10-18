@@ -36,3 +36,14 @@ for(const topic of ['律令・軍事','奈良・文化']){
 }
 assert.throws(()=>applyToWeb(old,[{...newCandidate,unit_minor:'未対応単元'}],[newCandidate.id]),/Unsupported new question Web unit/);
 console.log('Ancient military and Nara culture route correctly; approval and subject boundaries remain enforced.');
+
+const kamakura={...newCandidate,unit_minor:'鎌倉・統治'};
+const kamakuraOut=applyToWeb(old,[kamakura],[kamakura.id]);
+assert.equal(kamakuraOut.at(-1).unit,'歴史・中世');
+assert.equal(kamakuraOut.at(-1).topic_name,'鎌倉');
+assert.equal(kamakuraOut.at(-1).master_topic_name,'鎌倉・統治');
+assert.deepEqual(kamakuraOut.slice(0,old.length),old);
+assert.deepEqual(applyToWeb(old,[kamakura],[]),old);
+assert.throws(()=>applyToWeb(old,[{...kamakura,grade:'中1〜中3'}],[kamakura.id]),/grade required/);
+assert.throws(()=>applyToWeb(old,[{...kamakura,unit_major:'地理'}],[kamakura.id]),/Unsupported new question Web unit/);
+console.log('Kamakura governance routes to medieval history without losing MASTER topic or weakening approval/grade gates.');
