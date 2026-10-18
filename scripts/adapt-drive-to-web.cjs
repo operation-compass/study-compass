@@ -27,7 +27,7 @@ function applyToWeb(existing, candidates, readyIds){
   assert(typeof c.grade==='string' && /^中[123]$/.test(c.grade),'New question grade required');
   assert(typeof c.unit_major==='string' && c.unit_major.trim() && typeof c.unit_minor==='string' && c.unit_minor.trim(),'New question unit metadata required');
   // Preserve the detailed MASTER topic, but use an existing Web period for routing.
-  const periods={'古代':'古代','中世':'中世','近世':'近世','近現代':'近現代','律令・税制':'古代','律令・軍事':'古代','奈良・文化':'古代','平安・地方制度':'古代'};
+  const periods={'古代':'古代','中世':'中世','近世':'近世','近現代':'近現代','律令・税制':'古代','律令・軍事':'古代','奈良・文化':'古代','平安・地方制度':'古代','鎌倉・統治':'中世'};
   const period=c.unit_major==='歴史'&&Object.hasOwn(periods,c.unit_minor)?periods[c.unit_minor]:null;
   assert(period,'Unsupported new question Web unit: '+c.unit_major+'/'+c.unit_minor);
   const options=[c.choice_a,c.choice_b,c.choice_c,c.choice_d].map(v=>String(v||'').trim());
