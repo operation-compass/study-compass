@@ -3,20 +3,20 @@
   "candidate": {
     "items": [
       {
-        "id": "SC-SOC-HIS-GAP10-000004",
+        "id": "SC-SOC-HIS-GAP10-000008",
         "subject": "社会",
         "grade": "中1",
         "unit_major": "歴史",
-        "unit_minor": "奈良・文化",
+        "unit_minor": "鎌倉・統治",
         "question_type": "4択",
-        "question_text": "【資料】756年、光明皇后は、聖武天皇が愛用した品などを東大寺へ納めた。正倉院の宝物の由来に関するこの資料を使って調べる課題として、最も適切なのは？",
-        "choice_a": "奈良時代の農民にかかった税の負担",
-        "choice_b": "奈良時代の国司による地方行政のしくみ",
-        "choice_c": "奈良時代の皇室と仏教寺院の関わり",
-        "choice_d": "奈良時代の班田収授法による土地の配分",
-        "correct_answer": "奈良時代の皇室と仏教寺院の関わり",
-        "explanation": "天皇に関係する品が仏教寺院へ納められたことから、この資料は皇室と仏教寺院の関わりを調べる手がかりになります。農民の税や国司の仕事、土地の配分は、この資料だけでは分かりません。正倉院の宝物の一部は、こうした献納に由来します。",
-        "version": "gap10-shosoin-source-v3"
+        "question_text": "承久の乱の後、幕府が京都に置いた朝廷の監視などを担う機関は？",
+        "choice_a": "六波羅探題",
+        "choice_b": "鎮西探題",
+        "choice_c": "政所",
+        "choice_d": "評定衆",
+        "correct_answer": "六波羅探題",
+        "explanation": "六波羅探題は1221年の承久の乱後、鎌倉幕府が京都に置いた出先機関です。朝廷の監視や京都の警備、西国の御家人の統制などを担当しました。",
+        "version": "gap10-codex-proof-v3"
       }
     ]
   },
@@ -25,59 +25,56 @@
       {
         "independent_reviews": [
           {
-            "id": "SC-SOC-HIS-GAP10-000004",
-            "version": "gap10-shosoin-source-v3",
-            "hash_version": "v2",
+            "id": "SC-SOC-HIS-GAP10-000008",
+            "version": "gap10-codex-proof-v3",
             "role": "accuracy",
             "result": "PASS",
-            "reviewer_id": "codex-agent-accuracy-20261017",
-            "checked_at": "2026-10-17T10:23:42.177Z",
-            "question_sha256": "13a2f446b71ee10172039c22393c199af7a1d89ea4e399de9b9b784fd41f0100",
-            "evidence_file": "accuracy-shosoin-v3.md",
-            "evidence_sha256": "1174c3688bd351057ffbd5d580edb3434451c9e13199802ec9a1659fc6a7c84f",
-            "source_urls": [
-              "https://www.kunaicho.go.jp/visit/event/shosoin/shososeibi/nenpyo.html",
-              "https://shosointen-glossary.narahaku.go.jp/chronology/"
-            ]
+            "reviewer_id": "/root/codex_accuracy_v2",
+            "checked_at": "2026-10-18T01:44:58Z",
+            "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+            "evidence_file": "docs/audits/evidence-20261018/codex-accuracy-v3.md",
+            "evidence_sha256": "17739f8de3e9304c74c17d37d1d5ce5957ae761d37decc793c972e306c7a8efd"
           },
           {
-            "id": "SC-SOC-HIS-GAP10-000004",
-            "version": "gap10-shosoin-source-v3",
+            "id": "SC-SOC-HIS-GAP10-000008",
+            "version": "gap10-codex-proof-v3",
             "role": "quality",
             "result": "PASS",
-            "reviewer_id": "codex-agent-quality-shosoin-v3-20261017",
-            "checked_at": "2026-10-17T10:23:48.405Z",
-            "question_sha256": "13a2f446b71ee10172039c22393c199af7a1d89ea4e399de9b9b784fd41f0100",
-            "evidence_file": "docs/audits/evidence-20261017/quality-shosoin-v3.md",
-            "evidence_sha256": "e5647d9bb9d33c608efe2b674411e777bf42c04cf077cd4cec5480cd4f6d180a"
+            "reviewer_id": "/root/codex_quality_v2",
+            "checked_at": "2026-10-18T01:45:29.7450885+00:00",
+            "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+            "evidence_file": "docs/audits/evidence-20261018/codex-quality-v3.md",
+            "evidence_sha256": "86c88a63c463116f055f841e9ea0e1c9ddd4b9e8d37429fb813bf8098f677eb3",
+            "risk": "LOW",
+            "exceptions": []
           },
           {
-            "id": "SC-SOC-HIS-GAP10-000004",
-            "version": "gap10-shosoin-source-v3",
+            "id": "SC-SOC-HIS-GAP10-000008",
+            "version": "gap10-codex-proof-v3",
             "role": "technical",
             "result": "PASS",
-            "reviewer_id": "codex-independent-technical-shosoin-v3-20261017",
-            "checked_at": "2026-10-17T10:25:41.855Z",
-            "question_sha256": "13a2f446b71ee10172039c22393c199af7a1d89ea4e399de9b9b784fd41f0100",
-            "evidence_file": "docs/audits/evidence-20261017/technical-shosoin-v3.md",
-            "evidence_sha256": "ce0e497af31962e6115340e1f180c13f390fb20a51abfc11e894201900141ce3"
+            "reviewer_id": "/root/codex_technical_v2",
+            "checked_at": "2026-10-18T07:38:12Z",
+            "question_sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
+            "evidence_file": "docs/audits/evidence-20261018/codex-technical-v3-r2.md",
+            "evidence_sha256": "acd633c991e7f55b29ab02f083678f76a541412020f9b35ca6690f19e7fb7a98"
           }
         ],
-        "id": "SC-SOC-HIS-GAP10-000004",
-        "version": "gap10-shosoin-source-v3",
+        "id": "SC-SOC-HIS-GAP10-000008",
+        "version": "gap10-codex-proof-v3",
         "hash_version": "v2",
-        "sha256": "13a2f446b71ee10172039c22393c199af7a1d89ea4e399de9b9b784fd41f0100",
+        "sha256": "b6cbeeb897cc79b2322fef9cca12b43aed23f3172457799ce8f6ca697fcd3b34",
         "accuracy": "PASS",
-        "accuracy_checked_at": "2026-10-17T10:23:42.177Z",
-        "evidence_url": "https://www.kunaicho.go.jp/visit/event/shosoin/shososeibi/nenpyo.html",
+        "accuracy_checked_at": "2026-10-18T01:44:58Z",
+        "evidence_url": "https://github.com/operation-compass/study-compass/blob/b7c24a27e61b40c0e86dd243e01ffcaff28d1ea9/docs/audits/evidence-20261018/codex-accuracy-v3.md",
         "quality": "PASS",
-        "quality_checked_at": "2026-10-17T10:23:48.405Z",
+        "quality_checked_at": "2026-10-18T01:45:29.7450885+00:00",
         "technical": "PASS",
-        "technical_checked_at": "2026-10-17T10:25:41.855Z",
+        "technical_checked_at": "2026-10-18T07:38:12Z",
         "risk": "LOW",
         "exception_reason": "",
         "final_decision": "READY",
-        "checked_at": "2026-10-17T10:26:07.984Z"
+        "checked_at": "2026-10-18T07:43:00.850Z"
       }
     ]
   },
@@ -85,6 +82,6 @@
     "mode": "ai_three_stage",
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-17T10:27:34.896Z"
+    "exported_at": "2026-10-18T07:46:26.277Z"
   }
 }
