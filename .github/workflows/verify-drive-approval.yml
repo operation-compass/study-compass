@@ -46,6 +46,26 @@ on:
       - 'scripts/test-drive-master-schema.cjs'
       - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/verify-drive-approval.yml'
+      - 'scripts/check-three-stage-audit.cjs'
+      - 'scripts/test-three-stage-audit.cjs'
+      - 'scripts/merge-approved-delta.cjs'
+      - 'scripts/test-merge-approved-delta.cjs'
+      - 'scripts/adapt-drive-to-web.cjs'
+      - 'scripts/test-adapt-drive-to-web.cjs'
+      - 'scripts/test-real-web-hold.cjs'
+      - 'scripts/test-gate-to-web-integration.cjs'
+      - 'scripts/select-ready-candidates.cjs'
+      - 'scripts/test-select-ready-candidates.cjs'
+      - 'scripts/test-real-ready-to-web.cjs'
+      - 'scripts/preview-approved-web-delta.cjs'
+      - 'scripts/prepare-ready-release.cjs'
+      - 'scripts/test-prepare-ready-release.cjs'
+      - 'scripts/test-real-new-ready-release.cjs'
+      - 'scripts/test-real-history-000006-web-mapping.cjs'
+      - 'scripts/inspect-ready-backlog.cjs'
+      - 'index.html'
+      - 'legacy-study.html'
+      - '.github/workflows/preview-ready-release.yml'
   workflow_dispatch:
 
 permissions:
@@ -171,4 +191,5 @@ jobs:
           node scripts/test-adapt-drive-to-web.cjs
           node scripts/test-auto-publication.cjs
           node scripts/test-auto-publication-controller.cjs
+
 
