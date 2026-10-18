@@ -18,31 +18,57 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - name: Confirm checked-in staging data meets READY conditions
+      - name: Checkout trusted main release code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
+          persist-credentials: false
+      - name: Checkout immutable event data
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate evidence and prepare read-only preview with trusted main
         id: eligibility
+        working-directory: live
         shell: bash
         run: |
           set -euo pipefail
-          node --check scripts/prepare-ready-release.cjs
-          node scripts/check-drive-staging-bundle.cjs data/staging/drive-sync-bundle.json
-          node --check worker.js
-          if node -e 'const fs=require("fs");const {selectReady}=require("./scripts/select-ready-candidates.cjs");const b=JSON.parse(fs.readFileSync("data/staging/drive-sync-bundle.json","utf8"));process.exit(selectReady(b).ready.length?0:2)' ; then
-            echo 'has_ready=true' >> "$GITHUB_OUTPUT"
-          else
-            status=$?
-            if [ "$status" -ne 2 ]; then
-              echo '::error::Eligibility validation failed unexpectedly'
-              exit "$status"
-            fi
-            echo 'has_ready=false' >> "$GITHUB_OUTPUT"
-            echo "No fully attested READY question; no release artifact or deployment."
-            exit 0
+          # Never import or execute audit-source scripts.
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+          const {verifyEvidence,evidenceIndex}=require('./scripts/verify-auto-publication.cjs');
+          const {prepare}=require('./scripts/prepare-ready-release.cjs');
+          const source=path.resolve('../audit-source');
+          const bundlePath=path.join(source,'data/staging/drive-sync-bundle.json');
+          for(const p of [source,path.join(source,'data'),path.join(source,'data/staging'),bundlePath])assert(!fs.lstatSync(p).isSymbolicLink(),'Bundle symlink rejected');
+          const b=JSON.parse(fs.readFileSync(bundlePath,'utf8'));
+          assert.equal(b.schema_version,1);
+          assert.equal(b.approval?.mode,'ai_three_stage');
+          assert.equal(b.approval?.export_source,'authenticated-drive-export');
+          assert.equal(b.approval?.source_spreadsheet_id,'1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88');
+          const at=Date.parse(b.approval.exported_at),now=Date.now();
+          assert(Number.isFinite(at)&&at<=now+60000&&now-at<86400000,'Stale or invalid snapshot');
+          const selected=verifyEvidence(b,evidenceIndex(source));
+          assert(selected.ready.length<=5,'Excess READY candidates');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'has_ready='+Boolean(selected.ready.length)+'\n');
+          if(selected.ready.length){
+            const report=prepare(b,path.join(process.env.RUNNER_TEMP,'study-ready-preview'));
+            console.log(JSON.stringify(report));
+          }else console.log('No READY questions; verified HOLD no-op. No deployment.');
+          NODE
+          if [ "$(grep '^has_ready=' "$GITHUB_OUTPUT" | tail -1)" = 'has_ready=true' ]; then
+            cp "$RUNNER_TEMP/study-ready-preview/index.html" index.html
+            cp "$RUNNER_TEMP/study-ready-preview/legacy-study.html" legacy-study.html
           fi
-          mkdir -p /tmp/study-ready-preview
-          node scripts/prepare-ready-release.cjs data/staging/drive-sync-bundle.json /tmp/study-ready-preview
-          node --check worker.js
-          echo "READY preview generated locally only; no GitHub commit and no Cloudflare deployment."
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
       - name: Save review-only artifact
         if: steps.eligibility.outputs.has_ready == 'true'
         uses: actions/upload-artifact@v4
@@ -50,6 +76,7 @@ jobs:
           name: study-ready-web-preview
           retention-days: 3
           path: |
-            /tmp/study-ready-preview/index.html
-            /tmp/study-ready-preview/legacy-study.html
-            /tmp/study-ready-preview/release-report.json
+            ${{ runner.temp }}/study-ready-preview/index.html
+            ${{ runner.temp }}/study-ready-preview/legacy-study.html
+            ${{ runner.temp }}/study-ready-preview/release-report.json
+
