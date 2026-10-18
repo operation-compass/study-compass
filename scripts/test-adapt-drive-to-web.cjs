@@ -40,7 +40,8 @@ console.log('Ancient military and Nara culture route correctly; approval and sub
 const kamakura={...newCandidate,unit_minor:'鎌倉・統治'};
 const kamakuraOut=applyToWeb(old,[kamakura],[kamakura.id]);
 assert.equal(kamakuraOut.at(-1).unit,'歴史・中世');
-assert.equal(kamakuraOut.at(-1).topic_name,'鎌倉・統治');
+assert.equal(kamakuraOut.at(-1).topic_name,'鎌倉');
+assert.equal(kamakuraOut.at(-1).master_topic_name,'鎌倉・統治');
 assert.deepEqual(kamakuraOut.slice(0,old.length),old);
 assert.deepEqual(applyToWeb(old,[kamakura],[]),old);
 assert.throws(()=>applyToWeb(old,[{...kamakura,grade:'中1〜中3'}],[kamakura.id]),/grade required/);

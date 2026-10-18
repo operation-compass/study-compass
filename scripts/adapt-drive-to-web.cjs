@@ -33,7 +33,10 @@ function applyToWeb(existing, candidates, readyIds){
   const options=[c.choice_a,c.choice_b,c.choice_c,c.choice_d].map(v=>String(v||'').trim());
   assert(options.every(Boolean)&&new Set(options).size===4&&options.includes(c.correct_answer),'Invalid new question choices');
   assert(c.question_text&&c.explanation,'Incomplete new question');
-  result.push({id,subject:c.subject,grade:c.grade,unit:c.unit_major+'・'+period,field_name:c.unit_major,topic_name:c.unit_minor,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation});
+  // The history hub matches chapter topics exactly; keep MASTER detail separately.
+  const webTopic=c.unit_minor==='鎌倉・統治'?'鎌倉':c.unit_minor;
+  const detail=webTopic===c.unit_minor?{}:{master_topic_name:c.unit_minor};
+  result.push({id,subject:c.subject,grade:c.grade,unit:c.unit_major+'・'+period,field_name:c.unit_major,topic_name:webTopic,...detail,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation});
  }
 
  return result;
