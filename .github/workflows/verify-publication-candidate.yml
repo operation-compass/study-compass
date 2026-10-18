@@ -1,0 +1,64 @@
+name: Verify publication candidate
+run-name: Verify publication candidate ${{ inputs.request_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      base_sha:
+        required: true
+        type: string
+      source_sha:
+        required: true
+        type: string
+      candidate_sha:
+        required: true
+        type: string
+      request_id:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.repository == 'operation-compass/study-compass'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate immutable input revisions
+        env:
+          BASE: ${{ inputs.base_sha }}
+          SOURCE: ${{ inputs.source_sha }}
+          CANDIDATE: ${{ inputs.candidate_sha }}
+        run: |
+          [[ "$BASE" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$SOURCE" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$CANDIDATE" =~ ^[a-f0-9]{40}$ ]]
+          test "$BASE" = "$GITHUB_SHA"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.base_sha }}
+          path: live
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_sha }}
+          path: candidate
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Regenerate from trusted baseline and compare exact candidate
+        working-directory: live
+        env:
+          BASE: ${{ inputs.base_sha }}
+          CANDIDATE: ${{ inputs.candidate_sha }}
+        run: |
+          node scripts/verify-publication-candidate.cjs ../audit-source ../candidate
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs

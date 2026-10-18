@@ -13,6 +13,18 @@ async function dispatchAndWait(sha){
  for(let n=0;n<90;n++){await sleep(10000);const runs=await api('actions/workflows/deploy-cloudflare.yml/runs?head_sha='+sha+'&event=workflow_dispatch&per_page=10');const run=runs.workflow_runs.find(x=>Date.parse(x.created_at)>=after);if(run?.status==='completed'){assert.equal(run.conclusion,'success','Deployment verification failed: '+run.id);return run.id;}}
  throw Error('Deployment verification timed out');
 }
+async function verifyCandidateAndWait(base,source,head){
+ const request='publication-'+process.env.GITHUB_RUN_ID+'-'+head;
+ const after=Date.now()-10000;
+ await api('actions/workflows/verify-publication-candidate.yml/dispatches',{method:'POST',body:{ref:'main',inputs:{base_sha:base,source_sha:source,candidate_sha:head,request_id:request}}});
+ for(let n=0;n<90;n++){
+  await sleep(10000);
+  const runs=await api('actions/workflows/verify-publication-candidate.yml/runs?head_sha='+base+'&event=workflow_dispatch&per_page=100');
+  const run=runs.workflow_runs.find(x=>x.display_title==='Verify publication candidate '+request&&x.head_sha===base&&x.event==='workflow_dispatch'&&Date.parse(x.created_at)>=after);
+  if(run?.status==='completed'){assert.equal(run.conclusion,'success','Candidate CI failed: '+run.id);return run.id;}
+ }
+ throw Error('Candidate CI timed out; nothing merged');
+}
 async function main(){
  assert(process.env.GH_TOKEN,'Missing workflow token');const root=path.resolve(process.env.STUDY_LIVE_ROOT||'.'),source=path.resolve(process.env.STUDY_SOURCE_ROOT||'../audit-source'),out=path.resolve(process.env.RUNNER_TEMP||'../tmp','study-auto-release');fs.mkdirSync(out,{recursive:true});
  const receipt={production_updated:false,source_branch:sourceBranch};const save=()=>fs.writeFileSync(path.join(out,'publication-receipt.json'),JSON.stringify(receipt,null,2));
@@ -49,6 +61,7 @@ async function main(){
   }
   verifyDiff(report,expected,await api('pulls/'+pr.number+'/files'));const head=pr.head.sha||git(['rev-parse','HEAD'],root);receipt.pr=pr.number;receipt.head_sha=head;
   if(pr.draft){const r=await fetch('https://api.github.com/graphql',{method:'POST',headers:{Authorization:'Bearer '+process.env.GH_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({query:'mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{isDraft}}}',variables:{id:pr.node_id}}),signal:AbortSignal.timeout(30000)});assert(r.ok,'Cannot mark verified PR ready');const b=await r.json();assert(!b.errors&&b.data.markPullRequestReadyForReview.pullRequest.isDraft===false,'Draft transition failed');}
+  receipt.candidate_ci_run=await verifyCandidateAndWait(base,sourceSha,head);save();
   assert.equal((await api('branches/main')).commit.sha,base,'main advanced before merge; retry with latest baseline');assert.equal((await api('branches/'+encodeURIComponent(sourceBranch))).commit.sha,sourceSha,'Staging advanced before merge');
   const merged=await api('pulls/'+pr.number+'/merge',{method:'PUT',body:{sha:head,merge_method:'merge'}});assert(merged.merged,'Merge rejected');mergeSha=merged.sha;receipt.merge_sha=mergeSha;receipt.production_updated=true;save();
   const mergedCommit=await api('commits/'+mergeSha);assert.equal(mergedCommit.parents.length,2,'Unexpected merge topology');assert.equal(mergedCommit.parents[1].sha,head,'Unexpected merged head');recoveryBase=mergedCommit.parents[0].sha;receipt.recovery_base=recoveryBase;assert.equal(recoveryBase,base,'main advanced during merge; restore actual first parent');

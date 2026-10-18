@@ -3,7 +3,7 @@
 // No real API, remote Git host, production deployment or authentication is used.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const root=path.join(__dirname,'..'),scenario=process.argv[3];
-const cases=['disabled','success-new-pr','success-existing-draft','delivery-mismatch','deploy-failure','newer-main','merge-race'];
+const cases=['disabled','success-new-pr','success-existing-draft','candidate-ci-failure','candidate-ci-wrong-run','delivery-mismatch','deploy-failure','newer-main','merge-race'];
 const git=(dir,args)=>cp.execFileSync('git',args,{cwd:dir,encoding:'utf8',maxBuffer:8*1024*1024,stdio:['ignore','pipe','pipe']}).trim();
 const init=dir=>{fs.mkdirSync(dir,{recursive:true});git(dir,['init','-b','main']);git(dir,['config','user.name','Offline Test']);git(dir,['config','user.email','offline@example.invalid']);};
 async function child(){
@@ -25,7 +25,7 @@ async function child(){
  const realNow=Date.now;Date.now=()=>Date.parse(bundle.approval.exported_at)+1000;
  const realTimer=global.setTimeout;global.setTimeout=(cb,ms,...args)=>realTimer(cb,ms===10000?0:ms,...args);
  process.env.GH_TOKEN='offline-placeholder-not-a-real-token';process.env.GITHUB_EVENT_NAME='workflow_dispatch';process.env.GITHUB_RUN_ID='offline-'+scenario;process.env.STUDY_LIVE_ROOT=live;process.env.STUDY_SOURCE_ROOT=source;process.env.RUNNER_TEMP=path.join(temp,'run');process.env.GITHUB_EVENT_PATH=path.join(temp,'event.json');fs.writeFileSync(process.env.GITHUB_EVENT_PATH,'{}');
- let pr=null,dispatches=0,mergedSha=null,requests=0,graphql=0;
+ let pr=null,dispatches=0,mergedSha=null,requests=0,graphql=0,candidateCI=null;
  const mainSha=()=>git(bare,['rev-parse','refs/heads/main']);
  const bankAt=sha=>git(bare,['show',sha+':legacy-study.html']);
  const bumpUnrelated=label=>{git(admin,['fetch','origin']);git(admin,['checkout','-B','main','origin/main']);fs.writeFileSync(path.join(admin,'unrelated.txt'),label);git(admin,['add','unrelated.txt']);git(admin,['commit','-m',label]);git(admin,['push','origin','main']);};
@@ -47,11 +47,20 @@ async function child(){
   if(route==='commits'&&u.searchParams.get('path'))return response([{sha:sourceSha}]);
   if(route==='commits/'+sourceSha)return response({author:{login:'operation-compass'},commit:{message:'Stage audited Drive snapshot (NOT production)'},files:[{filename:'data/staging/drive-sync-bundle.json',sha:verifier.gitBlob(fs.readFileSync(path.join(fixtures,'bundle.json'),'utf8'))}]});
   if(route.startsWith('commits/')){const sha=route.split('/')[1],parents=git(bare,['show','-s','--format=%P',sha]).split(' ').filter(Boolean);return response({parents:parents.map(sha=>({sha}))});}
+  if(route==='actions/workflows/verify-publication-candidate.yml/dispatches'){
+   assert.equal(method,'POST');assert.equal(body.ref,'main');assert.equal(body.inputs.base_sha,base);assert.equal(body.inputs.source_sha,sourceSha);assert.equal(body.inputs.candidate_sha,pr.head.sha);
+   const candidate=path.join(temp,'ci-candidate'),ciLive=path.join(temp,'ci-trusted-main');git(temp,['clone',bare,candidate]);git(candidate,['checkout',pr.head.sha]);git(temp,['clone',bare,ciLive]);git(ciLive,['checkout',base]);
+   const result=require(path.join(ciLive,'scripts/verify-publication-candidate.cjs')).verify(source,candidate,base,pr.head.sha);assert.equal(result.verified,true);
+   candidateCI={id:77,head_sha:base,event:'workflow_dispatch',display_title:'Verify publication candidate '+body.inputs.request_id,status:'completed',conclusion:scenario==='candidate-ci-failure'?'failure':'success',created_at:new Date(Date.now()).toISOString()};
+   if(scenario==='candidate-ci-wrong-run')candidateCI.display_title+='-unrelated';
+   return response(null,204);
+  }
+  if(route==='actions/workflows/verify-publication-candidate.yml/runs')return response({workflow_runs:candidateCI?[candidateCI]:[]});
   if(route==='pulls'&&method==='GET')return response(pr?[pr]:[]);
   if(route==='pulls'&&method==='POST'){assert.equal(body.base,'main');const sha=git(bare,['rev-parse','refs/heads/'+body.head]);pr={number:123,node_id:'PR_offline',draft:false,user:{login:'github-actions[bot]'},head:{sha,ref:body.head}};return response(pr,201);}
   if(route==='pulls/123/files'){return response(git(bare,['diff','--name-only',base,pr.head.sha]).split('\n').filter(Boolean).map(filename=>({filename,sha:git(bare,['rev-parse',pr.head.sha+':'+filename])})));}
   if(route==='pulls/123/merge'){
-   assert.equal(method,'PUT');assert.equal(body.sha,pr.head.sha);if(scenario==='merge-race')bumpUnrelated('concurrent work before merge');git(admin,['fetch','origin']);git(admin,['checkout','-B','main','origin/main']);git(admin,['merge','--no-ff','origin/'+pr.head.ref,'-m','offline verified merge']);git(admin,['push','origin','main']);mergedSha=mainSha();return response({merged:true,sha:mergedSha});
+   assert.equal(candidateCI?.conclusion,'success');assert(!['candidate-ci-failure','candidate-ci-wrong-run'].includes(scenario),'Unverified candidate must never merge');assert.equal(method,'PUT');assert.equal(body.sha,pr.head.sha);if(scenario==='merge-race')bumpUnrelated('concurrent work before merge');git(admin,['fetch','origin']);git(admin,['checkout','-B','main','origin/main']);git(admin,['merge','--no-ff','origin/'+pr.head.ref,'-m','offline verified merge']);git(admin,['push','origin','main']);mergedSha=mainSha();return response({merged:true,sha:mergedSha});
   }
   if(route==='actions/workflows/deploy-cloudflare.yml/dispatches'){assert.equal(method,'POST');assert.equal(body.ref,'main');dispatches++;if(scenario==='newer-main'&&dispatches===1)bumpUnrelated('newer work after merge');return response(null,204);}
   if(route==='actions/workflows/deploy-cloudflare.yml/runs'){const sha=u.searchParams.get('head_sha');const fail=dispatches===1&&['deploy-failure','newer-main'].includes(scenario);return response({workflow_runs:[{id:dispatches,status:'completed',conclusion:fail?'failure':'success',created_at:new Date(Date.now()).toISOString(),head_sha:sha}]});}
@@ -62,6 +71,7 @@ async function child(){
  const receipt=JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP,'study-auto-release/publication-receipt.json'),'utf8'));
  const current=mainSha(),bank=verifier.questions(bankAt(current)),present=bank.filter(q=>ids.has(q.id));
  if(scenario==='disabled'){assert(!error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(pr,null);assert.equal(receipt.result,'verified-not-published');}
+ else if(scenario.startsWith('candidate-ci-')){assert(error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(present.length,0);assert.equal(receipt.production_updated,false);assert.equal(receipt.result,'failure');assert(receipt.reason.includes(scenario==='candidate-ci-failure'?'Candidate CI failed':'Candidate CI timed out'));}
  else if(scenario.startsWith('success-')){assert.ifError(error);assert.equal(receipt.result,'success');assert.equal(receipt.published_bank_verified,true);assert.equal(present.length,2);assert.equal(dispatches,1);if(scenario==='success-existing-draft')assert.equal(graphql,1);}
  else if(scenario==='newer-main'){assert(error);assert.equal(receipt.recovery_verified,false);assert.equal(dispatches,1);assert.equal(present.length,2);assert.equal(git(bare,['show',current+':unrelated.txt']),'newer work after merge');assert(receipt.recovery_reason.includes('Newer main changes'));}
  else{assert(error);assert.equal(receipt.recovery_verified,true);assert.equal(present.length,0);assert.equal(git(bare,['show',current+':unrelated.txt']),scenario==='merge-race'?'concurrent work before merge':'preserve this work');assert.equal(dispatches,scenario==='merge-race'?1:2);assert(receipt.recovery_sha);}
