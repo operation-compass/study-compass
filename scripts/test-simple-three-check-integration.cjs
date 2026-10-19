@@ -14,14 +14,14 @@ function fixture(){
  }
  e.accuracy.sources=['https://example.org/source'];
  Object.assign(e.quality,{duplicate_reviewed:true,existing_web_reviewed:true,curriculum_reviewed:true});
- return {bundle:{candidate:{items:[q]},simple_checks:{records:[e]}},index,approval:new Set(['approval-1'])};
+ return {bundle:{candidate:{items:[q]},simple_checks:{records:[e]}},index,approval:new Map([['approval-1',{id:q.id,version:q.version,question_sha256:hash}]])};
 }
 test('valid shadow evaluation never grants actual release',()=>{
  const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001']);
  assert.deepEqual(r.eligible,['SC-TEST-001']);assert.equal(r.production_updated,false);assert.equal(r.mode,'shadow_only');
 });
 test('untrusted approval is held in shadow evaluation',()=>{
- const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,new Set(),['SC-TEST-001']);
+ const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,new Map(),['SC-TEST-001']);
  assert.deepEqual(r.eligible,[]);assert.deepEqual(r.held,['SC-TEST-001']);
 });
 test('missing verified audit evidence is held',()=>{
