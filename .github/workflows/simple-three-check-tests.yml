@@ -1,0 +1,20 @@
+name: Study COMPASS simple-check isolated tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/simple-three-check-gate.cjs'
+      - 'scripts/test-simple-three-check-gate.cjs'
+      - '.github/workflows/simple-three-check-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run isolated candidate checks
+        run: node --test scripts/test-simple-three-check-gate.cjs
