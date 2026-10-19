@@ -44,7 +44,7 @@ function previewSimpleThreeChecks(bundle,index,approvedReferences,masterIds){
  assert.equal(new Set(candidateIds).size,candidateIds.length,'Duplicate candidate ID');
  assert(Array.isArray(masterIds)&&masterIds.length>0,'Full canonical MASTER ID inventory required');
  assert.equal(new Set(masterIds).size,masterIds.length,'Duplicate MASTER ID');
- assert(approvedReferences instanceof Set,'Trusted approval registry required');
+ assert(approvedReferences instanceof Map,'Trusted approval registry required');
  const audits=new Map();
  for(const record of bundle.simple_checks.records){
   assert(record?.id&&!audits.has(record.id),'Duplicate simple-check audit ID');
