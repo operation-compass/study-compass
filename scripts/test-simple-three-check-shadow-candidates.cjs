@@ -5,7 +5,8 @@ const q={question_id:'SC-1',subject:'社会',grade:'中2',unit_major:'歴史',un
 const fields=['id','subject','grade','unit_major','unit_minor','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation'];
 function hash(row){const vals=fields.map(k=>String((k==='id'?row.question_id:row[k])??''));return crypto.createHash('sha256').update(JSON.stringify(vals)).digest('hex');}
 let rows=[],records=[];
-global.SpreadsheetApp={openById:()=>({getSheetByName:()=>({})})};
+let reviewTabExists=true;
+global.SpreadsheetApp={openById:()=>({getSheetByName:name=>name==='Web自動公開｜新3チェック記録'&&!reviewTabExists?null:{}})};
 global.studyRows_=()=>rows;global.scReadSimpleChecks_=()=>({records});
 global.studyValidV2Metadata_=q=>/^中[123]$/.test(q.grade)&&!!q.unit_major&&!!q.unit_minor;
 global.studySha_=q=>crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
@@ -45,4 +46,10 @@ test('retired MASTER question cannot be resurrected by an old review',()=>{
 test('CHECK with publish_flag true is held even if SHA matches',()=>{
  rows=[{...q,status:'CHECK',publish_flag:true}];records=[{id:'SC-1',version:'v1',question_sha256:hash(q)}];
  assert.equal(scBuildSimpleShadowCandidates_().held[0].reason,'MASTER_NOT_CHECK_UNPUBLISHED');
+});
+
+test('missing real new-review tab fails explicitly, not silently as empty approval',()=>{
+ reviewTabExists=false;
+ try{assert.throws(()=>scBuildSimpleShadowCandidates_(),/NEW_THREE_CHECK_REVIEW_TAB_MISSING/);}
+ finally{reviewTabExists=true;}
 });
