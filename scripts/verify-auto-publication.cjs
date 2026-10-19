@@ -50,7 +50,14 @@ function previewSimpleThreeChecks(bundle,index,approvedReferences,masterIds){
   assert(record?.id&&!audits.has(record.id),'Duplicate simple-check audit ID');
   audits.set(record.id,record);
  }
- const artifacts=new Map(index.filter(f=>f.path.endsWith('.md')).map(f=>[f.path,f.text]));
+ assert(Array.isArray(index),'Repository evidence file index required');
+ const artifacts=new Map();
+ for(const f of index){
+  if(!f || typeof f.path!=='string' || typeof f.text!=='string')throw Error('Invalid evidence file entry');
+  if(!f.path.startsWith('docs/audits/') || !f.path.endsWith('.md'))continue;
+  assert(!artifacts.has(f.path),'Duplicate evidence path: '+f.path);
+  artifacts.set(f.path,f.text);
+ }
  const candidates=bundle.candidate.items.map(q=>{
   const record=audits.get(q.id);
   const result=verifyThreeCheckArtifacts(q,record,masterIds,artifacts,approvedReferences);
