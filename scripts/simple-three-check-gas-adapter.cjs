@@ -22,6 +22,12 @@ function buildShadowReport(gasBundle, inventory, evidenceFiles, approvals) {
  const simpleChecks=gasBundle.simple_checks;
  if(!Array.isArray(simpleChecks?.records))throw Error('No simplified-review records; legacy 3-audit PASS cannot be transformed');
  const result=previewSimpleThreeChecks({candidate:gasBundle.candidate,simple_checks:simpleChecks},evidenceFiles,new Map(approvals),inventory);
- return {...result,source:shadow?'canonical_GAS_shadow_preview':'authenticated_GAS_bundle',legacy_release_unchanged:true};
+ // No live connector currently authenticates the provenance of approvals or
+ // independent review identities. Passing an array of claimed approvals is
+ // insufficient to authorize a real release. Report only simulated passes.
+ return {...result,eligible:[],unverified_candidates:result.eligible,
+  release_authorized:false,authorization_blocker:'TRUSTED_APPROVAL_PROVENANCE_NOT_CONNECTED',
+  source:shadow?'canonical_GAS_shadow_preview':'authenticated_GAS_bundle',
+  legacy_release_unchanged:true};
 }
 module.exports={buildShadowReport};
