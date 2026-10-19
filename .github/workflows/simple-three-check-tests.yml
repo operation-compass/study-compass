@@ -6,6 +6,8 @@ on:
       - 'scripts/test-simple-three-check-gate.cjs'
       - 'scripts/simple-three-check-evidence.cjs'
       - 'scripts/test-simple-three-check-evidence.cjs'
+      - 'scripts/test-simple-three-check-integration.cjs'
+      - 'scripts/verify-auto-publication.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
   workflow_dispatch:
 permissions:
