@@ -47,3 +47,14 @@ assert.deepEqual(applyToWeb(old,[kamakura],[]),old);
 assert.throws(()=>applyToWeb(old,[{...kamakura,grade:'中1〜中3'}],[kamakura.id]),/grade required/);
 assert.throws(()=>applyToWeb(old,[{...kamakura,unit_major:'地理'}],[kamakura.id]),/Unsupported new question Web unit/);
 console.log('Kamakura governance routes to medieval history without losing MASTER topic or weakening approval/grade gates.');
+
+const shoen={...newCandidate,grade:'中1',unit_minor:'平安・荘園'};
+const shoenOut=applyToWeb(old,[shoen],[shoen.id]);
+assert.equal(shoenOut.at(-1).unit,'歴史・古代');
+assert.equal(shoenOut.at(-1).topic_name,'平安');
+assert.equal(shoenOut.at(-1).master_topic_name,'平安・荘園');
+assert.deepEqual(shoenOut.slice(0,old.length),old);
+assert.deepEqual(applyToWeb(old,[shoen],[]),old);
+assert.throws(()=>applyToWeb(old,[{...shoen,grade:'中1〜中3'}],[shoen.id]),/grade required/);
+assert.throws(()=>applyToWeb(old,[{...shoen,unit_major:'地理'}],[shoen.id]),/Unsupported new question Web unit/);
+console.log('Heian estate questions route to Heian chapter with MASTER detail preserved.');
