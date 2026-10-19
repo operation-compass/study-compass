@@ -18,3 +18,14 @@ Existing 3-stage audit row (as observed in canonical Sheets): accuracy PASS, qua
 Missing to release: complete source check for remaining explanation clauses; verified duplication/quality evidence; trusted independent approval registry and bound SHA; real new-review record (proposed sheet tab is currently absent); authenticated GAS staging; main release checks and Cloudflare end-to-end confirmation.
 
 No cell, review record, status, publication flag, GAS trigger, main or production site changed. Do not interpret this research note as PASS.
+
+
+## Follow-up verification (2026-10-19)
+- MASTER cross-row query on text containing 武家諸法度 (rows 1–2300, 42 columns): 11 matching rows, but **only row 338 uses 武家諸法度 as the correct answer** among those returned; other hits were distractor texts or explanations mentioning law. This is a bounded text search and **not** proof that semantically equivalent questions or current Web duplicates are absent.
+- MASTER row 338 remains CHECK / publish_flag FALSE. Existing audit row remains technical PENDING, risk UNASSESSED, final HOLD. No approval inferred.
+- National Archives official exhibit (https://www.archives.go.jp/exhibition/digital/ieyasu/contents3_02/03/): 1615, Shogun Hidetada, 13 clauses; independently verified via official chronology (https://www.archives.go.jp/exhibition/digital/ieyasu/history.html).
+- Primary legal text transcription of 1615 Genna decree: https://ja.wikisource.org/wiki/武家諸法度_(元和令) contains clauses on repair of castles (report even repairs) and private marriage (prohibition). It is a publicly edited transcription, not a certified national-archive text. Treat as corroboration only, pending reliable edition validation.
+- Four distractors are laws from other periods or for different purposes (公事方御定書, 御成敗式目, 十七条の憲法). This yields one historically appropriate answer for the stated question, but distractor era disparity could make the choice too easy. Curriculum quality sign-off remains **not complete**.
+- Existing Web `index.html` could not be read via connected GitHub fetch due to large content; production duplicate comparison is **unverified**, not PASS.
+
+Release status: HOLD; independent approval, real review evidence, and end-to-end deployment remain incomplete.
