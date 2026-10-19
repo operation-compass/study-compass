@@ -7,7 +7,7 @@ function scReadSimpleChecks_(spreadsheet) {
   const tab = spreadsheet.getSheetByName('Web自動公開｜新3チェック記録');
   if (!tab) return {records: []}; // migration hasn't been enabled
   const rows = tab.getDataRange().getValues();
-  if (rows.length < 2) return {records: []};
+  if (!rows.length) throw Error('Review tab exists but has no header');
   const header = rows[0].map(String);
   const required = ['question_id','question_version','content_sha256','simple_check_record_json'];
   required.forEach(function(name) {
@@ -17,7 +17,11 @@ function scReadSimpleChecks_(spreadsheet) {
   const records = [];
   rows.slice(1).forEach(function(row, offset) {
     const id = String(row[header.indexOf('question_id')] || '').trim();
-    if (!id) return;
+    if (!id) {
+      if (row.some(function(cell){ return String(cell == null ? '' : cell).trim() !== ''; }))
+        throw Error('Review row missing question_id at row '+(offset+2));
+      return;
+    }
     if (ids[id]) throw Error('Duplicate simple-check ID: '+id);
     ids[id] = true;
     const raw = row[header.indexOf('simple_check_record_json')];
