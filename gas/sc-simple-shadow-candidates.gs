@@ -4,6 +4,8 @@
  */
 function scBuildSimpleShadowCandidates_() {
   var book=SpreadsheetApp.openById(STUDY.spreadsheetId);
+  if(!book.getSheetByName('Web自動公開｜新3チェック記録'))
+    throw Error('NEW_THREE_CHECK_REVIEW_TAB_MISSING: shadow migration is not configured');
   var rows=studyRows_(book.getSheetByName(STUDY.source));
   var reviews=scReadSimpleChecks_(book).records;
   var byId={}, ids={};
