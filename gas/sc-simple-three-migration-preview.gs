@@ -37,7 +37,7 @@ function studySimpleThreeMigrationPreview() {
           String(row.version||'')!==String(review.version||''))
         summary.mismatched_master_hashes.push(review.id);
       if (String(row.status||'').trim()!=='CHECK' ||
-          !([false,'FALSE','false','',0].includes(row.publish_flag)))
+          !([false,'FALSE','false',0].includes(row.publish_flag)))
         summary.blocked_master_status.push(review.id);
     }
     if (!/^[a-f0-9]{64}$/.test(String(review.question_sha256||'')))
