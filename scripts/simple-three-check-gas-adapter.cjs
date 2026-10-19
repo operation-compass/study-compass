@@ -3,13 +3,18 @@
 // No implicit PASS, READY, or publication permission.
 const {previewSimpleThreeChecks}=require('./verify-auto-publication.cjs');
 function buildShadowReport(gasBundle, inventory, evidenceFiles, approvals) {
- if(!gasBundle||!Array.isArray(gasBundle.candidate?.items)||!Array.isArray(gasBundle.audit?.records))
+ if(!gasBundle||!Array.isArray(gasBundle.candidate?.items))
+  throw Error('Authenticated GAS candidate items are required');
+ const shadow=gasBundle.mode==='shadow_only'&&gasBundle.production_updated===false;
+ if(!shadow&&!Array.isArray(gasBundle.audit?.records))
   throw Error('Existing GAS candidate/audit bundle is required');
+ if(shadow&&gasBundle.audit!==undefined)
+  throw Error('Shadow-only bundle must not carry legacy release audits');
  if(!Array.isArray(inventory)||!Array.isArray(evidenceFiles)||!Array.isArray(approvals))
   throw Error('Independent canonical inventory, evidence files and trusted approval registry required');
  const simpleChecks=gasBundle.simple_checks;
  if(!Array.isArray(simpleChecks?.records))throw Error('No simplified-review records; legacy 3-audit PASS cannot be transformed');
  const result=previewSimpleThreeChecks({candidate:gasBundle.candidate,simple_checks:simpleChecks},evidenceFiles,new Map(approvals),inventory);
- return {...result,source:'authenticated_GAS_bundle',legacy_release_unchanged:true};
+ return {...result,source:shadow?'canonical_GAS_shadow_preview':'authenticated_GAS_bundle',legacy_release_unchanged:true};
 }
 module.exports={buildShadowReport};
