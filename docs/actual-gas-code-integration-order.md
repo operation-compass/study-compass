@@ -3,12 +3,12 @@
 **目的:** 既存の公開ルートを変更せず、正本から読んだ新監査記録をステージング用JSONに同梱する準備をする。現在のPRは未マージ、以下も実稼働GASには未適用。
 
 ## 元コードで確認した依存関係
-- `STUDY.branch` は `feature/drive-approval-gate-20261016`。PR #27のブランチとは**異なる**。PR #27をマージしても、このGASがPR #27のコードを実行するわけではない。
+- `STUDY.branch` は `feature/drive-approval-gate-20261016`。**これは正しい構成**であり、mainの `.github/workflows/propose-ready-release.yml` がこのブランチへのステージングpushを受け取り、 `.github/workflows/auto-publish-ready.yml` も同じブランチからデータと証拠のみをcheckoutしている。信頼済み実行コードはmainを利用する。PR #27の開発ブランチと異なるのは意図した分離であり、送信先を変更しない。
 - `studyCollect_()` は旧 `final_decision === 'READY'` を要求する。単に新監査JSONを付加しても新方式の候補は発生しない。
 - `studyUnpublishedBatch_()` は旧監査READYを必要とする。現行の最大5問の選別ロジックを流用しただけでは新方式を処理できない。
 - `studyStageApproved()` は未公開候補が0件ならGitHubへの送信より前に終了する。空の旧候補への新監査データの同梱は実行されない。
 - `studyPutGitHub_()` が `studySameSnapshot_()` で比較するのは `candidate`, `audit`, 一部の `approval` のみ。新監査記録のみの更新は見逃される。
-- `studyPutGitHub_()` の出力先は `data/staging/drive-sync-bundle.json`。既存の公開ワークフローの参照ブランチ・参照パスとも一致するか現行設定を確認してから改修する。
+- `studyPutGitHub_()` の出力先は `data/staging/drive-sync-bundle.json`。**mainの両ワークフローで同じ参照ブランチ・同じファイルパスを使用していることを確認済み**。既存のステージング経路を維持する。
 - 現行監査ログ16列から新方式の審査証拠や正本の承認台帳は生成できない。旧PASSから新PASSへの無断変換は禁止。
 
 ## 本番を壊さない導入順序
