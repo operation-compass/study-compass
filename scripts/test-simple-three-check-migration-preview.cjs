@@ -49,3 +49,9 @@ test('public or withdrawn MASTER row cannot be previewed as current candidate',(
  assert.deepEqual(studySimpleThreeMigrationPreview().blocked_master_status,['SC-001']);
  assert.equal(studySimpleThreeMigrationPreview().eligible_for_publication,0);
 });
+
+test('blank publication flag is flagged in preview',()=>{
+ rows=[{question_id:'SC-001',status:'CHECK',publish_flag:'',version:'v1'}];
+ checks=[{id:'SC-001',version:'v1',question_sha256:'a'.repeat(64)}];
+ assert.deepEqual(studySimpleThreeMigrationPreview().blocked_master_status,['SC-001']);
+});
