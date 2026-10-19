@@ -9,7 +9,7 @@ function buildShadowReport(gasBundle, inventory, evidenceFiles, approvals) {
   throw Error('Independent canonical inventory, evidence files and trusted approval registry required');
  const simpleChecks=gasBundle.simple_checks;
  if(!Array.isArray(simpleChecks?.records))throw Error('No simplified-review records; legacy 3-audit PASS cannot be transformed');
- const result=previewSimpleThreeChecks({candidate:gasBundle.candidate,simple_checks:simpleChecks},evidenceFiles,new Set(approvals),inventory);
+ const result=previewSimpleThreeChecks({candidate:gasBundle.candidate,simple_checks:simpleChecks},evidenceFiles,new Map(approvals),inventory);
  return {...result,source:'authenticated_GAS_bundle',legacy_release_unchanged:true};
 }
 module.exports={buildShadowReport};
