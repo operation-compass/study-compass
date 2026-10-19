@@ -25,9 +25,22 @@ function buildShadowReport(gasBundle, inventory, evidenceFiles, approvals) {
  // No live connector currently authenticates the provenance of approvals or
  // independent review identities. Passing an array of claimed approvals is
  // insufficient to authorize a real release. Report only simulated passes.
- return {...result,eligible:[],unverified_candidates:result.eligible,
+ // Every candidate remains HOLD, including those that passed a *simulated*
+ // evidence check. Do not expose an eligible:true nested candidate that a
+ // downstream consumer might accidentally interpret as release permission.
+ const candidates=result.candidates.map(item=>({
+  ...item,
+  preliminary_eligible:item.eligible,
+  preliminary_status:item.status,
+  eligible:false,
+  status:'HOLD',
+  errors:[...item.errors,'approval_provenance_unverified']
+ }));
+ return {...result,candidates,eligible:[],
+  held:result.candidates.map(item=>item.id),
+  unverified_candidates:result.eligible,
   release_authorized:false,authorization_blocker:'TRUSTED_APPROVAL_PROVENANCE_NOT_CONNECTED',
-  source:shadow?'canonical_GAS_shadow_preview':'authenticated_GAS_bundle',
+  source:shadow?'canonical_GAS_shadow_preview':'legacy_GAS_bundle_unverified',
   legacy_release_unchanged:true};
 }
 module.exports={buildShadowReport};
