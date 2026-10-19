@@ -1,0 +1,27 @@
+name: Diagnose live staging without publication
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/diagnose-live-staging.cjs'
+      - '.github/workflows/diagnose-live-staging.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout proposed diagnostic code
+        uses: actions/checkout@v4
+      - name: Checkout staging data only
+        uses: actions/checkout@v4
+        with:
+          repository: operation-compass/study-compass
+          ref: feature/drive-approval-gate-20261016
+          path: audit-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Report diagnostic, never publish
+        run: node scripts/diagnose-live-staging.cjs audit-source/data/staging/drive-sync-bundle.json
