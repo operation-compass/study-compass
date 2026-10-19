@@ -42,3 +42,44 @@ test('shadow report cannot authorize release without independently authenticated
  assert.deepEqual(r.eligible,[]);
  assert.equal(r.authorization_blocker,'TRUSTED_APPROVAL_PROVENANCE_NOT_CONNECTED');
 });
+
+test('all superficially passing shadow checks remain HOLD, including nested candidate status',()=>{
+ const {hashV2}=require('./simple-three-check-gate.cjs');
+ const {sha256}=require('./simple-three-check-evidence.cjs');
+ const q={id:'SC-TEST-001',subject:'社会',grade:'中2',unit_major:'歴史',
+  unit_minor:'室町',question_type:'4択',question_text:'テスト問題',
+  choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',
+  correct_answer:'A',explanation:'テスト説明',version:'v1'};
+ const hash=hashV2(q);
+ const evidence={id:q.id,version:q.version,question_sha256:hash,risk:'LOW',
+  publication_approved:true,approval_reference:'synthetic-approval'};
+ const files=[];
+ for(const role of ['accuracy','quality']){
+  const reviewer=role+'-synthetic-reviewer',path='docs/audits/'+role+'-synthetic.md';
+  const body=q.id+' '+hash+' '+reviewer;
+  files.push({path,text:body});
+  evidence[role]={reviewer,result:'PASS',checked_at:'2026-10-19',
+   question_sha256:hash,evidence_file:path,evidence_sha256:sha256(body)};
+ }
+ evidence.accuracy.sources=['https://example.org/synthetic-reference'];
+ Object.assign(evidence.quality,{duplicate_reviewed:true,existing_web_reviewed:true,
+  curriculum_reviewed:true});
+ const bundle={mode:'shadow_only',production_updated:false,
+  canonical_master_ids:[q.id],candidate:{items:[q]},simple_checks:{records:[evidence]}};
+ const approvals=[['synthetic-approval',{id:q.id,version:q.version,question_sha256:hash}]];
+ const report=buildShadowReport(bundle,[q.id],files,approvals);
+ assert.deepEqual(report.unverified_candidates,[q.id]);
+ assert.deepEqual(report.eligible,[]);
+ assert.deepEqual(report.held,[q.id]);
+ assert.equal(report.release_authorized,false);
+ assert.equal(report.candidates[0].preliminary_eligible,true);
+ assert.equal(report.candidates[0].eligible,false);
+ assert.equal(report.candidates[0].status,'HOLD');
+ assert(report.candidates[0].errors.includes('approval_provenance_unverified'));
+ // A forged or stale approval must not even count as preliminary success.
+ const stale=buildShadowReport(bundle,[q.id],files,
+  [['synthetic-approval',{id:q.id,version:q.version,question_sha256:'0'.repeat(64)}]]);
+ assert.deepEqual(stale.unverified_candidates,[]);
+ assert.deepEqual(stale.held,[q.id]);
+ assert.equal(stale.candidates[0].eligible,false);
+});
