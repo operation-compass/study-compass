@@ -30,4 +30,22 @@ function scAttachSimpleChecksToStaging_(existingBundle, spreadsheet) {
   extended.simple_checks = checks;
   return extended;
 }
-if (typeof module !== 'undefined') module.exports = {scAttachSimpleChecksToStaging_};
+/* Prevent the original studySameSnapshot_() from suppressing updates
+ * made exclusively to new review records. An old snapshot without the new
+ * field must be uploaded once even if candidate and audit are unchanged.
+ * The original 12-hour freshness and approval/source checks still apply.
+ */
+function scSameSnapshotWithSimpleChecks_(previous, next) {
+  if (typeof studySameSnapshot_ !== 'function') {
+    throw Error('Existing studySameSnapshot_ is required');
+  }
+  if (!studySameSnapshot_(previous, next)) return false;
+  if (!previous || !next ||
+      !previous.simple_checks || !next.simple_checks ||
+      !Array.isArray(previous.simple_checks.records) ||
+      !Array.isArray(next.simple_checks.records)) return false;
+  return JSON.stringify(previous.simple_checks) === JSON.stringify(next.simple_checks);
+}
+if (typeof module !== 'undefined') module.exports = {
+  scAttachSimpleChecksToStaging_, scSameSnapshotWithSimpleChecks_
+};
