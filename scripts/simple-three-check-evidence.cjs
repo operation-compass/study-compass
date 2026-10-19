@@ -18,6 +18,10 @@ function verifyThreeCheckArtifacts(question,evidence,masterIds,artifacts,approve
      authorization.version!==question?.version ||
      authorization.question_sha256!==preflight.question_sha256)
    errors.push('untrusted_or_unbound_approval');
+ const a=evidence?.accuracy,b=evidence?.quality;
+ if(a?.reviewer && b?.reviewer && a.reviewer.trim()===b.reviewer.trim())errors.push('same_reviewer_for_two_checks');
+ if(a?.evidence_file && a.evidence_file===b?.evidence_file)errors.push('shared_evidence_file');
+ if(a?.evidence_sha256 && a.evidence_sha256===b?.evidence_sha256)errors.push('shared_evidence_digest');
  for(const role of ['accuracy','quality']){
   const check=evidence?.[role];
   const file=check?.evidence_file;
