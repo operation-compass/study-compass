@@ -7,6 +7,8 @@ on:
       - 'scripts/simple-three-check-evidence.cjs'
       - 'scripts/test-simple-three-check-evidence.cjs'
       - 'scripts/test-simple-three-check-integration.cjs'
+      - 'scripts/simple-three-check-gas-adapter.cjs'
+      - 'scripts/test-simple-three-check-gas-adapter.cjs'
       - 'scripts/verify-auto-publication.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
   workflow_dispatch:
