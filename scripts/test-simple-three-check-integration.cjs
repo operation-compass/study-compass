@@ -35,3 +35,9 @@ test('duplicate candidate IDs fail closed',()=>{
 test('missing complete master inventory fails closed',()=>{const f=fixture();assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval),/MASTER ID inventory/);});
 test('candidate omitted from full master inventory remains HOLD',()=>{const f=fixture();const r=previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-OTHER-001']);assert.deepEqual(r.eligible,[]);});
 test('duplicate IDs in canonical MASTER fail closed',()=>{const f=fixture();assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001','SC-TEST-001']),/Duplicate MASTER/);});
+
+test('duplicate evidence paths fail closed rather than last-writer wins',()=>{
+ const f=fixture();
+ f.index.push({...f.index[0],text:'forged evidence'});
+ assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001']),/Duplicate evidence path/);
+});
