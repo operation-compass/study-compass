@@ -17,7 +17,7 @@ const validDate = s => nonblank(s) && /^\d{4}-\d{2}-\d{2}(?:T.*)?$/.test(s) && N
 const canonical = s => String(s ?? '').normalize('NFKC').replace(/\s+/g,'').toLowerCase();
 function preflightQuestion(q, evidence, knownIds = []) {
   const errors = [];
-  if (!q || !evidence) return {eligible:false, errors:['missing_question_or_evidence']};
+  if (!q || typeof q !== 'object' || Array.isArray(q) || !evidence || typeof evidence !== 'object' || Array.isArray(evidence)) return {eligible:false, errors:['missing_question_or_evidence']};
   for (const f of V2_FIELDS) if (!nonblank(q[f])) errors.push('missing_' + f);
   if (!/^中[123]$/.test(q.grade ?? '')) errors.push('invalid_grade');
   if (q.question_type !== '4択') errors.push('invalid_question_type');
@@ -25,17 +25,17 @@ function preflightQuestion(q, evidence, knownIds = []) {
   if (new Set(choices.map(canonical)).size !== 4) errors.push('duplicate_choices');
   if (choices.filter(x => canonical(x) === canonical(q.correct_answer)).length !== 1) errors.push('invalid_correct_answer');
   if (!nonblank(q.version)) errors.push('missing_version');
-  if (knownIds.filter(id => id === q.id).length > 1) errors.push('duplicate_id');
+  if (!Array.isArray(knownIds) || knownIds.filter(id => id === q.id).length !== 1) errors.push('missing_or_duplicate_master_id');
   const sha = hashV2(q);
   if (evidence.id !== q.id || evidence.version !== q.version || evidence.question_sha256 !== sha) errors.push('evidence_identity_mismatch');
   for (const name of ['accuracy','quality']) {
     const c = evidence[name];
     if (!c || c.result !== 'PASS' || !validDate(c.checked_at) || !nonblank(c.reviewer) || c.question_sha256 !== sha) errors.push('invalid_' + name + '_check');
   }
-  if (!Array.isArray(evidence.accuracy?.sources) || !evidence.accuracy.sources.some(u => typeof u === 'string' && /^https:\/\//.test(u))) errors.push('missing_source_url');
+  if (!Array.isArray(evidence.accuracy?.sources) || !evidence.accuracy.sources.some(u => typeof u === 'string' && /^https:\/\/[a-z0-9.-]+\//i.test(u))) errors.push('missing_source_url');
   if (!evidence.quality || evidence.quality.duplicate_reviewed !== true || evidence.quality.existing_web_reviewed !== true || evidence.quality.curriculum_reviewed !== true) errors.push('incomplete_quality_review');
   if (evidence.risk !== 'LOW' || evidence.exception_reason) errors.push('risk_or_exception');
-  if (evidence.publication_approved !== true) errors.push('missing_publication_approval');
+  if (evidence.publication_approved !== true || !nonblank(evidence.approval_reference)) errors.push('missing_publication_approval');
   return {eligible:errors.length===0, errors, question_sha256:sha, status:errors.length===0?'PRECHECK_PASS':'HOLD'};
 }
 module.exports = {preflightQuestion,hashV2,V2_FIELDS};
