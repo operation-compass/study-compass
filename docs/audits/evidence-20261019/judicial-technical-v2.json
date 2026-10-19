@@ -1,0 +1,27 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000007",
+      "version": "gap10-judicial-purpose-v2",
+      "role": "technical",
+      "result": "HOLD",
+      "risk": "MEDIUM",
+      "exceptions": [],
+      "reviewer_id": "/root/judicial_technical",
+      "checked_at": "2026-10-19T06:20:18.802Z",
+      "question_sha256": "7a8c5f2ad4349e7eb8aac90065638749d4b3ab81ba855ad014ecf3079a6d4cd6",
+      "evidence_file": "docs/audits/evidence-20261019/judicial-technical-v2.md",
+      "evidence_sha256": "cbb6a7a24a917746d55c00c1fc198f6473798a7e49b031792eb5e262911b0628",
+      "sha_version": "v2",
+      "source_ref": "6b417240",
+      "adapter_blob": "ed722173faf729001ae88df02783b31c121c56fb",
+      "pending": [
+        "fresh current main HTML verification",
+        "adapter support",
+        "three modes measured 390px",
+        "right/wrong scoring",
+        "history UI export persistence"
+      ]
+    }
+  ]
+}

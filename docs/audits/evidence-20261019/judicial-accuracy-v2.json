@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000007",
+      "version": "gap10-judicial-purpose-v2",
+      "role": "accuracy",
+      "result": "PASS",
+      "risk": "LOW",
+      "exception_reason": "",
+      "reviewer_id": "/root/judicial_accuracy",
+      "checked_at": "2026-10-19T06:19:33.999Z",
+      "question_sha256": "7a8c5f2ad4349e7eb8aac90065638749d4b3ab81ba855ad014ecf3079a6d4cd6",
+      "evidence_file": "docs/audits/evidence-20261019/judicial-accuracy-v2.md",
+      "evidence_sha256": "26c96a43fdc76ea398f9b026da82dcebc44d40a9ee5d7d41231bed6a9e03e711"
+    }
+  ]
+}

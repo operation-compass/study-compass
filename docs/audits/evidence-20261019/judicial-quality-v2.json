@@ -1,0 +1,22 @@
+{
+  "records": [{
+    "id": "SC-SOC-HIS-GAP10-000007",
+    "version": "gap10-judicial-purpose-v2",
+    "hash_version": "v2",
+    "question_sha256": "7a8c5f2ad4349e7eb8aac90065638749d4b3ab81ba855ad014ecf3079a6d4cd6",
+    "role": "quality",
+    "reviewer_id": "/root/judicial_quality",
+    "checked_at": "2026-10-19T06:19:13.580Z",
+    "result": "HOLD",
+    "risk": "MEDIUM",
+    "exception_reason": "学習目標の意味重複が未解消",
+    "evidence_file": "docs/audits/evidence-20261019/judicial-quality-v2.md",
+    "evidence_sha256": "8a7ebbc93ebf5b45030e1433f220481ae2aae23feacdb29c76b63aba1c611582",
+    "production_commit": "6b41724063a08f5dddb7c5d7620bd4184e23bfbd",
+    "production_html_blob": "419d74909bd19737345d7457b55c0baf8d98507c",
+    "comparison": {"master_range": "問題MASTER!A1:X6000", "master_question_count": 5214, "master_fresh_direct_read": true, "production_paths": ["index.html", "legacy-study.html"], "production_tree_and_blob_direct_read": true},
+    "duplicate_ids": ["SC-SOC-HIS-000183", "SC-SOC-HIS-LEVEL-000016", "SC-SOC-HIS-GAP17-000014"],
+    "findings": ["既存Web2問と、御成敗式目の説明として武士慣習に基づく裁判基準を選ぶ学習目標が重複", "中1・標準の法制度比較として四肢同型で成立するが独自の到達目標は増えていない"],
+    "required_action": "具体的資料・事例から法の適用対象を判断する等の別目標へ実質改題し、全体意味重複と一次典拠を再確認、SHA変更後に独立3監査を再実施。候補編集・正本更新・公開は未実行"
+  }]
+}
