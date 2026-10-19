@@ -1,0 +1,43 @@
+# 徳政碑 v3 technical 最終監査
+
+reviewer_id: codex:/root/tokusei_source_technical
+checked_at: 2026-10-19T10:25:49.677Z
+id: SC-SOC-HIS-GAP10-000010
+version: gap10-tokusei-source-v3
+question_sha256: ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29
+result: PASS
+risk: LOW
+exception_reason: 空
+
+## 対象と判断範囲
+
+同一13フィールドSHA v2の内容・隔離adapter・実ブラウザ証拠について独立に検査しPASS。初期PENDING証拠は保存維持。他役割の報告およびcode-review.mdは読まず判断した。currentmain 6b41724063a08f5dddb7c5d7620bd4184e23bfbdの両HTMLblob 419d74909bd19737345d7457b55c0baf8d98507cをGitHub connectorで直接確認し、基準bytesのGit SHA1も再計算済み。
+
+## コードと候補同一性
+
+currentmainのadapter/regression/selectorをコミット固定で直接取得。現行adapterは室町・一揆をUnsupportedで拒否することを再現。隔離adapterの2行だけを修正し、歴史・中世、topic_name室町、master_topic_name室町・一揆へ対応。既存currentmain regression成功、630件全体deepEqual・全ID順序保持、追加1件631件、室町23→24を検証。未承認候補の除外、最大5件、重複READY拒否、不正学年/地理/未対応単元拒否を保持。selectorの13フィールドv2 SHA一致、未監査候補HOLDを確認。両preview HTMLは同一bank。KEYだけ隔離しDAY=86400000を維持。bank/title/KEYを戻したbytesが基準と一致。
+
+## 実ブラウザraw証拠の独立評価
+
+親がoperatorとして採取したraw accessibility trace・DOM実測・8PNGを自分で読み/画像表示し確認。3モードすべてで候補文、答え、解説が一致。4択の誤答選択をincorrect/0点、正答をcorrect/1点とする状態遷移と0/1・1/1結果をtraceで確認。PNGのwrong-result390/correct-result390という名前はセッション集計画面そのものを保証せず、採点結果画面の確認はraw traceに依拠した。問題だけ確認は選択肢非表示→正解と解説、flashcardは表面→裏面と正解/解説を表示。390幅で本文と操作に重なり・横切れなし。DOMはmcq clientWidth375/scrollWidth375、question/flashcard clientWidth390/scrollWidth390で横overflowなし。画面の「今回の10問」は既存UIの固定表示で、実集計1/1と候補データの異常ではなく今回の2行変更外。
+
+履歴保存ボタンdownloadの実JSONを独立比較。beforeの誤答/正答2イベントはafterの先頭にdeepEqualで保持。afterは問題確認のviewedイベント1件だけ追加しgradedは2件を維持。reloadedはafterとdeepEqualかつ実bytes一致。隔離キーでの保存再読を実証し、基準本番KEYは未変更。既存実利用者の本番localStorageを操作したとは主張しない。
+
+## 公開工程の別状態
+
+このPASSは同一候補のcontent technical audit結果。currentmainへの室町routing adapter修正反映、コードPR/CI、認証済みGAS同期、候補公開CI・統合・本番配信は未完了であり、このPASSから公開成功を主張しない。現行main adapterでは公開できないため、その正規コード変更を先行させる。公開ガード/設定/承認条件の変更・外部更新なし。
+
+## Raw evidence SHA256
+
+- outputs/tokusei-source-route/operator-trace.json 22219d00e96cbfe6ec46a77a1290022286ddd31f4adec9effbf1d58b63612bc6
+- outputs/tokusei-source-route/history-before.json d66c5a174712338523b90ff5433bdc05f781cac6973602ab7424c734dcff099e
+- outputs/tokusei-source-route/history-after.json 906d10c568018e62054cca65e25c85fa9b4e50c84adb61cb000ac1f887a83fcd
+- outputs/tokusei-source-route/history-reloaded.json 906d10c568018e62054cca65e25c85fa9b4e50c84adb61cb000ac1f887a83fcd
+- outputs/tokusei-source-route/mcq390.png d83dee5be66fc499ce2702d2c6af0835c5154260ad2a9bfc8c5a734bf9849856
+- outputs/tokusei-source-route/wrong390.png 5c5ad6ec6c265d0b9f2e8f473bced5d05f3e258a50cba6bd8647f69b3d4298d3
+- outputs/tokusei-source-route/wrong-result390.png b8d9ef6596ab87ed052b5b0ff7f4a1e8a7e23633f018068ce79e922069d0913c
+- outputs/tokusei-source-route/correct-result390.png 064117fa5ceac0d32cbcb41faab20857eaf78453f96f90f186ec6a20b699b897
+- outputs/tokusei-source-route/question390.png adb187c0e2b5855d6b1bae24e86f4323a6a4ca00e9288a3974958ea78cf55800
+- outputs/tokusei-source-route/question-answer390.png 504439d14c90213c832300d1fa24dc2bdf2d24c8eeab4d72e2288a9b1d5d25a4
+- outputs/tokusei-source-route/flashcard390.png 401412b02c39ff6f38da88c7dc95030124f96bf396a486ca5925f42e0d819c7a
+- outputs/tokusei-source-route/flashcard-answer390.png e95173fd62ea3c117e1b493506101b04f9f2bb9040aa2b838db8e5e17396be46

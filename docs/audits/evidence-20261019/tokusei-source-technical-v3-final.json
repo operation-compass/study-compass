@@ -1,0 +1,87 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-source-v3",
+      "role": "technical",
+      "result": "PASS",
+      "reviewer_id": "codex:/root/tokusei_source_technical",
+      "checked_at": "2026-10-19T10:25:49.677Z",
+      "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-source-technical-v3-final.md",
+      "evidence_sha256": "4a4d7d2f72faa7f7b4b2cd23834254fdd56636937495bf4756d8eb9af3911423"
+    }
+  ],
+  "candidate": {
+    "id": "SC-SOC-HIS-GAP10-000010",
+    "subject": "社会",
+    "grade": "中1",
+    "unit_major": "歴史",
+    "unit_minor": "室町・一揆",
+    "question_type": "4択",
+    "question_text": "室町時代の正長元年柳生徳政碑に記された「負目（負債）あるべからず」が示す措置は？",
+    "choice_a": "それまでの借金を帳消しにする",
+    "choice_b": "借金の返済期限を延ばす",
+    "choice_c": "借金の利息だけを引き下げる",
+    "choice_d": "借金を米で返済するようにする",
+    "correct_answer": "それまでの借金を帳消しにする",
+    "explanation": "奈良市が紹介する柳生徳政碑の釈文は、負債がないことを示しています。この碑は、正長元年（1428年）の徳政一揆による負債の取り消しを伝える史料です。返済期限の延長や利息だけの軽減を示すものではありません。",
+    "version": "gap10-tokusei-source-v3",
+    "source_url": "https://www.city.nara.lg.jp/site/bunkazai/95331.html",
+    "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29"
+  },
+  "risk": "LOW",
+  "exception_reason": "",
+  "scope": "content technical audit with isolated routing adapter and raw browser evidence",
+  "release_state": "BLOCKED_UNTIL_ROUTING_CODE_AND_REGULAR_CI",
+  "artifacts": [
+    {
+      "file": "outputs/tokusei-source-route/operator-trace.json",
+      "sha256": "22219d00e96cbfe6ec46a77a1290022286ddd31f4adec9effbf1d58b63612bc6"
+    },
+    {
+      "file": "outputs/tokusei-source-route/history-before.json",
+      "sha256": "d66c5a174712338523b90ff5433bdc05f781cac6973602ab7424c734dcff099e"
+    },
+    {
+      "file": "outputs/tokusei-source-route/history-after.json",
+      "sha256": "906d10c568018e62054cca65e25c85fa9b4e50c84adb61cb000ac1f887a83fcd"
+    },
+    {
+      "file": "outputs/tokusei-source-route/history-reloaded.json",
+      "sha256": "906d10c568018e62054cca65e25c85fa9b4e50c84adb61cb000ac1f887a83fcd"
+    },
+    {
+      "file": "outputs/tokusei-source-route/mcq390.png",
+      "sha256": "d83dee5be66fc499ce2702d2c6af0835c5154260ad2a9bfc8c5a734bf9849856"
+    },
+    {
+      "file": "outputs/tokusei-source-route/wrong390.png",
+      "sha256": "5c5ad6ec6c265d0b9f2e8f473bced5d05f3e258a50cba6bd8647f69b3d4298d3"
+    },
+    {
+      "file": "outputs/tokusei-source-route/wrong-result390.png",
+      "sha256": "b8d9ef6596ab87ed052b5b0ff7f4a1e8a7e23633f018068ce79e922069d0913c"
+    },
+    {
+      "file": "outputs/tokusei-source-route/correct-result390.png",
+      "sha256": "064117fa5ceac0d32cbcb41faab20857eaf78453f96f90f186ec6a20b699b897"
+    },
+    {
+      "file": "outputs/tokusei-source-route/question390.png",
+      "sha256": "adb187c0e2b5855d6b1bae24e86f4323a6a4ca00e9288a3974958ea78cf55800"
+    },
+    {
+      "file": "outputs/tokusei-source-route/question-answer390.png",
+      "sha256": "504439d14c90213c832300d1fa24dc2bdf2d24c8eeab4d72e2288a9b1d5d25a4"
+    },
+    {
+      "file": "outputs/tokusei-source-route/flashcard390.png",
+      "sha256": "401412b02c39ff6f38da88c7dc95030124f96bf396a486ca5925f42e0d819c7a"
+    },
+    {
+      "file": "outputs/tokusei-source-route/flashcard-answer390.png",
+      "sha256": "e95173fd62ea3c117e1b493506101b04f9f2bb9040aa2b838db8e5e17396be46"
+    }
+  ]
+}

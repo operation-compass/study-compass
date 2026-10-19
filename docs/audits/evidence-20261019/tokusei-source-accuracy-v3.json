@@ -1,0 +1,20 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-source-v3",
+      "hash_version": "v2",
+      "role": "accuracy",
+      "result": "PASS",
+      "risk": "LOW",
+      "exception_reason": "",
+      "reviewer_id": "codex-agent:/root/tokusei_source_accuracy",
+      "checked_at": "2026-10-19T08:18:21.250Z",
+      "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-source-accuracy-v3.md",
+      "evidence_sha256": "7ab31e79e2c39a9dc53d5e71cee516158c8d8feb796bcdecc62cbf750f03c6fd",
+      "source_url": "https://www.city.nara.lg.jp/site/bunkazai/95331.html",
+      "source_retrieved_at": "2026-10-19T08:18:21.250Z"
+    }
+  ]
+}

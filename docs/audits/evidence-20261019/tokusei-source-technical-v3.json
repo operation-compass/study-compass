@@ -1,0 +1,38 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-source-v3",
+      "role": "technical",
+      "result": "PENDING",
+      "reviewer_id": "codex:/root/tokusei_source_technical",
+      "checked_at": "2026-10-19T08:19:55.994Z",
+      "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-source-technical-v3.md",
+      "evidence_sha256": "ee5d0f59c92f401a865e4828a6488afc95b58171d099a60aec84b187a06dec3e"
+    }
+  ],
+  "candidate": {
+    "id": "SC-SOC-HIS-GAP10-000010",
+    "subject": "社会",
+    "grade": "中1",
+    "unit_major": "歴史",
+    "unit_minor": "室町・一揆",
+    "question_type": "4択",
+    "question_text": "室町時代の正長元年柳生徳政碑に記された「負目（負債）あるべからず」が示す措置は？",
+    "choice_a": "それまでの借金を帳消しにする",
+    "choice_b": "借金の返済期限を延ばす",
+    "choice_c": "借金の利息だけを引き下げる",
+    "choice_d": "借金を米で返済するようにする",
+    "correct_answer": "それまでの借金を帳消しにする",
+    "explanation": "奈良市が紹介する柳生徳政碑の釈文は、負債がないことを示しています。この碑は、正長元年（1428年）の徳政一揆による負債の取り消しを伝える史料です。返済期限の延長や利息だけの軽減を示すものではありません。",
+    "version": "gap10-tokusei-source-v3",
+    "source_url": "https://www.city.nara.lg.jp/site/bunkazai/95331.html",
+    "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29"
+  },
+  "remaining": [
+    "raw browser UI evidence",
+    "adapter change not yet on main",
+    "candidate CI not run"
+  ]
+}

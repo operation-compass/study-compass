@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-source-v3",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "codex-agent-/root/tokusei_source_quality",
+      "checked_at": "2026-10-19T17:19:26+09:00",
+      "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+      "risk": "LOW",
+      "exception_reason": "",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-source-quality-v3.md",
+      "evidence_sha256": "a3805ea424b1ea7f1f8b5a82a834e8b62e638491bee79a417ec058959ca0921f"
+    }
+  ]
+}
