@@ -1,0 +1,21 @@
+{
+  "records": [
+    {
+      "question_sha256": "7972abd5af2c1712c5d1b65c3bec928602102444152d4de6fd7427ef8a588e72",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-technical-v2.md",
+      "result": "PENDING",
+      "role": "technical",
+      "checked_at": "2026-10-19T06:24:17Z",
+      "final_decision": "HOLD",
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "reviewer_id": "codex-agent:/root/tokusei_technical",
+      "version": "gap10-tokusei-demand-v2",
+      "risk": "HIGH",
+      "exceptions": [
+        "Unsupported new question Web unit: 歴史/室町・一揆",
+        "UI, both banks, scoring, narrow screen, history preservation and candidate CI evidence pending"
+      ],
+      "evidence_sha256": "a135062674cf85841addda13730a7a15c9769b4eeadf477479a6bdb5d3e4668d"
+    }
+  ]
+}

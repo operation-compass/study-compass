@@ -1,0 +1,19 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-demand-v2",
+      "role": "accuracy",
+      "result": "HOLD",
+      "reviewer_id": "codex-agent:/root/tokusei_accuracy",
+      "checked_at": "2026-10-19T06:23:37Z",
+      "question_sha256": "7972abd5af2c1712c5d1b65c3bec928602102444152d4de6fd7427ef8a588e72",
+      "risk": "MEDIUM",
+      "exceptions": [
+        "Bの排除と解説後半の断定を支える一次本文未確認。徳政の広い意味と重なりを残す。"
+      ],
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-accuracy-v2.md",
+      "evidence_sha256": "89f977e3f75d33e453b3b20a5747fe80d00c09ec6b713bf6eba3d5744a6d8682"
+    }
+  ]
+}

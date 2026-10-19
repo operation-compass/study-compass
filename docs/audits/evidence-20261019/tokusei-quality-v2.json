@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000010",
+      "version": "gap10-tokusei-demand-v2",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "codex-agent:/root/tokusei_quality",
+      "checked_at": "2026-10-19T06:24:38Z",
+      "question_sha256": "7972abd5af2c1712c5d1b65c3bec928602102444152d4de6fd7427ef8a588e72",
+      "evidence_file": "docs/audits/evidence-20261019/tokusei-quality-v2.md",
+      "evidence_sha256": "8231d075713f46aa60dd2ba8a2beb41f1ecc31b567283730aed16378efa1ce4e",
+      "risk": "LOW",
+      "exceptions": []
+    }
+  ]
+}
