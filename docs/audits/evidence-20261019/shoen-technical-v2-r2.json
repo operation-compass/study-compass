@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "technical",
+      "result": "PASS",
+      "reviewer_id": "/root/shoen_technical",
+      "checked_at": "2026-10-19T04:15:32Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-technical-v2-r2.md",
+      "evidence_sha256": "f1b313aab3832e72af04bf957f3502dc9a9af2d2ecc3b96cac3029e4fb0e6e5f"
+    }
+  ]
+}

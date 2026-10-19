@@ -1,0 +1,18 @@
+{
+  "id": "SC-SOC-HIS-GAP10-000006",
+  "subject": "社会",
+  "grade": "中1",
+  "unit_major": "歴史",
+  "unit_minor": "平安・荘園",
+  "question_type": "4択",
+  "question_text": "荘園の「不輸の権」と「不入の権」の説明として正しいものは？",
+  "choice_a": "不輸＝税の免除／不入＝国司などの立ち入りを拒否",
+  "choice_b": "不輸＝国司などの立ち入りを拒否／不入＝税の免除",
+  "choice_c": "不輸＝税の免除／不入＝口分田の支給",
+  "choice_d": "不輸＝口分田の支給／不入＝国司などの立ち入りを拒否",
+  "correct_answer": "不輸＝税の免除／不入＝国司などの立ち入りを拒否",
+  "explanation": "不輸の権は税の免除、不入の権は国司などの役人の立ち入りを拒む特権です。税と役人の立ち入りという、異なる対象に関する権利です。すべての荘園に両方が認められたわけではありません。",
+  "version": "gap10-shoen-review-v2",
+  "source_url": "https://www.city.tamana.lg.jp/q/aview/457/1000.html",
+  "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b"
+}

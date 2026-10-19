@@ -1,0 +1,41 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "accuracy",
+      "result": "PASS",
+      "risk": "LOW",
+      "exception": "",
+      "reviewer_id": "/root/shoen_accuracy",
+      "checked_at": "2026-10-19T00:22:31Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-accuracy-v2.md",
+      "evidence_sha256": "28a80e5ad380e016f04ef4dc2fa44b1c03cb8bb41f63afdb44971ee07f42a8e7"
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "/root/shoen_quality",
+      "checked_at": "2026-10-19T00:24:03Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-quality-v2.md",
+      "evidence_sha256": "0363a02b04f62eab198df9152ffd977d2460619c02791cc6020380145b44da27",
+      "risk": "LOW",
+      "exceptions": []
+    },
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "technical",
+      "result": "PASS",
+      "reviewer_id": "/root/shoen_technical",
+      "checked_at": "2026-10-19T04:15:32Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-technical-v2-r2.md",
+      "evidence_sha256": "f1b313aab3832e72af04bf957f3502dc9a9af2d2ecc3b96cac3029e4fb0e6e5f"
+    }
+  ]
+}

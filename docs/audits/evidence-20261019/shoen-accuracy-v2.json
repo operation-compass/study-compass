@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "accuracy",
+      "result": "PASS",
+      "risk": "LOW",
+      "exception": "",
+      "reviewer_id": "/root/shoen_accuracy",
+      "checked_at": "2026-10-19T00:22:31Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-accuracy-v2.md",
+      "evidence_sha256": "28a80e5ad380e016f04ef4dc2fa44b1c03cb8bb41f63afdb44971ee07f42a8e7"
+    }
+  ]
+}

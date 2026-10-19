@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "id": "SC-SOC-HIS-GAP10-000006",
+      "version": "gap10-shoen-review-v2",
+      "role": "quality",
+      "result": "PASS",
+      "reviewer_id": "/root/shoen_quality",
+      "checked_at": "2026-10-19T00:24:03Z",
+      "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+      "evidence_file": "docs/audits/evidence-20261019/shoen-quality-v2.md",
+      "evidence_sha256": "0363a02b04f62eab198df9152ffd977d2460619c02791cc6020380145b44da27",
+      "risk": "LOW",
+      "exceptions": []
+    }
+  ]
+}
