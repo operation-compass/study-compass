@@ -21,6 +21,12 @@ function scBuildSimpleShadowCandidates_() {
     seen[id]=true;
     var row=byId[id];
     if(!row){held.push({id:id,reason:'MASTER_ID_NOT_FOUND'});return;}
+    // Shadow migration is restricted to explicitly pending, non-public MASTER
+    // questions. Review JSON must never resurrect a retired/public row.
+    if(String(row.status||'').trim()!=='CHECK' ||
+       [false,'FALSE','false','',0].indexOf(row.publish_flag)===-1){
+      held.push({id:id,reason:'MASTER_NOT_CHECK_UNPUBLISHED'});return;
+    }
     var q={id:id,subject:String(row.subject||''),grade:String(row.grade||''),
       unit_major:String(row.unit_major||''),unit_minor:String(row.unit_minor||''),
       question_type:String(row.question_type||''),question_text:String(row.question_text||''),
