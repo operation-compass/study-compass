@@ -34,3 +34,11 @@ test('shadow inventory with duplicate MASTER IDs fails closed',()=>{
  const x={mode:'shadow_only',production_updated:false,canonical_master_ids:['A','A'],candidate:{items:[{id:'A'}]},simple_checks:{records:[]}};
  assert.throws(()=>buildShadowReport(x,['A'],[],[]),/unique canonical MASTER/);
 });
+
+test('shadow report cannot authorize release without independently authenticated approval provenance',()=>{
+ const x={mode:'shadow_only',production_updated:false,canonical_master_ids:['A'],candidate:{items:[{id:'A'}]},simple_checks:{records:[]}};
+ const r=buildShadowReport(x,['A'],[],[]);
+ assert.equal(r.release_authorized,false);
+ assert.deepEqual(r.eligible,[]);
+ assert.equal(r.authorization_blocker,'TRUSTED_APPROVAL_PROVENANCE_NOT_CONNECTED');
+});
