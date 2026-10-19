@@ -11,4 +11,4 @@ test('record exported without changing PENDING',()=>{const x=scReadSimpleChecks_
 test('wrong SHA rejected',()=>assert.throws(()=>scReadSimpleChecks_(sheet([headers,['SC-001','v2','b'.repeat(64),JSON.stringify(record)]])),/mismatch/));
 test('duplicate review IDs rejected',()=>assert.throws(()=>scReadSimpleChecks_(sheet([headers,['SC-001','v2',sha,JSON.stringify(record)],['SC-001','v2',sha,JSON.stringify(record)]])),/Duplicate/));
 test('bad JSON rejected',()=>assert.throws(()=>scReadSimpleChecks_(sheet([headers,['SC-001','v2',sha,'{invalid']])),/Invalid/));
-test('missing required header rejected',()=>assert.throws(()=>scReadSimpleChecks_(sheet([headers.slice(0,3)])),/Missing/));
+test('missing required header rejected',()=>assert.throws(()=>scReadSimpleChecks_(sheet([headers.slice(0,3),['SC-001','v2',sha]])),/Missing/));
