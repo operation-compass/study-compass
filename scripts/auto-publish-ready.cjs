@@ -40,7 +40,18 @@ async function main(){
   const raw=fs.readFileSync(path.join(source,bundlePath),'utf8'),bundle=JSON.parse(raw);
   const changes=await api('commits?sha='+sourceSha+'&path='+bundlePath+'&per_page=1');assert(changes.length===1,'Missing authenticated staging commit');const staged=await api('commits/'+changes[0].sha);
   assert.equal(staged.author?.login,'operation-compass','Unexpected staging actor');assert.equal(staged.commit.message.split('\n')[0],'Stage audited Drive snapshot (NOT production)','Unexpected staging provenance');assert.deepEqual(staged.files.map(x=>x.filename),[bundlePath],'Staging commit modified unrelated files');assert.equal(staged.files[0].sha,gitBlob(raw),'Staging bundle is not the authenticated file');
-  const selected=verifyEvidence(bundle,evidenceIndex(source));receipt.selected=selected.ready;
+  // Invalid review evidence must never publish. Record a visible HOLD instead of
+  // repeatedly failing an otherwise healthy publication workflow.
+  let selected;
+  try { selected=verifyEvidence(bundle,evidenceIndex(source)); }
+  catch(error) {
+   const rejected=/^(Review ID mismatch|Review version mismatch|Missing or ambiguous review evidence artifact|Review evidence path mismatch|Review artifact identity missing|Missing matching independent review record|Automatic release requires SHA v2)/.test(String(error.message));
+   if(!rejected) throw error;
+   receipt.no_change=true;receipt.result='held-invalid-audit-evidence';
+   receipt.reason=String(error.message).slice(0,500);save();
+   console.warn('::warning::Publication held: '+receipt.reason);return;
+  }
+  receipt.selected=selected.ready;
   if(!selected.ready.length){receipt.no_change=true;save();return;}
   assert.equal(sha256(fs.readFileSync(path.join(root,files[0]))),sha256(fs.readFileSync(path.join(root,files[1]))),'Production HTML mirrors disagree');
   const report=prepare(bundle,out);receipt.report=report;
