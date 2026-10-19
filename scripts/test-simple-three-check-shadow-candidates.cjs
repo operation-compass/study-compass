@@ -53,3 +53,9 @@ test('missing real new-review tab fails explicitly, not silently as empty approv
  try{assert.throws(()=>scBuildSimpleShadowCandidates_(),/NEW_THREE_CHECK_REVIEW_TAB_MISSING/);}
  finally{reviewTabExists=true;}
 });
+
+test('blank publication flag is not an explicit unpublished approval',()=>{
+ rows=[{...q,publish_flag:''}];records=[{id:'SC-1',version:'v1',question_sha256:hash(q)}];
+ const r=scBuildSimpleShadowCandidates_();assert.equal(r.candidate.items.length,0);
+ assert.equal(r.held[0].reason,'MASTER_NOT_CHECK_UNPUBLISHED');
+});
