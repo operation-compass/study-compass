@@ -3,20 +3,20 @@
   "candidate": {
     "items": [
       {
-        "id": "SC-SOC-HIS-GAP10-000006",
+        "id": "SC-SOC-HIS-GAP10-000010",
         "subject": "社会",
         "grade": "中1",
         "unit_major": "歴史",
-        "unit_minor": "平安・荘園",
+        "unit_minor": "室町・一揆",
         "question_type": "4択",
-        "question_text": "荘園の「不輸の権」と「不入の権」の説明として正しいものは？",
-        "choice_a": "不輸＝税の免除／不入＝国司などの立ち入りを拒否",
-        "choice_b": "不輸＝国司などの立ち入りを拒否／不入＝税の免除",
-        "choice_c": "不輸＝税の免除／不入＝口分田の支給",
-        "choice_d": "不輸＝口分田の支給／不入＝国司などの立ち入りを拒否",
-        "correct_answer": "不輸＝税の免除／不入＝国司などの立ち入りを拒否",
-        "explanation": "不輸の権は税の免除、不入の権は国司などの役人の立ち入りを拒む特権です。税と役人の立ち入りという、異なる対象に関する権利です。すべての荘園に両方が認められたわけではありません。",
-        "version": "gap10-shoen-review-v2"
+        "question_text": "室町時代の正長元年柳生徳政碑に記された「負目（負債）あるべからず」が示す措置は？",
+        "choice_a": "それまでの借金を帳消しにする",
+        "choice_b": "借金の返済期限を延ばす",
+        "choice_c": "借金の利息だけを引き下げる",
+        "choice_d": "借金を米で返済するようにする",
+        "correct_answer": "それまでの借金を帳消しにする",
+        "explanation": "奈良市が紹介する柳生徳政碑の釈文は、負債がないことを示しています。この碑は、正長元年（1428年）の徳政一揆による負債の取り消しを伝える史料です。返済期限の延長や利息だけの軽減を示すものではありません。",
+        "version": "gap10-tokusei-source-v3"
       }
     ]
   },
@@ -25,58 +25,48 @@
       {
         "independent_reviews": [
           {
-            "id": "SC-SOC-HIS-GAP10-000006",
-            "version": "gap10-shoen-review-v2",
             "role": "accuracy",
             "result": "PASS",
-            "risk": "LOW",
-            "exception": "",
-            "reviewer_id": "/root/shoen_accuracy",
-            "checked_at": "2026-10-19T00:22:31Z",
-            "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
-            "evidence_file": "docs/audits/evidence-20261019/shoen-accuracy-v2.md",
-            "evidence_sha256": "28a80e5ad380e016f04ef4dc2fa44b1c03cb8bb41f63afdb44971ee07f42a8e7"
+            "reviewer_id": "codex-agent:/root/tokusei_source_accuracy",
+            "checked_at": "2026-10-19T08:18:21.25Z",
+            "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+            "evidence_file": "docs/audits/evidence-20261019/tokusei-source-accuracy-v3.md",
+            "evidence_sha256": "7ab31e79e2c39a9dc53d5e71cee516158c8d8feb796bcdecc62cbf750f03c6fd"
           },
           {
-            "id": "SC-SOC-HIS-GAP10-000006",
-            "version": "gap10-shoen-review-v2",
             "role": "quality",
             "result": "PASS",
-            "reviewer_id": "/root/shoen_quality",
-            "checked_at": "2026-10-19T00:24:03Z",
-            "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
-            "evidence_file": "docs/audits/evidence-20261019/shoen-quality-v2.md",
-            "evidence_sha256": "0363a02b04f62eab198df9152ffd977d2460619c02791cc6020380145b44da27",
-            "risk": "LOW",
-            "exceptions": []
+            "reviewer_id": "codex-agent-/root/tokusei_source_quality",
+            "checked_at": "2026-10-19T17:19:26+09:00",
+            "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+            "evidence_file": "docs/audits/evidence-20261019/tokusei-source-quality-v3.md",
+            "evidence_sha256": "a3805ea424b1ea7f1f8b5a82a834e8b62e638491bee79a417ec058959ca0921f"
           },
           {
-            "id": "SC-SOC-HIS-GAP10-000006",
-            "version": "gap10-shoen-review-v2",
             "role": "technical",
             "result": "PASS",
-            "reviewer_id": "/root/shoen_technical",
-            "checked_at": "2026-10-19T04:15:32Z",
-            "question_sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
-            "evidence_file": "docs/audits/evidence-20261019/shoen-technical-v2-r2.md",
-            "evidence_sha256": "f1b313aab3832e72af04bf957f3502dc9a9af2d2ecc3b96cac3029e4fb0e6e5f"
+            "reviewer_id": "codex:/root/tokusei_source_technical",
+            "checked_at": "2026-10-19T10:25:49.677Z",
+            "question_sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
+            "evidence_file": "docs/audits/evidence-20261019/tokusei-source-technical-v3-final.md",
+            "evidence_sha256": "4a4d7d2f72faa7f7b4b2cd23834254fdd56636937495bf4756d8eb9af3911423"
           }
         ],
-        "id": "SC-SOC-HIS-GAP10-000006",
-        "version": "gap10-shoen-review-v2",
+        "id": "SC-SOC-HIS-GAP10-000010",
+        "version": "gap10-tokusei-source-v3",
         "hash_version": "v2",
-        "sha256": "e393a6bf3c2788d2047bd7a233fde005507a0023d852a8440207b84126e5f53b",
+        "sha256": "ba2b66a5d479a0289648461560fa8a0f2d61c0f7edbd376bba429d74d6a10e29",
         "accuracy": "PASS",
-        "accuracy_checked_at": "2026-10-19T00:22:31Z",
-        "evidence_url": "https://github.com/operation-compass/study-compass/blob/fc7bd45ee62c8183bfcbb9d465be1a19db082cc8/docs/audits/evidence-20261019/shoen-accuracy-v2.md",
+        "accuracy_checked_at": "2026-10-19T08:18:21.25Z",
+        "evidence_url": "https://github.com/operation-compass/study-compass/tree/703c8251e3684e59c9b1d232621886270f8b690f/docs/audits/evidence-20261019",
         "quality": "PASS",
-        "quality_checked_at": "2026-10-19T00:24:03Z",
+        "quality_checked_at": "2026-10-19T17:19:26+09:00",
         "technical": "PASS",
-        "technical_checked_at": "2026-10-19T04:15:32Z",
+        "technical_checked_at": "2026-10-19T10:25:49.677Z",
         "risk": "LOW",
         "exception_reason": "",
         "final_decision": "READY",
-        "checked_at": "2026-10-19T04:17:41.980Z"
+        "checked_at": "2026-10-19T10:27:17Z"
       }
     ]
   },
@@ -84,6 +74,6 @@
     "mode": "ai_three_stage",
     "source_spreadsheet_id": "1Mmerqyc6z1gNR7Ju8NRPswKfau01vYMTJfTMGZxPZ88",
     "export_source": "authenticated-drive-export",
-    "exported_at": "2026-10-19T04:19:18.765Z"
+    "exported_at": "2026-10-19T10:29:44.752Z"
   }
 }
