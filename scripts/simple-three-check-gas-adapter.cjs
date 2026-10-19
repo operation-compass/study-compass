@@ -12,6 +12,13 @@ function buildShadowReport(gasBundle, inventory, evidenceFiles, approvals) {
   throw Error('Shadow-only bundle must not carry legacy release audits');
  if(!Array.isArray(inventory)||!Array.isArray(evidenceFiles)||!Array.isArray(approvals))
   throw Error('Independent canonical inventory, evidence files and trusted approval registry required');
+ if(shadow){
+  const exported=gasBundle.canonical_master_ids;
+  if(!Array.isArray(exported)||!exported.length||new Set(exported).size!==exported.length)
+   throw Error('Shadow bundle requires full unique canonical MASTER inventory');
+  if(exported.length!==inventory.length || !exported.every(id=>inventory.includes(id)))
+   throw Error('Shadow MASTER inventory differs from independently supplied inventory');
+ }
  const simpleChecks=gasBundle.simple_checks;
  if(!Array.isArray(simpleChecks?.records))throw Error('No simplified-review records; legacy 3-audit PASS cannot be transformed');
  const result=previewSimpleThreeChecks({candidate:gasBundle.candidate,simple_checks:simpleChecks},evidenceFiles,new Map(approvals),inventory);
