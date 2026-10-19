@@ -17,18 +17,21 @@ function fixture(){
  return {bundle:{candidate:{items:[q]},simple_checks:{records:[e]}},index,approval:new Set(['approval-1'])};
 }
 test('valid shadow evaluation never grants actual release',()=>{
- const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,f.approval);
+ const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001']);
  assert.deepEqual(r.eligible,['SC-TEST-001']);assert.equal(r.production_updated,false);assert.equal(r.mode,'shadow_only');
 });
 test('untrusted approval is held in shadow evaluation',()=>{
- const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,new Set());
+ const f=fixture(),r=previewSimpleThreeChecks(f.bundle,f.index,new Set(),['SC-TEST-001']);
  assert.deepEqual(r.eligible,[]);assert.deepEqual(r.held,['SC-TEST-001']);
 });
 test('missing verified audit evidence is held',()=>{
- const f=fixture();f.index=[];const r=previewSimpleThreeChecks(f.bundle,f.index,f.approval);
+ const f=fixture();f.index=[];const r=previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001']);
  assert.deepEqual(r.held,['SC-TEST-001']);
 });
 test('duplicate candidate IDs fail closed',()=>{
  const f=fixture();f.bundle.candidate.items.push({...f.bundle.candidate.items[0]});
- assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval),/Duplicate/);
+ assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001']),/Duplicate/);
 });
+test('missing complete master inventory fails closed',()=>{const f=fixture();assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval),/MASTER ID inventory/);});
+test('candidate omitted from full master inventory remains HOLD',()=>{const f=fixture();const r=previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-OTHER-001']);assert.deepEqual(r.eligible,[]);});
+test('duplicate IDs in canonical MASTER fail closed',()=>{const f=fixture();assert.throws(()=>previewSimpleThreeChecks(f.bundle,f.index,f.approval,['SC-TEST-001','SC-TEST-001']),/Duplicate MASTER/);});
