@@ -58,3 +58,14 @@ assert.deepEqual(applyToWeb(old,[shoen],[]),old);
 assert.throws(()=>applyToWeb(old,[{...shoen,grade:'中1〜中3'}],[shoen.id]),/grade required/);
 assert.throws(()=>applyToWeb(old,[{...shoen,unit_major:'地理'}],[shoen.id]),/Unsupported new question Web unit/);
 console.log('Heian estate questions route to Heian chapter with MASTER detail preserved.');
+
+const muromachi={...newCandidate,grade:'中1',unit_minor:'室町・一揆'};
+const muromachiOut=applyToWeb(old,[muromachi],[muromachi.id]);
+assert.equal(muromachiOut.at(-1).unit,'歴史・中世');
+assert.equal(muromachiOut.at(-1).topic_name,'室町');
+assert.equal(muromachiOut.at(-1).master_topic_name,'室町・一揆');
+assert.deepEqual(muromachiOut.slice(0,old.length),old);
+assert.deepEqual(applyToWeb(old,[muromachi],[]),old);
+assert.throws(()=>applyToWeb(old,[{...muromachi,unit_major:'地理'}],[muromachi.id]),/Unsupported new question Web unit/);
+console.log('Muromachi uprising questions retain MASTER detail and require READY IDs.');
+
