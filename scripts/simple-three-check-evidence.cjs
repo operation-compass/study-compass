@@ -13,7 +13,11 @@ function verifyThreeCheckArtifacts(question,evidence,masterIds,artifacts,approve
  const errors=[];
  const preflight=preflightQuestion(question,evidence,masterIds);
  errors.push(...preflight.errors);
- if(!(approvedReferences instanceof Set)||!approvedReferences.has(evidence?.approval_reference)) errors.push('untrusted_approval_reference');
+ const authorization=approvedReferences instanceof Map?approvedReferences.get(evidence?.approval_reference):undefined;
+ if(!authorization || authorization.id!==question?.id ||
+     authorization.version!==question?.version ||
+     authorization.question_sha256!==preflight.question_sha256)
+   errors.push('untrusted_or_unbound_approval');
  for(const role of ['accuracy','quality']){
   const check=evidence?.[role];
   const file=check?.evidence_file;
