@@ -26,7 +26,7 @@ function scBuildSimpleShadowCandidates_() {
     // Shadow migration is restricted to explicitly pending, non-public MASTER
     // questions. Review JSON must never resurrect a retired/public row.
     if(String(row.status||'').trim()!=='CHECK' ||
-       [false,'FALSE','false','',0].indexOf(row.publish_flag)===-1){
+       [false,'FALSE','false',0].indexOf(row.publish_flag)===-1){
       held.push({id:id,reason:'MASTER_NOT_CHECK_UNPUBLISHED'});return;
     }
     var q={id:id,subject:String(row.subject||''),grade:String(row.grade||''),
