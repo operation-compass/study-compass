@@ -11,6 +11,8 @@ on:
       - 'scripts/test-simple-three-check-gas-adapter.cjs'
       - 'scripts/test-simple-three-check-gas-export.cjs'
       - 'gas/sc-simple-check-export.gs'
+      - 'gas/sc-attach-simple-checks.gs'
+      - 'scripts/test-simple-three-check-gas-hook.cjs'
       - 'scripts/verify-auto-publication.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
   workflow_dispatch:
