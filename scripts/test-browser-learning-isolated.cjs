@@ -55,8 +55,24 @@ async function main(){
   assert.equal(graded.incorrect[2].question_version,'v0.1');
   await page.reload({waitUntil:'domcontentloaded'});
   assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).length,key),3);
+  // Exercise an actual browser tap on the rendered choice button, not only a
+  // direct function call. The page is an ephemeral local test page.
+  await page.evaluate(()=>{
+    mode='qa';
+    queue=[{id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',q:'708年に発行された銅銭は？',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],ex:'708年に発行された銅銭は和同開珎'}];
+    index=0;locked=false;session='tap-e2e';miniMockActive=false;renderQ();
+  });
+  await page.locator('.choice').filter({hasText:'和同開珎'}).click();
+  assert(await page.locator('#feedback').innerText().then(x=>x.includes('正解')));
+  const afterTap=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key);
+  assert.equal(afterTap.length,4);
+  assert.equal(afterTap[3].outcome,'correct');
+  assert.equal(afterTap[3].question_version,'v0.1');
+  await page.reload({waitUntil:'domcontentloaded'});
+  assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).length,key),4);
 
-  const result={mode:'isolated_chromium',mobile_viewport:'390x844',page_title:await page.title(),baseline_history_preserved:true,real_grading_correct_and_incorrect:true,history_events_after_reload:3,production_updated:false,release_authorized:false};
+
+  const result={mode:'isolated_chromium',mobile_viewport:'390x844',page_title:await page.title(),baseline_history_preserved:true,real_grading_correct_and_incorrect:true,actual_choice_tap:true,history_events_after_reload:4,production_updated:false,release_authorized:false};
   assert.equal(failures.length,0,'Browser runtime errors: '+failures.join('; '));
   console.log(JSON.stringify(result));
  }finally{await browser.close();await new Promise(resolve=>server.close(resolve));fs.rmSync(temp,{recursive:true,force:true})}
