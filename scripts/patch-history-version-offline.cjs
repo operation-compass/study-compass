@@ -15,7 +15,7 @@ function patch(html){
  for(const r of recorders){
   const start=html.indexOf(r.start);
   assert(start>=0,'Missing recorder '+r.start);
-  const end=html.indexOf('\\nfunction ',start+1);
+  const end=html.indexOf('\nfunction ',start+1);
   assert(end>start,'Recorder boundary missing '+r.start);
   const segment=html.slice(start,end);
   assert(segment.includes(r.suffix),'Recorder identity mismatch '+r.suffix);
