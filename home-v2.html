@@ -114,7 +114,7 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
    localStorage.setItem(probe,"1");
    localStorage.removeItem(probe);
  }catch(e){storageOkay=false}
- try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.checked||typeof s.checked!=="object")throw Error("invalid written");w=Object.keys(s.checked).filter(id=>s.checked[id]===true).length;}}catch(e){storageOkay=false}
+ try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||Array.isArray(s)||!s.scores||typeof s.scores!=="object"||Array.isArray(s.scores)||(s.checked!==undefined&&(typeof s.checked!=="object"||Array.isArray(s.checked))))throw Error("invalid written");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{}).filter(id=>s.checked[id]===true)]).size;}}catch(e){storageOkay=false}
  try{const raw=localStorage.getItem("studyCompassGeneratedBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.answered||typeof s.answered!=="object")throw Error("invalid generated");g=Object.keys(s.answered).length;}}catch(e){storageOkay=false}
  if(!storageOkay){document.getElementById("storageStatus").textContent="⚠ このブラウザでは学習履歴の保存または読み込みを確認できません。表示件数が正確でない可能性があります。元の保存データは削除しません。";}
  document.getElementById("written").textContent=w+" / 40";document.getElementById("generated").textContent=g+" / 24";document.getElementById("total").textContent=(w+g)+" / 64";
