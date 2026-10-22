@@ -57,8 +57,6 @@ async function main(){
   // A READY audit in staging is not the same as a production authorization.
   // Do not rely on a claimed permission field inside the same staging bundle.
   const candidateCount=selected.ready.length;
-  // A trusted, independently signed authorization is mandatory before production writes.
-  const approved=require('./release-attestation-gate.cjs').authorized(selected.ready,sourceSha,base);
   if(candidateCount>0){
     receipt.result='HOLD_UNVERIFIED_PRODUCTION_PERMISSION';
     receipt.held_candidate_count=candidateCount;
