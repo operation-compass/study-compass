@@ -29,6 +29,8 @@ on:
       - 'scripts/test-browser-learning-isolated.cjs'
       - 'scripts/test-browser-master-snapshot.cjs'
       - 'scripts/test-live-master-drift-preview.cjs'
+      - 'scripts/test-exception-classification.cjs'
+      - 'gas/sc-auto-three-check-exception-preview.gs'
       - 'gas/sc-master-preflight-preview.gs'
       - 'scripts/adapt-drive-to-web.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
@@ -43,6 +45,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Test read-only exception classification and HOLD
+        run: node --test scripts/test-exception-classification.cjs
       - name: Test read-only live MASTER drift detection and HOLD
         run: node --test scripts/test-live-master-drift-preview.cjs
       - name: Test pinned MASTER fixture drift
