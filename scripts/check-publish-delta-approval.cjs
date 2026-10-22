@@ -27,15 +27,12 @@ function validate(items,baseline,evidence){
  for(const b of baseline)if(!seen.has(b.id))blocked.push({id:b.id,type:'REMOVED',reasons:['BASELINE_REMOVAL_REQUIRES_REVIEW']});
  return {mode:'read_only_delta_gate',baseline_count:baseline.length,current_count:items.length,unchanged_count:unchanged.length,blocked,can_deploy:blocked.length===0,production_updated:false};
 }
-// Production integration must verify provenance externally. No caller-supplied
-// boolean is accepted as proof; without an authenticated provenance verifier,
-// the function intentionally refuses to authorize deployment.
-function validateForDeployment(items,baseline,evidence,verifyProvenance){
+// A callback supplied by the caller cannot authenticate a deployment baseline.
+// Fail closed until an external, audited attestation implementation exists.
+function validateForDeployment(items,baseline,evidence){
  const result=validate(items,baseline,evidence);
- if(typeof verifyProvenance!=='function')return {...result,can_deploy:false,blocked:[...result.blocked,{type:'GATE',reasons:['BASELINE_PROVENANCE_UNVERIFIED']}]};
- let proof=false;
- try{proof=verifyProvenance(baseline,items,evidence)===true;}catch(_){proof=false;}
- if(!proof)return {...result,can_deploy:false,blocked:[...result.blocked,{type:'GATE',reasons:['BASELINE_PROVENANCE_UNVERIFIED']}]};
- return result;
+ return {...result,can_deploy:false,blocked:[...result.blocked,
+  {type:'GATE',reasons:['TRUSTED_BASELINE_ATTESTATION_NOT_IMPLEMENTED']}],
+  production_updated:false};
 }
 module.exports={validate,validateForDeployment};
