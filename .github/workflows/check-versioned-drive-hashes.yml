@@ -4,6 +4,8 @@ on:
     paths:
       - 'scripts/verify-versioned-drive-hashes.cjs'
       - 'scripts/audit-drive-export.cjs'
+      - 'scripts/check-drive-connection.cjs'
+      - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/check-versioned-drive-hashes.yml'
   workflow_dispatch:
 permissions:
@@ -22,3 +24,13 @@ jobs:
         run: node scripts/verify-versioned-drive-hashes.cjs --self-test
       - name: Existing CSV parser regression
         run: node scripts/audit-drive-export.cjs --self-test
+      - name: Drive connection must fail closed without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if env -u STUDY_COMPASS_GOOGLE_SERVICE_ACCOUNT_JSON node scripts/check-drive-connection.cjs > /tmp/study-drive-diagnostic.log 2>&1; then
+            echo 'ERROR: missing credential was unexpectedly accepted'
+            exit 1
+          fi
+          grep -q 'Missing service-account secret' /tmp/study-drive-diagnostic.log
+          echo 'PASS: missing credentials are rejected; no Drive request performed.'
