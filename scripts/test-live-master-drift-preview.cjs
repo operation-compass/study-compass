@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const source=fs.readFileSync('gas/sc-live-master-drift-preview.gs','utf8');
+const source=fs.readFileSync('gas/sc-master-preflight-preview.gs','utf8');
 const ids=['SC-SOC-HIS-WEB26-000001','SC-SOC-HIS-WEB26-000002','SC-SOC-HIS-WEB26-000003'];
 const header=['question_id','status','subject','grade','unit_major','unit_minor','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation','memory_tip','difficulty','importance','source_type','source_url','verified_date','reviewer','version','publish_flag'];
 const rows=[
