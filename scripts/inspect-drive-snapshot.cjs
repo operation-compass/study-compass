@@ -7,6 +7,8 @@ function inspect(snapshot,now=new Date()){
  const errors=[];
  if(!snapshot||!Array.isArray(snapshot.questions)||!Array.isArray(snapshot.reviews)||!Array.isArray(snapshot.approvals))
    return {valid:false,errors:['SNAPSHOT_INCOMPLETE'],can_deploy:false};
+ // A fresh timestamp or self-declared source cannot authenticate the producer.
+ // All validity results describe structure only; never an authorized release.
  const t=Date.parse(snapshot.fetched_at||'');
  if(!Number.isFinite(t)||t>now.getTime()+60000||now.getTime()-t>900000)errors.push('SNAPSHOT_STALE');
  const ids=new Set();
