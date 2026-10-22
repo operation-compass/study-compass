@@ -1,5 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
+const crypto=require('node:crypto');
 const {validate}=require('./verify-independent-release.cjs');
 const sha='a'.repeat(64),id='EXAMPLE';
 const row={question_id:id,status:'PUBLIC',publish_flag:'TRUE',version:'v1',content_sha256:sha};
@@ -8,10 +9,14 @@ const audit={question_id:id,question_version:'v1',content_sha256:sha,audit_1_acc
 const release={question_id:id,production_permission:'ALLOW',authorized_by:'human',authorized_at:'2026-10-22',version:'v1',content_sha256:sha};
 const snap={source_sha:'source',main_sha:'main',verified_source:'authenticated_google_sheets_readonly',rows:[row],approvals:[approval],audits:[audit]};
 const permissions={permissions:[release]};
-const provenance={authenticated_by:'trusted_drive_exporter',source_sha:'source',main_sha:'main',verified:true};
+const keys=crypto.generateKeyPairSync('ed25519');
+const key=keys.publicKey.export({type:'spki',format:'pem'});
+const payload=JSON.stringify({snapshot:snap,permission:permissions,ids:[id],sourceSha:'source',mainSha:'main'});
+const provenance={public_key:key,trusted_public_key:key,signature:crypto.sign(null,Buffer.from(payload),keys.privateKey).toString('base64')};
 assert(validate(snap,permissions,[id],'source','main',provenance));
 assert(!validate(snap,permissions,[id],'source','main'));
-assert(!validate(snap,permissions,[id],'source','main',{...provenance,verified:false}));
+assert(!validate(snap,permissions,[id],'source','main',{...provenance,signature:'ZmFrZQ=='}));
+assert(!validate(snap,permissions,[id],'source','main',{...provenance,trusted_public_key:'wrong'}));
 assert(!validate(snap,permissions,[id],'stale','main',provenance));
 assert(!validate({...snap,verified_source:'staging_claim'},permissions,[id],'source','main',provenance));
 assert(!validate({...snap,approvals:[{...approval,approval_note:'本番反映は行わない'}]},permissions,[id],'source','main',provenance));
