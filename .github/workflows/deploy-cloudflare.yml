@@ -29,6 +29,7 @@ jobs:
           node scripts/check-beta.cjs
           node scripts/check-home-safety.cjs
           node scripts/check-approval-contract.cjs
+          node scripts/audit-drive-export.cjs --self-test
           python3 - <<'PY'
           from pathlib import Path
           worker = Path("worker.js").read_text()
