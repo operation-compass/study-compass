@@ -29,7 +29,7 @@ async function main(){
   // Exercise the ACTUAL app submitChoice -> record -> save chain on an isolated
   // injected candidate, while keeping the earlier browser history unchanged.
   const graded=await page.evaluate(key=>{
-   const candidate={id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],q:'708年に発行された銅銭は？',ex:'708年に発行された銅銭は和同開珎'};
+   const candidate={id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],q:'708年に発行され、律令国家が普及を進めた日本の銅銭は？',ex:'和同開珎は708年発行。富本銭はそれ以前に作られた貨幣であり、和同開珎を日本最初の貨幣と断定するのは不適切。'};
    const original={queue,index,currentOptions,locked,selectedAnswer,session,historyTestContext,miniMockActive,active,timingValid};
    const prior=JSON.parse(localStorage.getItem(key));
    try{
@@ -59,7 +59,7 @@ async function main(){
   // direct function call. The page is an ephemeral local test page.
   await page.evaluate(()=>{
     mode='qa';
-    queue=[{id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',q:'708年に発行された銅銭は？',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],ex:'708年に発行された銅銭は和同開珎'}];
+    queue=[{id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',q:'708年に発行され、律令国家が普及を進めた日本の銅銭は？',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],ex:'和同開珎は708年発行。富本銭はそれ以前に作られた貨幣であり、和同開珎を日本最初の貨幣と断定するのは不適切。'}];
     index=0;locked=false;session='tap-e2e';miniMockActive=false;renderQ();
   });
   await page.locator('.choice').filter({hasText:'和同開珎'}).click();
@@ -75,13 +75,13 @@ async function main(){
   // Cover the two remaining ancient-coin candidates with real rendered taps.
   // Candidate fixtures stay on ephemeral localhost and cannot enter production.
   const remaining=[
-    {id:'SC-SOC-HIS-WEB26-000002',answer:'富本銭',q:'飛鳥池遺跡で製造された7世紀後半の貨幣は？',options:['和同開珎','富本銭','開元通宝','永楽通宝']},
-    {id:'SC-SOC-HIS-WEB26-000003',answer:'開元通宝',q:'和同開珎のモデルとなった唐の貨幣は？',options:['富本銭','永楽通宝','開元通宝','寛永通宝']}
+    {id:'SC-SOC-HIS-WEB26-000002',answer:'富本銭',q:'飛鳥池遺跡で作られ、和同開珎より古い7世紀後半の貨幣は？',options:['和同開珎','富本銭','開元通宝','永楽通宝'],ex:'富本銭は飛鳥池遺跡で製造され、和同開珎より古い7世紀後半の鋳造貨幣。'},
+    {id:'SC-SOC-HIS-WEB26-000003',answer:'開元通宝',q:'708年の和同開珎がモデルにした唐の貨幣は？',options:['富本銭','永楽通宝','開元通宝','寛永通宝'],ex:'日本銀行貨幣博物館によれば、和同開珎は唐の開元通宝をモデルとして発行された。'}
   ];
   for(const candidate of remaining){
     await page.evaluate(candidate=>{
       mode='qa';
-      queue=[{...candidate,version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',ex:'監査専用の仮解説'}];
+      queue=[{...candidate,version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',ex:candidate.ex}];
       index=0;locked=false;session='tap-e2e';miniMockActive=false;renderQ();
     },candidate);
     await page.locator('.choice').filter({hasText:candidate.answer}).click();
