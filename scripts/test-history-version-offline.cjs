@@ -14,4 +14,4 @@ for(const filename of ['index.html','legacy-study.html']){
  assert.equal(edited.length>0,true);
  });
 }
-test('ambiguous old source or storage key changes are rejected',()=>{assert.throws(()=>patch("question_version:'v0.3-CHECK'"),/storage key/);assert.throws(()=>patch("const KEY='studyCompassAlphaV3'"),/exactly one/)});
+test('ambiguous old source or storage key changes are rejected',()=>{assert.throws(()=>patch("question_version:'v0.3-CHECK'"),/three legacy version expressions/);assert.throws(()=>patch("const KEY='studyCompassAlphaV3'"),/exactly one/)});
