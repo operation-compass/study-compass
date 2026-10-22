@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {validate}=require('./verify-independent-release.cjs');
+const sha='a'.repeat(64),id='EXAMPLE';
+const row={question_id:id,status:'PUBLIC',publish_flag:'TRUE',version:'v1',content_sha256:sha};
+const approval={question_id:id,approval_status:'APPROVED',approved_by:'reviewer',approved_at:'2026-10-22',approved_version:'v1',approved_sha256:sha};
+const audit={question_id:id,question_version:'v1',content_sha256:sha,audit_1_accuracy:'PASS',audit_2_quality:'PASS',audit_3_technical:'PASS'};
+const release={question_id:id,production_permission:'ALLOW',authorized_by:'human',authorized_at:'2026-10-22',version:'v1',content_sha256:sha};
+const snap={source_sha:'source',main_sha:'main',verified_source:'authenticated_google_sheets_readonly',rows:[row],approvals:[approval],audits:[audit]};
+const permissions={permissions:[release]};
+assert(validate(snap,permissions,[id],'source','main'));
+assert(!validate(snap,permissions,[id],'stale','main'));
+assert(!validate({...snap,verified_source:'staging_claim'},permissions,[id],'source','main'));
+assert(!validate({...snap,approvals:[{...approval,approval_note:'本番反映は行わない'}]},permissions,[id],'source','main'));
+assert(!validate(snap,{permissions:[]},[id],'source','main'));
+assert(!validate(snap,{permissions:[{...release,production_permission:'HOLD'}]},[id],'source','main'));
+assert(!validate(snap,permissions,[id,id],'source','main'));
+console.log('PASS independent release gate negative and positive fixture cases');
