@@ -20,7 +20,7 @@ test('explicit HOLD overrides apparently complete metadata',()=>{
 test('invalid or duplicated identity rejects',()=>{assert.throws(()=>validate([existing,existing],baseline,{}),/INVALID_CANDIDATE/);assert.throws(()=>validate([existing],[existing,existing],{}),/INVALID_BASELINE/)});
 
 test('unchanged content but changed version requires new approval',()=>{const q={...existing,version:'v2'};const r=validate([q],baseline,{});assert.equal(r.can_deploy,false);assert.equal(r.blocked[0].type,'MODIFIED')});
-test('deployment rejects unverified baseline provenance even with unchanged content',()=>{const r=validateForDeployment([existing],baseline,{});assert.equal(r.can_deploy,false);assert(r.blocked.some(x=>x.reasons.includes('BASELINE_PROVENANCE_UNVERIFIED')))});
+test('deployment rejects unverified baseline provenance even with unchanged content',()=>{const r=validateForDeployment([existing],baseline,{});assert.equal(r.can_deploy,false);assert(r.blocked.some(x=>x.reasons.includes('TRUSTED_BASELINE_ATTESTATION_NOT_IMPLEMENTED')))});
 test('deployment rejects false or throwing provenance verifier',()=>{for(const check of [()=>false,()=>{throw Error('no trust')}]){const r=validateForDeployment([existing],baseline,{},check);assert.equal(r.can_deploy,false)}});
 
 test('caller-supplied true callback cannot authorize production',()=>{
