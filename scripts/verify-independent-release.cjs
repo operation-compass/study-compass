@@ -1,7 +1,12 @@
 'use strict';
 const {allowed}=require('./check-approval-contract.cjs');
+const crypto=require('node:crypto');
 function validate(snapshot,permission,ids,sourceSha,mainSha,provenance){
- if(!provenance||provenance.authenticated_by!=='trusted_drive_exporter'||provenance.source_sha!==sourceSha||provenance.main_sha!==mainSha||provenance.verified!==true)return false;
+ if(!provenance||!provenance.public_key||!provenance.signature||!provenance.trusted_public_key)return false;
+ // Never trust a public key supplied by the staging bundle: the caller must pin it.
+ if(provenance.public_key!==provenance.trusted_public_key)return false;
+ const signed=JSON.stringify({snapshot,permission,ids,sourceSha,mainSha});
+ try{if(!crypto.verify(null,Buffer.from(signed),provenance.trusted_public_key,Buffer.from(provenance.signature,'base64')))return false;}catch{return false;}
  if(!snapshot||!permission||!Array.isArray(ids)||!ids.length)return false;
  if(snapshot.source_sha!==sourceSha||snapshot.main_sha!==mainSha)return false;
  if(snapshot.verified_source!=='authenticated_google_sheets_readonly')return false;
