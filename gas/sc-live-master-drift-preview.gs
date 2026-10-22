@@ -15,6 +15,10 @@ function studyPreviewThreeCoinsLiveDriftReadOnly() {
   ];
   // Inspect actual MASTER by stable ID, not presumed row numbers.
   var last=sheet.getLastRow();
+  if(last<2)throw Error('MASTER_EMPTY');
+  var header=sheet.getRange(1,1,1,23).getDisplayValues()[0];
+  var required={0:'question_id',1:'status',2:'subject',3:'grade',4:'unit_major',5:'unit_minor',6:'question_type',7:'question_text',8:'choice_a',9:'choice_b',10:'choice_c',11:'choice_d',12:'correct_answer',13:'explanation',21:'version',22:'publish_flag'};
+  Object.keys(required).forEach(function(k){if(header[Number(k)]!==required[k])throw Error('MASTER_SCHEMA_CHANGED_COLUMN_'+(Number(k)+1));});
   var rows=sheet.getRange(2,1,last-1,23).getDisplayValues();
   var relevant={}, counts={};
   expected.forEach(function(e){counts[e[0]]=0;});
