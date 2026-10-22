@@ -6,7 +6,7 @@ const baseline=[{id:'LIVE-001',version:'v1',sha256:h}];
 const existing={id:'LIVE-001',version:'v1',sha256:h};
 const extra={id:'NEW-001',version:'v0.1',sha256:h2};
 test('unchanged deployed bank is unaffected by missing candidate approvals',()=>{const r=validate([existing],baseline,{});assert.equal(r.can_deploy,true);assert.equal(r.unchanged_count,1);assert.equal(r.production_updated,false)});
-test('new unapproved and modified candidates are blocked',()=>{for(const q of [extra,{...existing,sha256:h2}]){const r=validate([existing,q].filter((x,i,a)=>a.findIndex(y=>y.id===x.id)===i),baseline,{});assert.equal(r.can_deploy,false);assert(r.blocked.some(b=>b.id===q.id))}});
+test('new unapproved and modified candidates are blocked',()=>{for(const q of [extra,{...existing,sha256:h2}]){const r=validate(q.id===existing.id?[q]:[existing,q],baseline,{});assert.equal(r.can_deploy,false);assert(r.blocked.some(b=>b.id===q.id))}});
 test('missing baseline entry blocks removal',()=>{const r=validate([],baseline,{});assert.equal(r.can_deploy,false);assert.equal(r.blocked[0].type,'REMOVED')});
 test('explicit HOLD overrides apparently complete metadata',()=>{
  const e={id:extra.id,version:extra.version,sha256:extra.sha256,master_status:'PUBLIC',publish_flag:true,
