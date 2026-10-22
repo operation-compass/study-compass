@@ -1,6 +1,7 @@
 'use strict';
 const {allowed}=require('./check-approval-contract.cjs');
-function validate(snapshot,permission,ids,sourceSha,mainSha){
+function validate(snapshot,permission,ids,sourceSha,mainSha,provenance){
+ if(!provenance||provenance.authenticated_by!=='trusted_drive_exporter'||provenance.source_sha!==sourceSha||provenance.main_sha!==mainSha||provenance.verified!==true)return false;
  if(!snapshot||!permission||!Array.isArray(ids)||!ids.length)return false;
  if(snapshot.source_sha!==sourceSha||snapshot.main_sha!==mainSha)return false;
  if(snapshot.verified_source!=='authenticated_google_sheets_readonly')return false;
