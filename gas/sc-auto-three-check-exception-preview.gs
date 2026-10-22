@@ -50,4 +50,22 @@ function studyPreviewThreeCoinsExceptionsReadOnly() {
   Logger.log(JSON.stringify(out));
   return out;
 }
-if(typeof module!=='undefined')module.exports={studyPreviewThreeCoinsExceptionsReadOnly};
+
+// Read-only classification: evidence availability never constitutes reviewer approval.
+function studyClassifyThreeCoinsExceptionsReadOnly() {
+  var preview=studyPreviewThreeCoinsExceptionsReadOnly();
+  var automated=['TECHNICAL_PREFLIGHT_FAILED','MASTER_ID_NOT_FOUND','SOURCE_URL_MISSING','MASTER_STATE_REQUIRES_MANUAL_REVIEW','DUPLICATE_FORMAL_REVIEW_RECORD'];
+  var needsHuman=['SOURCE_CONTENT_NOT_AUTOMATICALLY_VERIFIED','SEMANTIC_DUPLICATE_AND_WEB_NOT_VERIFIED','CURRICULUM_REVIEW_NOT_VERIFIED','MOBILE_GRADING_HISTORY_NOT_VERIFIED','FORMAL_REVIEW_RECORD_MISSING','TRUSTED_RELEASE_AUTHORIZATION_MISSING'];
+  var results=preview.results.map(function(row) {
+    return {id:row.id,version:row.version,sha256_v2:row.sha256_v2,
+      machine_checkable:row.exceptions.filter(function(e){return automated.indexOf(e)>=0;}),
+      evidence_or_independent_review_required:row.exceptions.filter(function(e){return needsHuman.indexOf(e)>=0;}),
+      release_authorized:false,production_permission:'HOLD'};
+  });
+  var out={mode:'read_only_exception_classification',results:results,
+    production_updated:false,published:0,release_authorized:false,production_permission:'HOLD'};
+  Logger.log(JSON.stringify(out));
+  return out;
+}
+
+if(typeof module!=='undefined')module.exports={studyPreviewThreeCoinsExceptionsReadOnly,studyClassifyThreeCoinsExceptionsReadOnly};
