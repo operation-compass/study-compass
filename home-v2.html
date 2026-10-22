@@ -85,13 +85,14 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
   </a>
 </section>
 
-<section class="stats">
-  <div class="stats-head"><span>この端末の学習状況</span><span id="today"></span></div>
+<section class="stats" aria-label="この端末の学習履歴">
+  <div class="stats-head"><span>これまでのβ教材確認数</span><span id="today"></span></div>
   <div class="stats-grid">
     <div class="statbox"><small>記述式</small><strong id="written">0 / 40</strong><div class="bar"><i id="writtenBar" style="width:0%"></i></div></div>
     <div class="statbox"><small>生成資料</small><strong id="generated">0 / 24</strong><div class="bar gold"><i id="generatedBar" style="width:0%"></i></div></div>
-    <div class="statbox"><small>記述・資料 合計</small><strong id="total">0 / 64</strong><div class="bar"><i id="totalBar" style="width:0%"></i></div></div>
+    <div class="statbox"><small>合計</small><strong id="total">0 / 64</strong><div class="bar"><i id="totalBar" style="width:0%"></i></div></div>
   </div>
+  <p id="storageStatus" role="status" style="font-size:12px;line-height:1.6;color:var(--compass-muted);margin:12px 3px 0">学習履歴はこの端末のブラウザに保存されます。登録は不要です。別端末やブラウザのデータ削除時には引き継がれません。</p>
 </section>
 
 <section class="banner">
@@ -106,10 +107,16 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
 </div>
 <script>
 (function(){
- const d=new Date(); document.getElementById("today").textContent=d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"});
- let w=0,g=0;
- try{const s=JSON.parse(localStorage.getItem("studyCompassWrittenBetaV1")||"{}");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{})]).size}catch(e){}
- try{const s=JSON.parse(localStorage.getItem("studyCompassGeneratedBetaV1")||"{}");g=Object.keys(s.answered||{}).length}catch(e){}
+ document.getElementById("today").textContent="端末内の記録";
+ let w=0,g=0,storageOkay=true;
+ try{
+   const probe="studyCompassStorageProbe";
+   localStorage.setItem(probe,"1");
+   localStorage.removeItem(probe);
+ }catch(e){storageOkay=false}
+ try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.checked||typeof s.checked!=="object")throw Error("invalid written");w=Object.keys(s.checked).filter(id=>s.checked[id]===true).length;}}catch(e){storageOkay=false}
+ try{const raw=localStorage.getItem("studyCompassGeneratedBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.answered||typeof s.answered!=="object")throw Error("invalid generated");g=Object.keys(s.answered).length;}}catch(e){storageOkay=false}
+ if(!storageOkay){document.getElementById("storageStatus").textContent="⚠ このブラウザでは学習履歴の保存または読み込みを確認できません。表示件数が正確でない可能性があります。元の保存データは削除しません。";}
  document.getElementById("written").textContent=w+" / 40";document.getElementById("generated").textContent=g+" / 24";document.getElementById("total").textContent=(w+g)+" / 64";
  document.getElementById("writtenBar").style.width=Math.min(100,w/40*100)+"%";document.getElementById("generatedBar").style.width=Math.min(100,g/24*100)+"%";document.getElementById("totalBar").style.width=Math.min(100,(w+g)/64*100)+"%";
 })();
