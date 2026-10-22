@@ -7,6 +7,8 @@ on:
       - 'scripts/check-drive-connection.cjs'
       - '.github/workflows/check-drive-connection.yml'
       - '.github/workflows/check-versioned-drive-hashes.yml'
+      - 'scripts/auto-publish-ready.cjs'
+      - 'scripts/test-release-hold.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,6 +24,8 @@ jobs:
         run: node --check scripts/verify-versioned-drive-hashes.cjs
       - name: Self test with negative cases
         run: node scripts/verify-versioned-drive-hashes.cjs --self-test
+      - name: Draft release safety guard
+        run: node scripts/test-release-hold.cjs
       - name: Existing CSV parser regression
         run: node scripts/audit-drive-export.cjs --self-test
       - name: Drive connection must fail closed without credentials
