@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
-const {validate}=require('./check-publish-delta-approval.cjs');
+const {validate,validateForDeployment}=require('./check-publish-delta-approval.cjs');
 const h='a'.repeat(64),h2='b'.repeat(64);
 const baseline=[{id:'LIVE-001',version:'v1',sha256:h}];
 const existing={id:'LIVE-001',version:'v1',sha256:h};
@@ -18,3 +18,7 @@ test('explicit HOLD overrides apparently complete metadata',()=>{
  assert.equal(r.can_deploy,false);assert(r.blocked[0].reasons.includes('EXPLICIT_HOLD'));
 });
 test('invalid or duplicated identity rejects',()=>{assert.throws(()=>validate([existing,existing],baseline,{}),/INVALID_CANDIDATE/);assert.throws(()=>validate([existing],[existing,existing],{}),/INVALID_BASELINE/)});
+
+test('unchanged content but changed version requires new approval',()=>{const q={...existing,version:'v2'};const r=validate([q],baseline,{});assert.equal(r.can_deploy,false);assert.equal(r.blocked[0].type,'MODIFIED')});
+test('deployment rejects unverified baseline provenance even with unchanged content',()=>{const r=validateForDeployment([existing],baseline,{});assert.equal(r.can_deploy,false);assert(r.blocked.some(x=>x.reasons.includes('BASELINE_PROVENANCE_UNVERIFIED')))});
+test('deployment rejects false or throwing provenance verifier',()=>{for(const check of [()=>false,()=>{throw Error('no trust')}]){const r=validateForDeployment([existing],baseline,{},check);assert.equal(r.can_deploy,false)}});
