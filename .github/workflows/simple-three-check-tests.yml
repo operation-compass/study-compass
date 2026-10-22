@@ -29,7 +29,7 @@ on:
       - 'scripts/test-browser-learning-isolated.cjs'
       - 'scripts/test-browser-master-snapshot.cjs'
       - 'scripts/test-live-master-drift-preview.cjs'
-      - 'gas/sc-live-master-drift-preview.gs'
+      - 'gas/sc-master-preflight-preview.gs'
       - 'scripts/adapt-drive-to-web.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
   workflow_dispatch:
