@@ -5,14 +5,14 @@ const assert=require('node:assert/strict');
 const HEX=/^[a-f0-9]{64}$/i;
 function validate(items,baseline,evidence){
  assert(Array.isArray(items)&&Array.isArray(baseline),'Candidate and baseline arrays required');
- const byId=new Map(),old=new Map();
- for(const b of baseline){if(!b?.id||!HEX.test(b.sha256)||old.has(b.id))throw Error('INVALID_BASELINE');old.set(b.id,b);}
+ const old=new Map();
+ for(const b of baseline){if(!b?.id||!b.version||!HEX.test(b.sha256)||old.has(b.id))throw Error('INVALID_BASELINE');old.set(b.id,b);}
  const seen=new Set(),blocked=[],unchanged=[];
  for(const q of items){
-  if(!q?.id||!HEX.test(q.sha256)||seen.has(q.id))throw Error('INVALID_CANDIDATE');
+  if(!q?.id||!q.version||!HEX.test(q.sha256)||seen.has(q.id))throw Error('INVALID_CANDIDATE');
   seen.add(q.id);
   const original=old.get(q.id);
-  if(original?.sha256===q.sha256){unchanged.push(q.id);continue;}
+  if(original?.sha256===q.sha256&&original?.version===q.version){unchanged.push(q.id);continue;}
   const e=evidence?.[q.id];
   const reasons=[];
   if(!e||e.id!==q.id||e.version!==q.version||e.sha256!==q.sha256)reasons.push('EVIDENCE_ID_VERSION_SHA_MISMATCH');
@@ -27,4 +27,15 @@ function validate(items,baseline,evidence){
  for(const b of baseline)if(!seen.has(b.id))blocked.push({id:b.id,type:'REMOVED',reasons:['BASELINE_REMOVAL_REQUIRES_REVIEW']});
  return {mode:'read_only_delta_gate',baseline_count:baseline.length,current_count:items.length,unchanged_count:unchanged.length,blocked,can_deploy:blocked.length===0,production_updated:false};
 }
-module.exports={validate};
+// Production integration must verify provenance externally. No caller-supplied
+// boolean is accepted as proof; without an authenticated provenance verifier,
+// the function intentionally refuses to authorize deployment.
+function validateForDeployment(items,baseline,evidence,verifyProvenance){
+ const result=validate(items,baseline,evidence);
+ if(typeof verifyProvenance!=='function')return {...result,can_deploy:false,blocked:[...result.blocked,{type:'GATE',reasons:['BASELINE_PROVENANCE_UNVERIFIED']}]};
+ let proof=false;
+ try{proof=verifyProvenance(baseline,items,evidence)===true;}catch(_){proof=false;}
+ if(!proof)return {...result,can_deploy:false,blocked:[...result.blocked,{type:'GATE',reasons:['BASELINE_PROVENANCE_UNVERIFIED']}]};
+ return result;
+}
+module.exports={validate,validateForDeployment};
