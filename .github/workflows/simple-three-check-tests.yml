@@ -43,6 +43,19 @@ on:
 permissions:
   contents: read
 jobs:
+  release-gate-fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify read-only release safety without browser setup
+        run: |
+          node --test scripts/test-check-publish-delta-approval.cjs
+          node --test scripts/test-current-drive-held-coins.cjs
+          node --test scripts/test-inspect-drive-snapshot.cjs
+          node --test scripts/test-reconcile-three-check-evidence.cjs
   unit-tests:
     runs-on: ubuntu-latest
     steps:
