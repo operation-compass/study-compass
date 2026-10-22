@@ -16,6 +16,8 @@ on:
       - 'scripts/test-simple-three-check-migration-preview.cjs'
       - 'scripts/test-simple-three-check-gas-hook.cjs'
       - 'scripts/verify-auto-publication.cjs'
+      - 'gas/sc-master-preflight-preview.gs'
+      - 'scripts/test-master-preflight-preview.cjs'
       - '.github/workflows/simple-three-check-tests.yml'
   workflow_dispatch:
 permissions:
@@ -28,5 +30,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Test MASTER preflight read-only functionality
+        run: node --test scripts/test-master-preflight-preview.cjs
       - name: Run isolated candidate checks
         run: node --test scripts/test-simple-three-check-*.cjs
