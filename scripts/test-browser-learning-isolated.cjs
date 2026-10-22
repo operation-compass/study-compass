@@ -29,7 +29,7 @@ async function main(){
   // Exercise the ACTUAL app submitChoice -> record -> save chain on an isolated
   // injected candidate, while keeping the earlier browser history unchanged.
   const graded=await page.evaluate(key=>{
-   const candidate={id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',answer:'和同開珎'};
+   const candidate={id:'SC-SOC-HIS-WEB26-000001',version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',answer:'和同開珎',options:['和同開珎','富本銭','開元通宝','寛永通宝'],q:'708年に発行された銅銭は？',ex:'708年に発行された銅銭は和同開珎'};
    const original={queue,index,currentOptions,locked,selectedAnswer,session,historyTestContext,miniMockActive,active,timingValid};
    const prior=JSON.parse(localStorage.getItem(key));
    try{
