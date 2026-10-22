@@ -32,8 +32,10 @@ function inspect(master,approvals,audits){
     const auditMatchesLegacy=Boolean(audit&&audit.content_sha256===hLegacy&&audit.question_version===row.version);
     const auditMatchesV2=Boolean(audit&&audit.content_sha256===hV2&&audit.question_version===row.version);
     const noPublish=/(本番反映は行わない|公開禁止|HOLD|do not publish)/i.test(approval?.approval_note||'');
+    const approvalComplete=Boolean(approval?.approval_status==='APPROVED'&&approval?.approved_by&&approval?.approved_at);
+    const auditsPass=Boolean(audit&&['audit_1_accuracy','audit_2_quality','audit_3_technical'].every(key=>audit[key]==='PASS'));
     out.push({id:row.question_id,approval_version:approval?.approved_version||null,master_version:row.version||null,
-      legacy_hash_matches_approval:oldMatches,audit_hash_matches_legacy:auditMatchesLegacy,
+      legacy_hash_matches_approval:oldMatches,approval_record_complete:approvalComplete,three_audits_pass:auditsPass,audit_hash_matches_legacy:auditMatchesLegacy,
       audit_hash_matches_v2:auditMatchesV2,has_explicit_no_publish: noPublish,
       publication_authorized:false,
       decision:'HOLD',reason:noPublish?'EXPLICIT_NO_PUBLISH':!oldMatches?'HASH_OR_VERSION_MISMATCH':'PRODUCTION_PERMISSION_NOT_VERIFIED'});
