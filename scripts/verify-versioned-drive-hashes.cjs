@@ -38,7 +38,7 @@ function inspect(master,approvals,audits){
       legacy_hash_matches_approval:oldMatches,approval_record_complete:approvalComplete,three_audits_pass:auditsPass,audit_hash_matches_legacy:auditMatchesLegacy,
       audit_hash_matches_v2:auditMatchesV2,has_explicit_no_publish: noPublish,
       publication_authorized:false,
-      decision:'HOLD',reason:noPublish?'EXPLICIT_NO_PUBLISH':!oldMatches?'HASH_OR_VERSION_MISMATCH':'PRODUCTION_PERMISSION_NOT_VERIFIED'});
+      decision:'HOLD',reason:noPublish?'EXPLICIT_NO_PUBLISH':!oldMatches?'HASH_OR_VERSION_MISMATCH':!approvalComplete?'APPROVAL_INCOMPLETE':!auditsPass?'AUDIT_INCOMPLETE':!(auditMatchesLegacy||auditMatchesV2)?'AUDIT_HASH_MISMATCH':'PRODUCTION_PERMISSION_NOT_VERIFIED'});
   }
   return {checked:out.length,records:out,note:'Diagnostics only. No result from this script authorizes production publishing.'};
 }
@@ -47,11 +47,14 @@ if(require.main===module){
   const row={question_id:'Q1',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'古代',question_type:'4択',question_text:'誰？',choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',correct_answer:'A',explanation:'説明',version:'v1',status:'PUBLIC',publish_flag:'TRUE'};
   const legacy=hash(row,'legacy'),v2=hash(row,'v2');
   assert.notEqual(legacy,v2);
-  const a={question_id:'Q1',approved_version:'v1',approved_sha256:legacy,approval_note:'本番反映は行わない'};
-  const t={question_id:'Q1',question_version:'v1',content_sha256:legacy};
+  const a={question_id:'Q1',approved_version:'v1',approved_sha256:legacy,approval_status:'APPROVED',approved_by:'reviewer',approved_at:'2026-10-16',approval_note:'本番反映は行わない'};
+  const t={question_id:'Q1',question_version:'v1',content_sha256:legacy,audit_1_accuracy:'PASS',audit_2_quality:'PASS',audit_3_technical:'PASS'};
   const result=inspect([row],[a],[t]).records[0];
   assert(result.legacy_hash_matches_approval&&result.audit_hash_matches_legacy);
   assert(!result.audit_hash_matches_v2&&result.has_explicit_no_publish&&!result.publication_authorized);
+  assert(result.approval_record_complete&&result.three_audits_pass);
+  assert.equal(inspect([row],[{...a,approval_note:'',approval_status:'HOLD'}],[t]).records[0].reason,'APPROVAL_INCOMPLETE');
+  assert.equal(inspect([row],[{...a,approval_note:''}],[{...t,audit_3_technical:'PENDING'}]).records[0].reason,'AUDIT_INCOMPLETE');
   assert.equal(inspect([{...row,question_text:'別問題'}],[a],[t]).records[0].legacy_hash_matches_approval,false);
   assert.throws(()=>hash(row,'unknown'),/Unsupported/);
   console.log('PASS versioned SHA comparison / explicit HOLD / content drift tests');process.exit(0);
