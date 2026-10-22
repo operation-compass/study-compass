@@ -63,6 +63,10 @@ async function main(){
   if(pr.draft){const r=await fetch('https://api.github.com/graphql',{method:'POST',headers:{Authorization:'Bearer '+process.env.GH_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({query:'mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{isDraft}}}',variables:{id:pr.node_id}}),signal:AbortSignal.timeout(30000)});assert(r.ok,'Cannot mark verified PR ready');const b=await r.json();assert(!b.errors&&b.data.markPullRequestReadyForReview.pullRequest.isDraft===false,'Draft transition failed');}
   receipt.candidate_ci_run=await verifyCandidateAndWait(base,sourceSha,head);save();
   assert.equal((await api('branches/main')).commit.sha,base,'main advanced before merge; retry with latest baseline');assert.equal((await api('branches/'+encodeURIComponent(sourceBranch))).commit.sha,sourceSha,'Staging advanced before merge');
+  // Never merge on staging attestation alone: live, independently authenticated
+  // individual approvals and production release authority are not wired yet.
+  // Prevent merging even if old controller fixtures report READY.
+  throw Error('LIVE_DRIVE_INDIVIDUAL_APPROVAL_GATE_NOT_CONNECTED');
   const merged=await api('pulls/'+pr.number+'/merge',{method:'PUT',body:{sha:head,merge_method:'merge'}});assert(merged.merged,'Merge rejected');mergeSha=merged.sha;receipt.merge_sha=mergeSha;receipt.production_updated=true;save();
   const mergedCommit=await api('commits/'+mergeSha);assert.equal(mergedCommit.parents.length,2,'Unexpected merge topology');assert.equal(mergedCommit.parents[1].sha,head,'Unexpected merged head');recoveryBase=mergedCommit.parents[0].sha;receipt.recovery_base=recoveryBase;assert.equal(recoveryBase,base,'main advanced during merge; restore actual first parent');
   receipt.deployment_run=await dispatchAndWait(mergeSha);
