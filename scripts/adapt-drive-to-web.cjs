@@ -18,7 +18,7 @@ function applyToWeb(existing, candidates, readyIds){
   assert(options.every(Boolean)&&new Set(options).size===4,'Invalid options');
   assert(options.includes(c.correct_answer),'Answer not in choices');
   assert(c.question_text&&c.explanation,'Missing question or explanation');
-  return {...q,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation};
+  return {...q,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation,...(c.version?{version:c.version}:{})};
  });
  for(const id of ready){
   if(seen.has(id))continue;
@@ -36,7 +36,7 @@ function applyToWeb(existing, candidates, readyIds){
   // The history hub matches chapter topics exactly; keep MASTER detail separately.
   const webTopic=c.unit_minor==='鎌倉・統治'?'鎌倉':c.unit_minor;
   const detail=webTopic===c.unit_minor?{}:{master_topic_name:c.unit_minor};
-  result.push({id,subject:c.subject,grade:c.grade,unit:c.unit_major+'・'+period,field_name:c.unit_major,topic_name:webTopic,...detail,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation});
+  result.push({id,version:c.version,subject:c.subject,grade:c.grade,unit:c.unit_major+'・'+period,field_name:c.unit_major,topic_name:webTopic,...detail,q:c.question_text,answer:c.correct_answer,options,ex:c.explanation});
  }
 
  return result;
