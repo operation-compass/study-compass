@@ -72,7 +72,35 @@ async function main(){
   assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).length,key),4);
 
 
-  const result={mode:'isolated_chromium',mobile_viewport:'390x844',page_title:await page.title(),baseline_history_preserved:true,real_grading_correct_and_incorrect:true,actual_choice_tap:true,history_events_after_reload:4,production_updated:false,release_authorized:false};
+  // Cover the two remaining ancient-coin candidates with real rendered taps.
+  // Candidate fixtures stay on ephemeral localhost and cannot enter production.
+  const remaining=[
+    {id:'SC-SOC-HIS-WEB26-000002',answer:'富本銭',q:'飛鳥池遺跡で製造された7世紀後半の貨幣は？',options:['和同開珎','富本銭','開元通宝','永楽通宝']},
+    {id:'SC-SOC-HIS-WEB26-000003',answer:'開元通宝',q:'和同開珎のモデルとなった唐の貨幣は？',options:['富本銭','永楽通宝','開元通宝','寛永通宝']}
+  ];
+  for(const candidate of remaining){
+    await page.evaluate(candidate=>{
+      mode='qa';
+      queue=[{...candidate,version:'v0.1',subject:'社会',unit:'歴史・古代',unit_id:'ancient',skill:'recognition',method:'auto',ex:'監査専用の仮解説'}];
+      index=0;locked=false;session='tap-e2e';miniMockActive=false;renderQ();
+    },candidate);
+    await page.locator('.choice').filter({hasText:candidate.answer}).click();
+    assert((await page.locator('#feedback').innerText()).includes('正解'),candidate.id+' feedback');
+    const events=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key);
+    const last=events.at(-1);
+    assert.deepEqual(events[0],baseline,'Existing history modified');
+    assert.equal(last.id,candidate.id);
+    assert.equal(last.outcome,'correct');
+    assert.equal(last.question_version,'v0.1');
+  }
+  await page.reload({waitUntil:'domcontentloaded'});
+  const finalEvents=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key);
+  assert.equal(finalEvents.length,6);
+  assert.deepEqual(finalEvents[0],baseline);
+  assert.deepEqual(finalEvents.slice(-3).map(e=>e.id),['SC-SOC-HIS-WEB26-000001','SC-SOC-HIS-WEB26-000002','SC-SOC-HIS-WEB26-000003']);
+
+
+  const result={mode:'isolated_chromium',mobile_viewport:'390x844',page_title:await page.title(),baseline_history_preserved:true,real_grading_correct_and_incorrect:true,actual_choice_tap:true,three_candidate_correct_taps:true,history_events_after_reload:6,production_updated:false,release_authorized:false};
   assert.equal(failures.length,0,'Browser runtime errors: '+failures.join('; '));
   console.log(JSON.stringify(result));
  }finally{await browser.close();await new Promise(resolve=>server.close(resolve));fs.rmSync(temp,{recursive:true,force:true})}
