@@ -72,12 +72,22 @@ async function child(){
  const current=mainSha(),bank=verifier.questions(bankAt(current)),present=bank.filter(q=>ids.has(q.id));
  if(scenario==='disabled'){assert(!error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(pr,null);assert.equal(receipt.result,'verified-not-published');}
  else if(scenario.startsWith('candidate-ci-')){assert(error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(present.length,0);assert.equal(receipt.production_updated,false);assert.equal(receipt.result,'failure');assert(receipt.reason.includes(scenario==='candidate-ci-failure'?'Candidate CI failed':'Candidate CI timed out'));}
- else if(scenario.startsWith('success-')){assert.ifError(error);assert.equal(receipt.result,'success');assert.equal(receipt.published_bank_verified,true);assert.equal(present.length,2);assert.equal(dispatches,1);if(scenario==='success-existing-draft')assert.equal(graphql,1);}
- else if(scenario==='newer-main'){assert(error);assert.equal(receipt.recovery_verified,false);assert.equal(dispatches,1);assert.equal(present.length,2);assert.equal(git(bare,['show',current+':unrelated.txt']),'newer work after merge');assert(receipt.recovery_reason.includes('Newer main changes'));}
- else{assert(error);assert.equal(receipt.recovery_verified,true);assert.equal(present.length,0);assert.equal(git(bare,['show',current+':unrelated.txt']),scenario==='merge-race'?'concurrent work before merge':'preserve this work');assert.equal(dispatches,scenario==='merge-race'?1:2);assert(receipt.recovery_sha);}
+ else {
+  // The live Drive approval verifier is not connected, so the controller
+  // must stop even after candidate CI passes. Previous positive-path
+  // merge/recovery simulations remain archived as scenarios, but are
+  // deliberately unreachable while fail-closed authorization is active.
+  assert(error);
+  assert.equal(current,base);
+  assert.equal(dispatches,0);
+  assert.equal(present.length,0);
+  assert.equal(receipt.production_updated,false);
+  assert.equal(receipt.result,'failure');
+  assert(receipt.reason.includes('LIVE_DRIVE_INDIVIDUAL_APPROVAL_GATE_NOT_CONNECTED'));
+ }
  console.log('OFFLINE_RESULT '+JSON.stringify({scenario,passed:true,requests,dispatches,production_host_contacted:false,real_git_host_contacted:false,main_changed_in_disposable_repo:current!==base,recovery_verified:receipt.recovery_verified??null}));
 }
 if(process.argv[2]==='--scenario')child().catch(e=>{console.error(String(e.message).slice(0,1200));process.exitCode=1;});else{
  const results=cases.map(name=>{const text=cp.execFileSync(process.execPath,[__filename,'--scenario',name],{encoding:'utf8',maxBuffer:8*1024*1024});const line=text.split(/\r?\n/).find(x=>x.startsWith('OFFLINE_RESULT '));assert(line);const result=JSON.parse(line.slice('OFFLINE_RESULT '.length));console.log(JSON.stringify(result));return result;});
- console.log('PASS: actual controller, actual two historical audited questions, real isolated Git merges/recovery, simulated GitHub/deployment only; '+results.length+' scenarios');
+ console.log('PASS: fail-closed controller, no remote merge or deploy without live Drive approval; '+results.length+' scenarios');
 }
