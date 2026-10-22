@@ -32,9 +32,15 @@ function reconcile(question,items={},evidenceFiles=new Map()){
     resolved.push(role.toUpperCase()+'_ARTIFACT_INTEGRITY');
     pending.push(role.toUpperCase()+'_VERIFIED_AUTHORITY_AND_SUBSTANCE');
   }
-  if(records.accuracy?.evidence_file&&records.quality?.evidence_file&&
-    records.accuracy.evidence_file===records.quality.evidence_file)
-    errors.push('REUSED_REVIEW_ARTIFACT');
+  // Distinct review roles must not reuse the same artifact; one document
+  // copied across roles is not independent review evidence.
+  const usedFiles=new Set();
+  for(const role of roles){
+    const file=records[role]?.evidence_file;
+    if(typeof file!=='string'||!safeFile(file))continue;
+    if(usedFiles.has(file)&&!errors.includes('REUSED_REVIEW_ARTIFACT'))errors.push('REUSED_REVIEW_ARTIFACT');
+    usedFiles.add(file);
+  }
   return {id,version,sha256_v2:digest,resolved,pending,errors,
     formal_review:'PENDING',release_authorized:false,production_permission:'HOLD',
     production_updated:false};
