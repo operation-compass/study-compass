@@ -55,3 +55,13 @@ test('blank publication flag is flagged in preview',()=>{
  checks=[{id:'SC-001',version:'v1',question_sha256:'a'.repeat(64)}];
  assert.deepEqual(studySimpleThreeMigrationPreview().blocked_master_status,['SC-001']);
 });
+
+test('empty new-review sheet remains read-only and publishes nothing',()=>{
+ rows=[{question_id:'SC-001',status:'CHECK',publish_flag:false,version:'v1'}];checks=[];
+ const before=JSON.stringify(rows);
+ const result=studySimpleThreeMigrationPreview();
+ assert.equal(result.review_records,0);
+ assert.equal(result.eligible_for_publication,0);
+ assert.equal(result.production_updated,false);
+ assert.equal(JSON.stringify(rows),before);
+});
