@@ -2,7 +2,6 @@
 // Offline, read-only comparison of three Google Sheets CSV exports.
 // No publishing, credential access, or writes to Drive.
 const fs = require('node:fs');
-const { allowed } = require('./check-approval-contract.cjs');
 function parseCSV(input) {
   input = input.replace(/^\uFEFF/, '');
   const rows=[];let row=[],field='',quoted=false;
@@ -30,23 +29,29 @@ function auditFiles(master, approvals, audits){
  const m=unique(master,'question_id','master question_id');
  const a=unique(approvals.filter(r=>r.question_id&&!r.question_id.startsWith('【')),'question_id','approval question_id');
  const t=unique(audits,'question_id','audit question_id');
- const published=[],hold=[],unapproved=[];
+ const metadataMatched=[],hold=[],unapproved=[];
  for(const [id,row] of m){
    if(row.status!=='PUBLIC'||String(row.publish_flag).toUpperCase()!=='TRUE')continue;
    const approval=a.get(id),audit=t.get(id);
-   const item={...row,content_sha256:(audit?.content_sha256||'')};
-   if(allowed(item,approval,audit))published.push(id);
+   // MASTER CSV has no authoritative content_sha256 column. Never borrow the audit hash as proof of the source text.
+   // Metadata agreement is a review candidate ONLY, not permission to publish.
+   const claimedHash=audit?.content_sha256;
+   const validHash=typeof claimedHash==='string'&&/^[a-f0-9]{64}$/i.test(claimedHash);
+   const matched=approval?.question_id===id&&approval?.approval_status==='APPROVED'&&approval?.approved_version===row.version&&approval?.approved_sha256===claimedHash&&validHash&&
+     Boolean(approval?.approved_by&&approval?.approved_at)&&audit?.question_id===id&&audit?.question_version===row.version&&
+     ['audit_1_accuracy','audit_2_quality','audit_3_technical'].every(k=>audit[k]==='PASS');
+   if(matched)metadataMatched.push(id);
    else hold.push(id);
  }
  for(const id of a.keys())if(!m.has(id))unapproved.push(id);
- return {master:m.size,approvalRows:a.size,auditRows:t.size,eligibleForReview:published,blocked:hold,approvalWithoutMaster:unapproved,
+ return {master:m.size,approvalRows:a.size,auditRows:t.size,metadataMatchedAwaitingContentHash:metadataMatched,blocked:hold,approvalWithoutMaster:unapproved,
    note:'Review only. NEVER publish based on this report: source-version hash must be independently recalculated and existing Web content audited.'};
 }
 if(require.main===module){
  if(process.argv.includes('--self-test')){
    const rows=parseCSV('a,b\n"hello, world","a""b"\n');if(rows[0].a!=='hello, world'||rows[0].b!=='a"b')throw Error('CSV parse failed');
    const x=auditFiles([{question_id:'X',status:'CHECK',publish_flag:'FALSE'}],[],[]);
-   if(x.master!==1||x.eligibleForReview.length)throw Error('unsafe approve');console.log('PASS read-only CSV audit self-test');process.exit(0);
+   if(x.master!==1||x.metadataMatchedAwaitingContentHash.length)throw Error('unsafe approve');console.log('PASS read-only CSV audit self-test');process.exit(0);
  }
  if(process.argv.length!==5){console.error('Usage: node scripts/audit-drive-export.cjs master.csv approvals.csv audits.csv');process.exit(2);}
  const [master,approvals,audits]=process.argv.slice(2).map(p=>parseCSV(fs.readFileSync(p,'utf8')));
