@@ -9,7 +9,8 @@ for(const filename of ['index.html','legacy-study.html']){
  const raw=fs.readFileSync(filename,'utf8'),edited=patch(raw);
  assert(edited.includes("question_version:q.version||'v0.3-CHECK'"));
  assert(edited.includes("const KEY='studyCompassAlphaV3'"));
- assert.equal(raw.split("question_version:'v0.3-CHECK'").length-1,1);
+ assert.equal(edited.split("question_version:q.version||'v0.3-CHECK'").length-1,1);
+ assert.equal(edited.split("question_version:'v0.3-CHECK'").length-1,raw.split("question_version:'v0.3-CHECK'").length-2);
  assert.equal(edited.length>0,true);
  });
 }
