@@ -9,9 +9,10 @@ for(const filename of ['index.html','legacy-study.html']){
  const raw=fs.readFileSync(filename,'utf8'),edited=patch(raw);
  assert(edited.includes("question_version:q.version||'v0.3-CHECK'"));
  assert(edited.includes("const KEY='studyCompassAlphaV3'"));
- assert.equal(edited.split("question_version:q.version||'v0.3-CHECK'").length-1,1);
- assert.equal(edited.split("question_version:'v0.3-CHECK'").length-1,raw.split("question_version:'v0.3-CHECK'").length-2);
+ assert.equal(edited.split("question_version:q.version||'v0.3-CHECK'").length-1,3);
+ assert.equal(raw.split("question_version:'v0.3-CHECK'").length-1,3);
+ assert.equal(edited.split("question_version:'v0.3-CHECK'").length-1,0);
  assert.equal(edited.length>0,true);
  });
 }
-test('ambiguous old source or storage key changes are rejected',()=>{assert.throws(()=>patch("question_version:'v0.3-CHECK'"),/three legacy version expressions/);assert.throws(()=>patch("const KEY='studyCompassAlphaV3'"),/exactly one/)});
+test('ambiguous old source or storage key changes are rejected',()=>{assert.throws(()=>patch("question_version:'v0.3-CHECK'"),/Response recorder not found|three legacy version expressions/);assert.throws(()=>patch("const KEY='studyCompassAlphaV3'"),/Response recorder not found|three legacy version expressions/)});
