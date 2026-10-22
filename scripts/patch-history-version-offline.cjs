@@ -7,24 +7,27 @@ function patch(html){
  assert.equal(typeof html,'string');
  assert(html.includes("const KEY='studyCompassAlphaV3'"),'Unexpected history storage key');
  const recorders=[
-  {start:'function recordFlash(',suffix:':flash-v03'},
-  {start:'function recordQuestionOnly(',suffix:':question-v03'},
+  {start:'function rateFlash(',suffix:':flash-v03'},
+  {start:'function pushQuestionOnlyEvent(',suffix:':question-v03'},
   {start:'function record(outcome,event_type=',suffix:':mcq-v03'}
  ];
- // Some recorders have different names. Resolve by distinctive event variant,
- // require one matching function and one old version marker in each.
- const lines=html.split('\n');
- const targets=[];
+ const segments=[];
  for(const r of recorders){
-  const matches=lines.map((line,i)=>({line,i})).filter(x=>x.line.startsWith('function ')&&x.line.includes(r.suffix));
-  assert.equal(matches.length,1,'Missing or ambiguous recorder '+r.suffix);
-  assert.equal(matches[0].line.split(old).length-1,1,'Unexpected version marker for '+r.suffix);
-  targets.push(matches[0].i);
+  const start=html.indexOf(r.start);
+  assert(start>=0,'Missing recorder '+r.start);
+  const end=html.indexOf('\\nfunction ',start+1);
+  assert(end>start,'Recorder boundary missing '+r.start);
+  const segment=html.slice(start,end);
+  assert(segment.includes(r.suffix),'Recorder identity mismatch '+r.suffix);
+  assert.equal(segment.split(old).length-1,1,'Unexpected version marker '+r.suffix);
+  segments.push({start,end,segment});
  }
- assert.equal(new Set(targets).size,3,'Recorder targets overlap');
  assert.equal(html.split(old).length-1,3,'Unexpected total version markers');
- for(const i of targets)lines[i]=lines[i].replace(old,replacement);
- return lines.join('\n');
+ assert(segments[0].end<=segments[1].start&&segments[1].end<=segments[2].start,'Recorder order changed');
+ let output=html;
+ for(const r of segments.reverse())output=output.slice(0,r.start)+r.segment.replace(old,replacement)+output.slice(r.end);
+ return output;
+
 }
 module.exports={patch};
 if(require.main===module){
