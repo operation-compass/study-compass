@@ -23,4 +23,24 @@ assert(!validate({...snap,approvals:[{...approval,approval_note:'本番反映は
 assert(!validate(snap,{permissions:[]},[id],'source','main',provenance,key));
 assert(!validate(snap,{permissions:[{...release,production_permission:'HOLD'}]},[id],'source','main',provenance,key));
 assert(!validate(snap,permissions,[id,id],'source','main',provenance,key));
+
+// Re-sign realistic adverse states: authentication by itself must not authorize release.
+const signedProvenance=(snapshot,permissionsValue=permissions)=>{
+ const data=JSON.stringify({snapshot,permission:permissionsValue,ids:[id],sourceSha:'source',mainSha:'main'});
+ return {signature:crypto.sign(null,Buffer.from(data),keys.privateKey).toString('base64')};
+};
+for(const denied of [
+ {...row,status:'CHECK',publish_flag:'FALSE'},
+ {...row,status:'PUBLIC',publish_flag:'FALSE'},
+ {...row,status:'CHECK',publish_flag:'TRUE'},
+ {...row,version:'v2'},
+ {...row,content_sha256:'b'.repeat(64)}
+]){
+ const candidate={...snap,rows:[denied]};
+ assert(!validate(candidate,permissions,[id],'source','main',signedProvenance(candidate),key),'Signed unauthorized master row was accepted');
+}
+const forbidden={...snap,approvals:[{...approval,approval_note:'本番反映は行わない'}]};
+assert(!validate(forbidden,permissions,[id],'source','main',signedProvenance(forbidden),key),'Explicit no-publication instruction was bypassed');
+const noAudit={...snap,audits:[]};
+assert(!validate(noAudit,permissions,[id],'source','main',signedProvenance(noAudit),key),'Missing real audit should be HOLD');
 console.log('PASS independent release gate negative and positive fixture cases');
