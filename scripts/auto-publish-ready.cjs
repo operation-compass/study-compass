@@ -40,6 +40,17 @@ async function main(){
   const raw=fs.readFileSync(path.join(source,bundlePath),'utf8'),bundle=JSON.parse(raw);
   const changes=await api('commits?sha='+sourceSha+'&path='+bundlePath+'&per_page=1');assert(changes.length===1,'Missing authenticated staging commit');const staged=await api('commits/'+changes[0].sha);
   assert.equal(staged.author?.login,'operation-compass','Unexpected staging actor');assert.equal(staged.commit.message.split('\n')[0],'Stage audited Drive snapshot (NOT production)','Unexpected staging provenance');assert.deepEqual(staged.files.map(x=>x.filename),[bundlePath],'Staging commit modified unrelated files');assert.equal(staged.files[0].sha,gitBlob(raw),'Staging bundle is not the authenticated file');
+  // Fail closed until real Drive publication permissions are authenticated.
+  // A READY audit in staging is not the same as a production authorization.
+  // Do not rely on a claimed permission field inside the same staging bundle.
+  const candidateCount=Array.isArray(bundle.candidate?.items)?bundle.candidate.items.length:0;
+  if(candidateCount>0){
+    receipt.result='HOLD_UNVERIFIED_PRODUCTION_PERMISSION';
+    receipt.held_candidate_count=candidateCount;
+    receipt.no_change=true;
+    save();
+    return;
+  }
   const selected=verifyEvidence(bundle,evidenceIndex(source));receipt.selected=selected.ready;
   if(!selected.ready.length){receipt.no_change=true;save();return;}
   assert.equal(sha256(fs.readFileSync(path.join(root,files[0]))),sha256(fs.readFileSync(path.join(root,files[1]))),'Production HTML mirrors disagree');
