@@ -38,7 +38,7 @@ function auditFiles(master, approvals, audits){
    const claimedHash=audit?.content_sha256;
    const validHash=typeof claimedHash==='string'&&/^[a-f0-9]{64}$/i.test(claimedHash);
    const matched=approval?.question_id===id&&approval?.approval_status==='APPROVED'&&approval?.approved_version===row.version&&approval?.approved_sha256===claimedHash&&validHash&&
-     Boolean(approval?.approved_by&&approval?.approved_at)&&audit?.question_id===id&&audit?.question_version===row.version&&
+     Boolean(approval?.approved_by&&approval?.approved_at)&&!/(本番反映は行わない|公開禁止|HOLD|do not publish)/i.test(approval?.approval_note||'')&&audit?.question_id===id&&audit?.question_version===row.version&&
      ['audit_1_accuracy','audit_2_quality','audit_3_technical'].every(k=>audit[k]==='PASS');
    if(matched)metadataMatched.push(id);
    else hold.push(id);
@@ -51,7 +51,11 @@ if(require.main===module){
  if(process.argv.includes('--self-test')){
    const rows=parseCSV('a,b\n"hello, world","a""b"\n');if(rows[0].a!=='hello, world'||rows[0].b!=='a"b')throw Error('CSV parse failed');
    const x=auditFiles([{question_id:'X',status:'CHECK',publish_flag:'FALSE'}],[],[]);
-   if(x.master!==1||x.metadataMatchedAwaitingContentHash.length)throw Error('unsafe approve');console.log('PASS read-only CSV audit self-test');process.exit(0);
+   if(x.master!==1||x.metadataMatchedAwaitingContentHash.length)throw Error('unsafe approve');
+   const hash='a'.repeat(64), row={question_id:'Q',status:'PUBLIC',publish_flag:'TRUE',version:'v1'};
+   const ap={question_id:'Q',approval_status:'APPROVED',approved_version:'v1',approved_sha256:hash,approved_by:'human',approved_at:'2026-10-16',approval_note:'本番反映は行わない。'};
+   const au={question_id:'Q',question_version:'v1',content_sha256:hash,audit_1_accuracy:'PASS',audit_2_quality:'PASS',audit_3_technical:'PASS'};
+   const denied=auditFiles([row],[ap],[au]);if(denied.metadataMatchedAwaitingContentHash.length!==0||denied.blocked[0]!=='Q')throw Error('explicit no-publish note ignored');console.log('PASS read-only CSV audit self-test');process.exit(0);
  }
  if(process.argv.length!==5){console.error('Usage: node scripts/audit-drive-export.cjs master.csv approvals.csv audits.csv');process.exit(2);}
  const [master,approvals,audits]=process.argv.slice(2).map(p=>parseCSV(fs.readFileSync(p,'utf8')));
