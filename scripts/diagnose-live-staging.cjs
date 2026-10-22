@@ -17,6 +17,7 @@ function diagnose(bundle){
    source_digest:digest(JSON.stringify(bundle)),
    candidate_ids:bundle.candidate.items.map(x=>x.id),
    legacy_ready_count:old.ready.length,
+   legacy_ready_is_production_permission:false,
    legacy_held_count:old.held.length,
    simple_check_records:Array.isArray(checks)?checks.length:0,
    new_gate_blocker:blocker,new_gate_releasable:0};
