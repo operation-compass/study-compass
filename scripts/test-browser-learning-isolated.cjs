@@ -36,9 +36,9 @@ async function main(){
     queue=[candidate];index=0;currentOptions=['和同開珎','富本銭','開元通宝','寛永通宝'];
     locked=false;selectedAnswer=null;session='isolated-browser';historyTestContext=null;miniMockActive=false;active=1500;timingValid=true;
     // Real renderQ creates the choice buttons and feedback container.
-    renderQ();submitChoice(0);
+    renderQ();submitChoice(currentOptions.indexOf(candidate.answer));
     const correct=JSON.parse(localStorage.getItem(key));
-    locked=false;renderQ();submitChoice(1);
+    locked=false;renderQ();submitChoice(currentOptions.findIndex(x=>x!==candidate.answer));
     const incorrect=JSON.parse(localStorage.getItem(key));
     return {prior,correct,incorrect};
    } finally {
