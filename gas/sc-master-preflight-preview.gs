@@ -29,3 +29,11 @@ function studyMasterPreflightPreview(questionIds) {
   return {mode:'read_only_preflight',production_updated:false,published:0,results:results};
 }
 if(typeof module!=='undefined')module.exports={studyMasterPreflightPreview};
+
+/* Manual entrypoint: select this function in Apps Script editor; no arguments needed. */
+function studyPreviewThreeCoinsReadOnly() {
+  var ids=['SC-SOC-HIS-WEB26-000001','SC-SOC-HIS-WEB26-000002','SC-SOC-HIS-WEB26-000003'];
+  var result=studyMasterPreflightPreview(ids);
+  Logger.log(JSON.stringify(result));
+  return result;
+}
