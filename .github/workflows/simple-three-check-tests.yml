@@ -63,7 +63,7 @@ jobs:
               txt=Path(p).read_text()
               found={}
               for n in names:
-                  m=re.search(r'const '+n+r'\\s*=\\s*(\\[[^\\n]*\\]);',txt)
+                  m=re.search(r'const '+n+r'\s*=\s*(\[[^\n]*\]);',txt)
                   if not m: raise SystemExit('INCOMPLETE_BANK_DATA '+n+' '+p)
                   found[n]=m.group(1)
               banks.append(found)
