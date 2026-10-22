@@ -60,6 +60,7 @@ function studyClassifyThreeCoinsExceptionsReadOnly() {
     return {id:row.id,version:row.version,sha256_v2:row.sha256_v2,
       machine_checkable:row.exceptions.filter(function(e){return automated.indexOf(e)>=0;}),
       evidence_or_independent_review_required:row.exceptions.filter(function(e){return needsHuman.indexOf(e)>=0;}),
+      unclassified_blockers:row.exceptions.filter(function(e){return automated.indexOf(e)<0&&needsHuman.indexOf(e)<0;}),
       release_authorized:false,production_permission:'HOLD'};
   });
   var out={mode:'read_only_exception_classification',results:results,
