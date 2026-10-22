@@ -47,6 +47,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Read-only live site vs main bank parity (no release)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin main
+          git show origin/main:legacy-study.html > /tmp/sc-main-legacy.html
+          curl -fsSL --retry 2 --max-time 20 'https://study-compass.occompass-info.workers.dev/legacy-study.html' -o /tmp/sc-live-legacy.html
+          python3 - <<'PY'
+          import re,hashlib
+          from pathlib import Path
+          names=('SOCIAL','WORDS','ENGLISH_GRAMMAR','JAPANESE','MATH','SCIENCE')
+          banks=[]
+          for p in ('/tmp/sc-main-legacy.html','/tmp/sc-live-legacy.html'):
+              txt=Path(p).read_text()
+              found={}
+              for n in names:
+                  m=re.search(r'const '+n+r'\\s*=\\s*(\\[[^\\n]*\\]);',txt)
+                  if not m: raise SystemExit('INCOMPLETE_BANK_DATA '+n+' '+p)
+                  found[n]=m.group(1)
+              banks.append(found)
+              print(p, 'raw_bytes',len(txt.encode()),'bank_fingerprint',hashlib.sha256((''.join(found.values())).encode()).hexdigest())
+          mismatch=[n for n in names if banks[0][n]!=banks[1][n]]
+          if mismatch: raise SystemExit('LIVE_MAIN_BANK_MISMATCH '+','.join(mismatch))
+          print('PASS main/live six raw bank arrays parity (not a Drive approval or 631 displayed-count proof)')
+          PY
       - name: Test publish delta approval fail-closed
         run: node --test scripts/test-check-publish-delta-approval.cjs
       - name: Test read-only exception classification and HOLD
