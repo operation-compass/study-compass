@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const source=fs.readFileSync('scripts/auto-publish-ready.cjs','utf8');
+const guard=source.indexOf("receipt.result='HOLD_UNVERIFIED_PRODUCTION_PERMISSION'");
+const verifyOnly=source.indexOf("receipt.result='verified-not-published'");
+const publishing=source.indexOf("const open=await api('pulls?state=open&base=main&per_page=100')");
+assert(verifyOnly>=0&&guard>verifyOnly&&publishing>guard,'verify-only must precede HOLD; HOLD must precede publication');
+assert(source.slice(guard,publishing).includes('return;'),'HOLD must stop publication');
+console.log('PASS: verify-only preserved and unverified production publishing blocked');
