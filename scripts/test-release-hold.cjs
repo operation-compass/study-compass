@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const source=fs.readFileSync('scripts/auto-publish-ready.cjs','utf8');
+const marker="receipt.result='HOLD_UNVERIFIED_PRODUCTION_PERMISSION'";
+const guard=source.indexOf(marker);
+const eligibility=source.indexOf('const selected=verifyEvidence(bundle,evidenceIndex(source));');
+assert(guard>0&&eligibility>guard,'release HOLD must precede READY selection');
+assert(source.slice(guard,eligibility).includes('return;'),'HOLD must stop publishing');
+console.log('PASS: unverified candidates stop before READY selection');
