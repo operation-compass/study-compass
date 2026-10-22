@@ -22,3 +22,34 @@
 - The master drift preview previously returned `unchanged=true`, `blockers=[]`, `release_authorized=false`, `production_permission=HOLD` as reported from a real GAS execution. That detects fixed snapshot drift, not formal approval.
 - Still missing: authenticated independent accuracy, educational quality and technical review; live-mobile acceptance evidence; and separate, individual authorized release clearance.
 - This document must never be consumed as an independent review PASS or an approval record.
+
+
+## Independent review handoff — not yet performed
+
+Each review must independently record: reviewer identity and role, UTC/JST checked time, question ID, version, current `hashV2`, specific evidence consulted, conclusion and any correction request. A reviewer must compare the live MASTER content to the SHA above **at review time**. Do not copy the PASS state from another question or another role.
+
+### Accuracy reviewer (all three questions)
+- 000001: Confirm issue year 708, what precisely is meant by "普及を進めた", and distinguish 富本銭 from any misleading "first Japanese coin" claim. Open the public reference and capture the precise supporting passage.
+- 000002: Verify what the designated cultural-property source establishes about 飛鳥池遺跡, age, manufacturing, and whether the wording "7世紀後半" is directly evidenced.
+- 000003: Confirm the museum's description of 開元通宝 as a model and distinguish that from later Chinese coins used as distractors.
+
+### Quality reviewer (all three questions)
+- Independently verify choice exclusivity and that all distractors are plausible but unambiguously incorrect.
+- Check whether 000001 and 000002 are acceptable complementary questions rather than pedagogical duplicates, and compare all three against existing live MASTER/Web questions for semantic duplication.
+- Validate middle-school curriculum fit, Japanese wording, furigana/accessibility requirements as applicable, and explanation sufficiency.
+
+### Technical reviewer (all three questions)
+- Recompute canonical `hashV2` against live MASTER, confirm `status=CHECK` and `publish_flag=FALSE`, and prove stable-ID uniqueness.
+- Confirm staging and production parity without publication, representative mobile viewport grading, and existing progress/history integrity.
+- Clearly mark simulated Chromium checks as simulations; real iPhone verification must be recorded separately if required by acceptance policy.
+
+### Acceptance record — all remain open
+| Evidence item | Status |
+| --- | --- |
+| Authenticated accuracy review, matching ID/version/SHA | PENDING |
+| Authenticated quality review, matching ID/version/SHA | PENDING |
+| Authenticated technical review, matching ID/version/SHA | PENDING |
+| Real-mobile acceptance evidence | PENDING |
+| Independently authenticated final release authorization, per ID | NOT GRANTED |
+
+**Release rule:** A document, SHA match, technical test, source URL or chatbot-generated evaluation is not a substitute for a trusted reviewer or explicitly authorized release. Until complete, no READY, no approval row and no publication.
