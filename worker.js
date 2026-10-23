@@ -55,7 +55,7 @@ async function addPublishedQuestions(html) {
   if (!incoming.length) return html;
   const known = new Set(existing.map(x=>x.id));
   if (incoming.some(q=>known.has(q.id))) throw Error("Duplicate question ID");
-  return html.slice(0,begin) + JSON.stringify([...existing,...incoming]) + html.slice(end);
+  return html.slice(0,begin) + JSON.stringify([...existing,...incoming]).replace(/</g, "\\u003c").replace(/>/g, "\\u003e") + html.slice(end);
 }
 
 export default {
