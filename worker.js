@@ -68,34 +68,48 @@ async function addPublishedQuestions(html, maxQuestions = Infinity) {
 // Approved-only learning interface: no embedded legacy question bank is served publicly.
 function approvedOnlyHtml(questions) {
   const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Study COMPASS｜監査済み問題</title><style>
-  :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#07152b;color:#f0f7ff}
-  *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(155deg,#07152b,#122a52)}
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Study COMPASS｜監査済み教材</title><style>
+  :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#07152b;color:#f0f7ff}*{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:linear-gradient(155deg,#07152b,#122a52)}
   header,main{max-width:720px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #38517a}
   a{color:#8cddff}h1{font-size:21px;margin:0}.tag{color:#9de5df;font-size:12px}
   .card{border:1px solid #44608e;border-radius:18px;background:#14294c;padding:24px;margin-top:22px}
-  .muted{color:#afc1dc}h2{font-size:23px;line-height:1.55}
+  .muted{color:#afc1dc}h2{font-size:23px;line-height:1.55}h3{margin:10px 0}
   button{display:block;width:100%;text-align:left;border:1px solid #5976a6;border-radius:12px;padding:15px;margin:10px 0;background:#1a3969;color:#fff;font-size:17px;cursor:pointer}
   button:disabled{opacity:.85;cursor:default}button.ok{border-color:#65dab2;background:#14554b}button.bad{border-color:#ff9696;background:#673040}
   #next{background:#1974d2;border:0;text-align:center;font-weight:700;margin-top:22px}
   #answer{font-size:17px;line-height:1.6}footer{text-align:center;color:#afc1dc;padding:20px}
+  [hidden]{display:none!important}
   </style></head><body><header><h1>Study COMPASS</h1><a href="/">ホームへ戻る</a></header>
-  <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div><section class="card">
-  <p id="progress" class="muted"></p><h2 id="question"></h2><div id="choices"></div><p id="answer" aria-live="polite"></p>
-  <button id="next" hidden>次の問題へ</button></section></main><footer>Study COMPASS｜公開品質を優先しています</footer>
-  <script>const questions=${json};let current=0,score=0;
+  <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
+  <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
+  <section id="quiz" class="card" hidden><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p><h2 id="question"></h2><div id="choices"></div><p id="answer" aria-live="polite"></p><button id="next" hidden>次の問題へ</button></section>
+  </main><footer>Study COMPASS｜公開品質を優先しています</footer>
+  <script>const questions=${json};let selected=[],current=0,score=0;
   const el=id=>document.getElementById(id);
-  function show(){const q=questions[current];el("progress").textContent=(current+1)+" / "+questions.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
-    el("choices").replaceChildren();el("answer").textContent="";el("next").hidden=true;
-    q.options.forEach((option,i)=>{const b=document.createElement("button");b.textContent=String.fromCharCode(65+i)+". "+option;
-      b.onclick=()=>{const correct=option===q.answer;if(correct)score++;
-        for(const c of el("choices").children){c.disabled=true;if(c.textContent.slice(3)===q.answer)c.classList.add("ok");}
-        if(!correct)b.classList.add("bad");
-        el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
-        el("next").hidden=false;el("next").textContent=current===questions.length-1?"最初から学習":"次の問題へ";};
-      el("choices").appendChild(b);});}
-  el("next").onclick=()=>{if(current===questions.length-1){current=0;score=0}else current++;show();};
-  if(questions.length)show();else {el("progress").textContent="現在、公開できる問題はありません";el("question").textContent="監査が完了した問題から順次公開します";el("choices").replaceChildren();}
+  const subjectOrder=["社会","理科","英語","国語","数学"];
+  const groups=[...new Set(questions.map(q=>q.subject))].sort((a,b)=>{const x=subjectOrder.indexOf(a),y=subjectOrder.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+  function clear(node){node.replaceChildren()}
+  function makeButton(label,callback){const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=callback;return b}
+  function chooseSubject(subject){el("units").hidden=false;el("unit-title").textContent=subject+"｜単元を選ぶ";
+    const container=el("unit-buttons");clear(container);
+    const subset=questions.filter(q=>q.subject===subject);
+    const units=[...new Set(subset.map(q=>q.topic_name||q.unit||"総合"))];
+    container.appendChild(makeButton("すべての単元（"+subset.length+"問）",()=>begin(subset)));
+    for(const unit of units){const list=subset.filter(q=>(q.topic_name||q.unit||"総合")===unit);container.appendChild(makeButton(unit+"（"+list.length+"問）",()=>begin(list)))}
+  }
+  function begin(items){selected=items;current=0;score=0;el("selector").hidden=true;el("quiz").hidden=false;show()}
+  function show(){const q=selected[current];el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
+    clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
+    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;
+      for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
+      if(!correct)b.classList.add("bad");el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
+      el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
+      b.dataset.value=option;el("choices").appendChild(b)})}
+  el("next").onclick=()=>{if(current===selected.length-1){el("back").click()}else{current++;show()}};
+  el("back").onclick=()=>{el("quiz").hidden=true;el("selector").hidden=false};
+  if(!groups.length){el("empty").hidden=false}
+  for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
   </script></body></html>`;
 }
 
