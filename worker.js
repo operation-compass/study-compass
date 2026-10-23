@@ -35,7 +35,13 @@ function parsePublicCsv(csv) {
     const at = ["A","B","C","D"].indexOf(key);
     const answer = at >= 0 ? options[at] : q.correct_answer;
     if (options.some(x=>!x) || !options.includes(answer)) throw Error("Bad public answer");
-    return { id:q.question_id, subject:q.subject, grade:q.grade, unit:q.unit_major,
+    const socialUnit = q.subject === "社会" && q.unit_major === "歴史"
+      ? (q.grade === "中1" ? "SC-SOC-G1-ANC" : q.grade === "中2" ? "SC-SOC-G2-MED" : q.grade === "中3" ? "SC-SOC-G3-MOD" : null)
+      : null;
+    if (q.subject === "社会" && q.unit_major === "歴史" && !socialUnit) throw Error("Unmapped published history grade");
+    return { id:q.question_id, subject:q.subject, grade:q.grade,
+      unit:q.unit_major === "歴史" ? "歴史・" + (q.grade === "中1" ? "古代" : q.grade === "中2" ? "中世" : "近現代") : q.unit_major,
+      unit_id: socialUnit || undefined,
       field_name:q.unit_major, topic_name:q.unit_minor, q:q.question_text,
       answer, options, ex:q.explanation };
   });
