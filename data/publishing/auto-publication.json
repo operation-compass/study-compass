@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "enabled": true,
-  "reason": "Explicit user activation approval on 2026-10-17 after seven isolated controller scenarios passed; real nonempty publication/recovery and native preview limitations disclosed.",
+  "enabled": false,
+  "reason": "Temporarily pause automatic publication pending authenticated live Drive individual approval, independent review, and explicit production authorization gate; preserve existing published study content and other schedules.",
   "activation_approval": "docs/audits/evidence-20261017/automatic-publication-activation-approval.json"
 }
