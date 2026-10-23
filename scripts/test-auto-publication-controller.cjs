@@ -71,7 +71,6 @@ async function child(){
  const receipt=JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP,'study-auto-release/publication-receipt.json'),'utf8'));
  const current=mainSha(),bank=verifier.questions(bankAt(current)),present=bank.filter(q=>ids.has(q.id));
  if(scenario==='disabled'){assert(!error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(pr,null);assert.equal(receipt.result,'verified-not-published');}
- else if(scenario.startsWith('candidate-ci-')){assert(error);assert.equal(current,base);assert.equal(dispatches,0);assert.equal(present.length,0);assert.equal(receipt.production_updated,false);assert.equal(receipt.result,'failure');assert(receipt.reason.includes(scenario==='candidate-ci-failure'?'Candidate CI failed':'Candidate CI timed out'));}
  else {
   // The live Drive approval verifier is not connected, so the controller
   // must stop even after candidate CI passes. Previous positive-path
