@@ -107,7 +107,9 @@ export default {
       headers.set("Expires", "0");
       // Extend the existing question bank without altering its UI; on failure retain the legacy questions.
       let html = await response.text();
-      try { html = await addPublishedQuestions(html); } catch (_) { /* keep existing questions */ }
+      // Temporary safety rollback: keep the verified legacy learning dataset unchanged.
+      // Public CSV remains available through /api/questions.csv for diagnosis.
+      // Re-enable merging only after the study page integrity gate passes.
       // HTML length changes when approved questions are appended; stale asset headers must not be reused.
       headers.delete("Content-Length");
       headers.delete("Content-Encoding");
