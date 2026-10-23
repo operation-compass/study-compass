@@ -90,3 +90,28 @@ test('question text cannot break out of embedded HTML script',async()=>{
     assert.equal(out.includes('\\u003c/script\\u003e'),true);
   }finally{globalThis.fetch=oldFetch;}
 });
+
+test('real legacy Study HTML retains all existing questions when public CSV adds one',async()=>{
+  const html=await fs.readFile(new URL('../legacy-study.html',import.meta.url),'utf8');
+  const marker='const SOCIAL = ',start=html.indexOf(marker);
+  assert.ok(start>=0,'existing question bank must exist');
+  const offset=start+marker.length;
+  const stop=html.indexOf(';',offset);
+  const before=JSON.parse(html.slice(offset,stop));
+  assert.ok(before.length>100,'unexpected loss of legacy bank');
+  const source=src+'\nexport { addPublishedQuestions };';
+  const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+  const row=['SC-INTEGRATION-NEW-00001','1','社会','中1','歴史','古代','4択','新規テスト問題','正答','誤答1','誤答2','誤答3','A','説明','https://example.org'].join(',');
+  const oldFetch=globalThis.fetch;
+  globalThis.fetch=async()=>new Response(HEADER+'\n'+row+'\n',{status:200});
+  try {
+    const changed=await api.addPublishedQuestions(html);
+    const from=changed.indexOf(marker)+marker.length,end=changed.indexOf(';',from);
+    const after=JSON.parse(changed.slice(from,end));
+    assert.equal(after.length,before.length+1);
+    assert.deepEqual(after.slice(0,before.length),before);
+    assert.equal(after.at(-1).answer,'正答');
+    assert.equal(after.at(-1).options.length,4);
+    assert.equal(changed.slice(0,html.indexOf(marker)),html.slice(0,html.indexOf(marker)));
+  } finally {globalThis.fetch=oldFetch;}
+});
