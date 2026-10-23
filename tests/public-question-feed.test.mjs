@@ -73,3 +73,20 @@ test('header-only public sheet keeps existing study page byte-for-byte',async()=
   globalThis.fetch=async()=>new Response(HEADER+'\n',{status:200});
   try{assert.equal(await api.addPublishedQuestions(original),original);}finally{globalThis.fetch=oldFetch;}
 });
+
+test('question text cannot break out of embedded HTML script',async()=>{
+  const source=src+'\nexport { addPublishedQuestions };';
+  const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+  const original='<script>const SOCIAL = [];</script>';
+  const payload='</script><script>alert(1)</script>';
+  const fields=['escape-test','1','社会','中1','歴史','近世','mcq',payload,'a','b','c','d','A','説明','https://example.org'];
+  const escapeCsv=v=>'"'+String(v).replaceAll('"','""')+'"';
+  const csv=HEADER+'\n'+fields.map(escapeCsv).join(',')+'\n';
+  const oldFetch=globalThis.fetch;
+  globalThis.fetch=async()=>new Response(csv,{status:200});
+  try{
+    const out=await api.addPublishedQuestions(original);
+    assert.equal(out.includes(payload),false,'Unsafe closing script tag leaked into HTML');
+    assert.equal(out.includes('\\u003c/script\\u003e'),true);
+  }finally{globalThis.fetch=oldFetch;}
+});
