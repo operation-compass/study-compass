@@ -102,7 +102,11 @@ export default {
       // Extend the existing question bank without altering its UI; on failure retain the legacy questions.
       let html = await response.text();
       try { html = await addPublishedQuestions(html); } catch (_) { /* keep existing questions */ }
-      // HTML length changes when approved questions are appended; stale asset headers must not be reused.\n      headers.delete("Content-Length");\n      headers.delete("Content-Encoding");\n      headers.delete("ETag");\n      const clean = new Response(html, { status: response.status, statusText: response.statusText, headers });
+      // HTML length changes when approved questions are appended; stale asset headers must not be reused.
+      headers.delete("Content-Length");
+      headers.delete("Content-Encoding");
+      headers.delete("ETag");
+      const clean = new Response(html, { status: response.status, statusText: response.statusText, headers });
 
       const mode = url.searchParams.get("mode") || "";
       const subject = url.searchParams.get("subject") || "";
