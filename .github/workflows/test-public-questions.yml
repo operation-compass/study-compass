@@ -1,0 +1,55 @@
+name: Study public CSV verification
+on:
+  pull_request:
+    paths:
+      - 'worker.js'
+      - 'tests/public-question-feed.test.mjs'
+      - '.github/workflows/test-public-questions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Worker syntax before deployment
+        run: node --check worker.js
+      - name: Test public feed without deployment
+        run: node --test tests/public-question-feed.test.mjs
+      - name: Inspect existing question schema (field names only)
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('legacy-study.html','utf8');
+          const key='const SOCIAL = ',at=html.indexOf(key);
+          if(at<0)throw Error('SOCIAL dataset missing');
+          const start=at+key.length,end=html.indexOf(';',start);
+          const rows=JSON.parse(html.slice(start,end));
+          console.log('Legacy questions count:',rows.length);
+          console.log('Legacy schema field names:',Object.keys(rows[0]||{}).join(','));
+          console.log('Legacy first row field types:',JSON.stringify(Object.fromEntries(Object.entries(rows[0]||{}).map(([k,v])=>[k,Array.isArray(v)?'array':typeof v]))));
+          NODE
+
+  verify-google-csv-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Google CSV endpoint (headers only, no data logging)
+        shell: bash
+        run: |
+          url='https://docs.google.com/spreadsheets/d/1WFYJ-a5V1GBZzr99yglB4MUaW29z-qBze6cZ5m4cM8g/export?format=csv&gid=343531822'
+          response=$(curl -sS -L -o /dev/null -w '%{http_code} %{content_type}' --max-time 20 "$url")
+          echo "Google Sheets CSV HTTP response: $response"
+          [[ "$response" == 200\ text/csv* ]] || { echo 'Public CSV access is not ready; leave PR as draft.'; exit 1; }
+          # Verify the actual public CSV schema without printing question content.
+          csv_file="$RUNNER_TEMP/study-public.csv"
+          curl -fsSL --max-time 20 "$url" -o "$csv_file"
+          expected='question_id,version,subject,grade,unit_major,unit_minor,question_type,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation,source_url'
+          actual="$(head -n 1 "$csv_file" | tr -d '\r' | sed 's/^\xef\xbb\xbf//')"
+          [[ "$actual" == "$expected" ]] || { echo 'Public CSV schema does not match expected 15 columns'; exit 1; }
+          echo 'Public CSV header verified (15 columns).'
