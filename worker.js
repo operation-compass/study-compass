@@ -64,11 +64,60 @@ async function addPublishedQuestions(html, maxQuestions = Infinity) {
   return html.slice(0,begin) + JSON.stringify([...existing,...incoming]).replace(/</g, "\\u003c").replace(/>/g, "\\u003e") + html.slice(end);
 }
 
+
+// Approved-only learning interface: no embedded legacy question bank is served publicly.
+function approvedOnlyHtml(questions) {
+  const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Study COMPASS｜監査済み問題</title><style>
+  :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#07152b;color:#f0f7ff}
+  *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(155deg,#07152b,#122a52)}
+  header,main{max-width:720px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #38517a}
+  a{color:#8cddff}h1{font-size:21px;margin:0}.tag{color:#9de5df;font-size:12px}
+  .card{border:1px solid #44608e;border-radius:18px;background:#14294c;padding:24px;margin-top:22px}
+  .muted{color:#afc1dc}h2{font-size:23px;line-height:1.55}
+  button{display:block;width:100%;text-align:left;border:1px solid #5976a6;border-radius:12px;padding:15px;margin:10px 0;background:#1a3969;color:#fff;font-size:17px;cursor:pointer}
+  button:disabled{opacity:.85;cursor:default}button.ok{border-color:#65dab2;background:#14554b}button.bad{border-color:#ff9696;background:#673040}
+  #next{background:#1974d2;border:0;text-align:center;font-weight:700;margin-top:22px}
+  #answer{font-size:17px;line-height:1.6}footer{text-align:center;color:#afc1dc;padding:20px}
+  </style></head><body><header><h1>Study COMPASS</h1><a href="/">ホームへ戻る</a></header>
+  <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div><section class="card">
+  <p id="progress" class="muted"></p><h2 id="question"></h2><div id="choices"></div><p id="answer" aria-live="polite"></p>
+  <button id="next" hidden>次の問題へ</button></section></main><footer>Study COMPASS｜公開品質を優先しています</footer>
+  <script>const questions=${json};let current=0,score=0;
+  const el=id=>document.getElementById(id);
+  function show(){const q=questions[current];el("progress").textContent=(current+1)+" / "+questions.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
+    el("choices").replaceChildren();el("answer").textContent="";el("next").hidden=true;
+    q.options.forEach((option,i)=>{const b=document.createElement("button");b.textContent=String.fromCharCode(65+i)+". "+option;
+      b.onclick=()=>{const correct=option===q.answer;if(correct)score++;
+        for(const c of el("choices").children){c.disabled=true;if(c.textContent.slice(3)===q.answer)c.classList.add("ok");}
+        if(!correct)b.classList.add("bad");
+        el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
+        el("next").hidden=false;el("next").textContent=current===questions.length-1?"最初から学習":"次の問題へ";};
+      el("choices").appendChild(b);});}
+  el("next").onclick=()=>{if(current===questions.length-1){current=0;score=0}else current++;show();};
+  if(questions.length)show();else {el("progress").textContent="現在、公開できる問題はありません";el("question").textContent="監査が完了した問題から順次公開します";el("choices").replaceChildren();}
+  </script></body></html>`;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
     // Review candidates are private to the release process, never public assets.
+    // Block direct access to the old unreviewed embedded question bank.
+    if (url.pathname === "/legacy-study.html") return new Response("Not found", {status:404,headers:{"Cache-Control":"no-store"}});
+    if (request.method === "GET" && url.pathname === "/study.html") {
+      try {
+        const upstream=await fetch(PUBLIC_URL,{signal:AbortSignal.timeout(5000)});
+        if(!upstream.ok)throw Error("Public data unavailable");
+        const csv=await upstream.text();
+        if(csv.length>1024*1024)throw Error("Public data too large");
+        const approved=parsePublicCsv(csv);
+        return new Response(approvedOnlyHtml(approved),{headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
+      } catch (_) {
+        return new Response("監査済み教材を読み込めません。公開を一時停止しています。",{status:503,headers:{"Content-Type":"text/plain; charset=utf-8","Cache-Control":"no-store"}});
+      }
+    }
     if (url.pathname === "/data/staging" || url.pathname.startsWith("/data/staging/")) {
       return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
     }
