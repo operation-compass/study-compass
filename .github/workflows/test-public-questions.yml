@@ -20,6 +20,19 @@ jobs:
           node-version: '22'
       - name: Test public feed without deployment
         run: node --test tests/public-question-feed.test.mjs
+      - name: Inspect existing question schema (field names only)
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('legacy-study.html','utf8');
+          const key='const SOCIAL = ',at=html.indexOf(key);
+          if(at<0)throw Error('SOCIAL dataset missing');
+          const start=at+key.length,end=html.indexOf(';',start);
+          const rows=JSON.parse(html.slice(start,end));
+          console.log('Legacy questions count:',rows.length);
+          console.log('Legacy schema field names:',Object.keys(rows[0]||{}).join(','));
+          console.log('Legacy first row field types:',JSON.stringify(Object.fromEntries(Object.entries(rows[0]||{}).map(([k,v])=>[k,Array.isArray(v)?'array':typeof v]))));
+          NODE
 
   verify-google-csv-access:
     runs-on: ubuntu-latest
