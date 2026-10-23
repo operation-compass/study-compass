@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Check Worker syntax before deployment
+        run: node --check worker.js
       - name: Test public feed without deployment
         run: node --test tests/public-question-feed.test.mjs
       - name: Inspect existing question schema (field names only)
