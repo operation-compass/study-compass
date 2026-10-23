@@ -34,7 +34,7 @@ function parsePublicCsv(csv) {
     const key = q.correct_answer.trim().toUpperCase();
     const at = ["A","B","C","D"].indexOf(key);
     const answer = at >= 0 ? options[at] : q.correct_answer;
-    if (options.some(x=>!x) || !options.includes(answer)) throw Error("Bad public answer");
+    if (options.some(x=>!x || !x.trim()) || new Set(options.map(x=>x.trim())).size !== 4 || options.filter(x=>x.trim()===answer.trim()).length !== 1 || !q.source_url.trim() || !q.explanation.trim() || q.question_type !== "4択") throw Error("Bad public answer or missing audit fields");
     const socialUnit = q.subject === "社会" && q.unit_major === "歴史"
       ? (q.grade === "中1" ? "SC-SOC-G1-ANC" : q.grade === "中2" ? "SC-SOC-G2-MED" : q.grade === "中3" ? "SC-SOC-G3-MOD" : null)
       : null;
