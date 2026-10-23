@@ -33,5 +33,37 @@ function verifyDiff(report,expected,prFiles){
  return changed;
 }
 function verifyPublished(expected,actual){assert.deepEqual(questions(actual),questions(expected),'Published question bank differs from expected release');}
-module.exports={sha256,gitBlob,files,questions,evidenceIndex,verifyEvidence,verifyDiff,verifyPublished};
+// Shadow-mode integration for the simplified 3-check process.
+ // This never changes selectReady() or grants release eligibility. The actual
+ // release controller must be explicitly migrated and tested separately.
+function previewSimpleThreeChecks(bundle,index,approvedReferences,masterIds){
+ const {verifyThreeCheckArtifacts}=require('./simple-three-check-evidence.cjs');
+ assert(Array.isArray(bundle?.candidate?.items),'Missing candidate items');
+ assert(Array.isArray(bundle?.simple_checks?.records),'Missing simple_checks records');
+ const candidateIds=bundle.candidate.items.map(q=>q.id);
+ assert.equal(new Set(candidateIds).size,candidateIds.length,'Duplicate candidate ID');
+ assert(Array.isArray(masterIds)&&masterIds.length>0,'Full canonical MASTER ID inventory required');
+ assert.equal(new Set(masterIds).size,masterIds.length,'Duplicate MASTER ID');
+ assert(approvedReferences instanceof Map,'Trusted approval registry required');
+ const audits=new Map();
+ for(const record of bundle.simple_checks.records){
+  assert(record?.id&&!audits.has(record.id),'Duplicate simple-check audit ID');
+  audits.set(record.id,record);
+ }
+ assert(Array.isArray(index),'Repository evidence file index required');
+ const artifacts=new Map();
+ for(const f of index){
+  if(!f || typeof f.path!=='string' || typeof f.text!=='string')throw Error('Invalid evidence file entry');
+  if(!f.path.startsWith('docs/audits/') || !f.path.endsWith('.md'))continue;
+  assert(!artifacts.has(f.path),'Duplicate evidence path: '+f.path);
+  artifacts.set(f.path,f.text);
+ }
+ const candidates=bundle.candidate.items.map(q=>{
+  const record=audits.get(q.id);
+  const result=verifyThreeCheckArtifacts(q,record,masterIds,artifacts,approvedReferences);
+  return {id:q.id,...result};
+ });
+ return {mode:'shadow_only',production_updated:false,eligible:candidates.filter(q=>q.eligible).map(q=>q.id),held:candidates.filter(q=>!q.eligible).map(q=>q.id),candidates};
+}
+module.exports={sha256,gitBlob,files,questions,evidenceIndex,verifyEvidence,verifyDiff,verifyPublished,previewSimpleThreeChecks};
 
