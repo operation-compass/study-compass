@@ -110,7 +110,7 @@ export default {
       // Roll out one verified public question on the ordinary learning route.
       // The opt-in preview can test all published questions before wider rollout.
       try {
-        html = await addPublishedQuestions(html, url.searchParams.get("published_preview") === "1" ? Infinity : 1);
+        html = await addPublishedQuestions(html);
       } catch (_) { /* preserve the working legacy questions on malformed public data */ }
       // HTML length changes when approved questions are appended; stale asset headers must not be reused.
       headers.delete("Content-Length");
