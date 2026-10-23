@@ -1,3 +1,63 @@
+const PUBLIC_HEADER = "question_id,version,subject,grade,unit_major,unit_minor,question_type,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation,source_url";
+const PUBLIC_URL = "https://docs.google.com/spreadsheets/d/1WFYJ-a5V1GBZzr99yglB4MUaW29z-qBze6cZ5m4cM8g/export?format=csv&gid=343531822";
+
+// Read only the isolated publication tab. Never read MASTER or review sheets.
+function parsePublicCsv(csv) {
+  const rows = [], row = []; let cell = "", quoted = false;
+  for (let i = 0; i < csv.length; i++) {
+    const c = csv[i];
+    if (quoted) {
+      if (c === '"' && csv[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else cell += c;
+    } else if (c === '"') {
+      if (cell) throw Error("Invalid CSV quote");
+      quoted = true;
+    } else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && csv[i + 1] === "\n") i++;
+      row.push(cell); if (row.some(x => x !== "")) rows.push(row.slice());
+      row.length = 0; cell = "";
+    } else cell += c;
+  }
+  if (quoted) throw Error("Unclosed CSV quote");
+  row.push(cell); if (row.some(x => x !== "")) rows.push(row);
+  const header = PUBLIC_HEADER.split(",");
+  if (!rows.length || rows[0].length !== header.length || rows[0].some((v,i) => (i === 0 ? v.replace(/^\uFEFF/, "") : v) !== header[i])) throw Error("Unexpected public schema");
+  const ids = new Set();
+  return rows.slice(1).map(cells => {
+    if (cells.length !== header.length) throw Error("Bad public question row");
+    const q = Object.fromEntries(header.map((key,i) => [key,cells[i]]));
+    if (!q.question_id || ids.has(q.question_id) || !q.question_text || !q.subject || !q.grade || !q.unit_major || !q.unit_minor) throw Error("Bad public question");
+    ids.add(q.question_id);
+    const options = [q.choice_a,q.choice_b,q.choice_c,q.choice_d];
+    const key = q.correct_answer.trim().toUpperCase();
+    const at = ["A","B","C","D"].indexOf(key);
+    const answer = at >= 0 ? options[at] : q.correct_answer;
+    if (options.some(x=>!x) || !options.includes(answer)) throw Error("Bad public answer");
+    return { id:q.question_id, subject:q.subject, grade:q.grade, unit:q.unit_major,
+      field_name:q.unit_major, topic_name:q.unit_minor, q:q.question_text,
+      answer, options, ex:q.explanation };
+  });
+}
+async function addPublishedQuestions(html) {
+  const marker = "const SOCIAL = ", from = html.indexOf(marker);
+  if (from < 0) return html;
+  const begin = from + marker.length, end = html.indexOf(";", begin);
+  if (end < 0) return html;
+  const existing = JSON.parse(html.slice(begin,end));
+  if (!Array.isArray(existing)) return html;
+  const upstream = await fetch(PUBLIC_URL, { signal: AbortSignal.timeout(3500) });
+  if (!upstream.ok) return html;
+  const csv = await upstream.text();
+  if (csv.length > 1024 * 1024) return html;
+  const incoming = parsePublicCsv(csv);
+  if (!incoming.length) return html;
+  const known = new Set(existing.map(x=>x.id));
+  if (incoming.some(q=>known.has(q.id))) throw Error("Duplicate question ID");
+  return html.slice(0,begin) + JSON.stringify([...existing,...incoming]) + html.slice(end);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -39,7 +99,10 @@ export default {
       headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
       headers.set("Pragma", "no-cache");
       headers.set("Expires", "0");
-      const clean = new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      // Extend the existing question bank without altering its UI; on failure retain the legacy questions.
+      let html = await response.text();
+      try { html = await addPublishedQuestions(html); } catch (_) { /* keep existing questions */ }
+      const clean = new Response(html, { status: response.status, statusText: response.statusText, headers });
 
       const mode = url.searchParams.get("mode") || "";
       const subject = url.searchParams.get("subject") || "";
