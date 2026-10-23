@@ -32,3 +32,10 @@ jobs:
           response=$(curl -sS -L -o /dev/null -w '%{http_code} %{content_type}' --max-time 20 "$url")
           echo "Google Sheets CSV HTTP response: $response"
           [[ "$response" == 200\ text/csv* ]] || { echo 'Public CSV access is not ready; leave PR as draft.'; exit 1; }
+          # Verify the actual public CSV schema without printing question content.
+          csv_file="$RUNNER_TEMP/study-public.csv"
+          curl -fsSL --max-time 20 "$url" -o "$csv_file"
+          expected='question_id,version,subject,grade,unit_major,unit_minor,question_type,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation,source_url'
+          actual="$(head -n 1 "$csv_file" | tr -d '\r' | sed 's/^\xef\xbb\xbf//')"
+          [[ "$actual" == "$expected" ]] || { echo 'Public CSV schema does not match expected 15 columns'; exit 1; }
+          echo 'Public CSV header verified (15 columns).'
