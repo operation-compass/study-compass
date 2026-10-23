@@ -46,7 +46,7 @@ function parsePublicCsv(csv) {
       answer, options, ex:q.explanation };
   });
 }
-async function addPublishedQuestions(html) {
+async function addPublishedQuestions(html, maxQuestions = Infinity) {
   const marker = "const SOCIAL = ", from = html.indexOf(marker);
   if (from < 0) return html;
   const begin = from + marker.length, end = html.indexOf(";", begin);
@@ -57,7 +57,7 @@ async function addPublishedQuestions(html) {
   if (!upstream.ok) return html;
   const csv = await upstream.text();
   if (csv.length > 1024 * 1024) return html;
-  const incoming = parsePublicCsv(csv);
+  const incoming = parsePublicCsv(csv).slice(0, maxQuestions);
   if (!incoming.length) return html;
   const known = new Set(existing.map(x=>x.id));
   if (incoming.some(q=>known.has(q.id))) throw Error("Duplicate question ID");
@@ -107,9 +107,12 @@ export default {
       headers.set("Expires", "0");
       // Extend the existing question bank without altering its UI; on failure retain the legacy questions.
       let html = await response.text();
-      // Temporary safety rollback: keep the verified legacy learning dataset unchanged.
-      // Public CSV remains available through /api/questions.csv for diagnosis.
-      // Re-enable merging only after the study page integrity gate passes.
+      // Isolated one-question trial; the default learning page remains unchanged.
+      // Never expose a failed merge: preserve the verified legacy page.
+      if (url.searchParams.get("published_preview") === "1") {
+        try { html = await addPublishedQuestions(html, 1); }
+        catch (_) { /* retain the working legacy questions */ }
+      }
       // HTML length changes when approved questions are appended; stale asset headers must not be reused.
       headers.delete("Content-Length");
       headers.delete("Content-Encoding");
