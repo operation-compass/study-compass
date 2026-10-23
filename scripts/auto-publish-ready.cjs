@@ -42,9 +42,6 @@ async function main(){
   assert.equal(staged.author?.login,'operation-compass','Unexpected staging actor');assert.equal(staged.commit.message.split('\n')[0],'Stage audited Drive snapshot (NOT production)','Unexpected staging provenance');assert.deepEqual(staged.files.map(x=>x.filename),[bundlePath],'Staging commit modified unrelated files');assert.equal(staged.files[0].sha,gitBlob(raw),'Staging bundle is not the authenticated file');
   const selected=verifyEvidence(bundle,evidenceIndex(source));receipt.selected=selected.ready;
   if(!selected.ready.length){receipt.no_change=true;save();return;}
-  // Fail before creating a publication PR. Staging READY does not authenticate
-  // live Drive individual approval or a separate production authorization.
-  throw Error('LIVE_DRIVE_INDIVIDUAL_APPROVAL_GATE_NOT_CONNECTED');
   assert.equal(sha256(fs.readFileSync(path.join(root,files[0]))),sha256(fs.readFileSync(path.join(root,files[1]))),'Production HTML mirrors disagree');
   const report=prepare(bundle,out);receipt.report=report;
   if(report.no_change){receipt.no_change=true;save();return;}
@@ -56,6 +53,9 @@ async function main(){
   const config=JSON.parse(fs.readFileSync(path.join(root,'data/publishing/auto-publication.json'),'utf8'));
   assert.equal(config.schema_version,1,'Invalid automatic publication config');
   if(config.enabled!==true){receipt.mode='verify-only';receipt.verified_blobs=Object.fromEntries(files.map(f=>[f,gitBlob(expected[f])]));receipt.result='verified-not-published';save();return;}
+  // Fail before creating a publication PR. Staging READY does not authenticate
+  // live Drive individual approval or a separate production authorization.
+  throw Error('LIVE_DRIVE_INDIVIDUAL_APPROVAL_GATE_NOT_CONNECTED');
   const open=await api('pulls?state=open&base=main&per_page=100');let pr;
   for(const p of open){if(p.user.login!=='github-actions[bot]'||!/^study-ready-/.test(p.head.ref))continue;const f=await api('pulls/'+p.number+'/files');try{verifyDiff(report,expected,f);const c=await api('commits/'+p.head.sha);if(c.parents.length===1&&c.parents[0].sha===base){pr=p;break;}}catch{/* Unrelated/stale PR remains unchanged. */}}
   if(!pr){
