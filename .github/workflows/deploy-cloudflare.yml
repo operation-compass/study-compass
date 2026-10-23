@@ -74,6 +74,19 @@ jobs:
           set -euo pipefail
           BASE="https://study-compass.occompass-info.workers.dev"
 
+          echo "Checking live approved-only question CSV..."
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/api/questions.csv?smoke=${GITHUB_SHA}" -o /tmp/public-questions.csv
+          python3 - <<'PY'
+          from pathlib import Path
+          import csv
+          with Path('/tmp/public-questions.csv').open(encoding='utf-8-sig', newline='') as fp:
+              rows=list(csv.reader(fp))
+          required='question_id,version,subject,grade,unit_major,unit_minor,question_type,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation,source_url'.split(',')
+          assert rows and rows[0] == required, 'Published CSV header mismatch'
+          assert all(len(r)==len(required) for r in rows[1:]), 'Published CSV malformed row'
+          print('Live published-question CSV verified; question count:',len(rows)-1)
+          PY
+
           echo "Checking homepage..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
           grep -q 'study-compass-build' /tmp/home.html
