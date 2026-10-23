@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import vm from 'node:vm';
 
 const src = await fs.readFile(new URL('../worker.js', import.meta.url),'utf8');
 const {default:worker} = await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
@@ -42,4 +43,13 @@ test('approved public question row is returned unchanged',async()=>{
   const res=await probe(new Response(csv,{status:200}));
   assert.equal(res.status,200);
   assert.equal(await res.text(),csv);
+});
+
+test('preview page inline quiz script has valid JavaScript syntax',async()=>{
+  const html=await fs.readFile(new URL('../public-questions.html',import.meta.url),'utf8');
+  const scripts=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)];
+  assert.equal(scripts.length,1,'Expected exactly one preview script');
+  assert.doesNotThrow(()=>new vm.Script(scripts[0][1]));
+  assert.match(scripts[0][1],/fetch\\('\/api\/questions\\.csv'/);
+  assert.match(scripts[0][1],/correct_answer/);
 });
