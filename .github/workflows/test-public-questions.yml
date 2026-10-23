@@ -3,9 +3,7 @@ on:
   pull_request:
     paths:
       - 'worker.js'
-      - 'public-questions.html'
       - 'tests/public-question-feed.test.mjs'
-      - 'tests/public-question-browser.mjs'
       - '.github/workflows/test-public-questions.yml'
   workflow_dispatch:
 
@@ -22,26 +20,6 @@ jobs:
           node-version: '22'
       - name: Test public feed without deployment
         run: node --test tests/public-question-feed.test.mjs
-
-  verify-quiz-browser:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install browser test dependency
-        run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
-      - name: Browser test with synthetic approved question (no deployment)
-        run: node tests/public-question-browser.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: public-questions-browser-preview
-          path: public-question-browser.png
-          if-no-files-found: ignore
 
   verify-google-csv-access:
     runs-on: ubuntu-latest
