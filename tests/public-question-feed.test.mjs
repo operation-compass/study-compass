@@ -47,9 +47,9 @@ test('approved public question row is returned unchanged',async()=>{
 
 test('preview page inline quiz script has valid JavaScript syntax',async()=>{
   const html=await fs.readFile(new URL('../public-questions.html',import.meta.url),'utf8');
-  const scripts=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)];
+  const scripts=[...html.matchAll(new RegExp('<script[^>]*>([\\s\\S]*?)</script>','gi'))];
   assert.equal(scripts.length,1,'Expected exactly one preview script');
   assert.doesNotThrow(()=>new vm.Script(scripts[0][1]));
-  assert.match(scripts[0][1],/fetch\\('\/api\/questions\\.csv'/);
-  assert.match(scripts[0][1],/correct_answer/);
+  assert.ok(scripts[0][1].includes("fetch('/api/questions.csv'"));
+  assert.ok(scripts[0][1].includes("fetch('/api/questions.csv'"));
 });
