@@ -1,0 +1,23 @@
+name: Study public CSV verification
+on:
+  pull_request:
+    paths:
+      - 'worker.js'
+      - 'public-questions.html'
+      - 'tests/public-question-feed.test.mjs'
+      - '.github/workflows/test-public-questions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test public feed without deployment
+        run: node --test tests/public-question-feed.test.mjs
