@@ -21,3 +21,14 @@ jobs:
           node-version: '22'
       - name: Test public feed without deployment
         run: node --test tests/public-question-feed.test.mjs
+
+  verify-google-csv-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Google CSV endpoint (headers only, no data logging)
+        shell: bash
+        run: |
+          url='https://docs.google.com/spreadsheets/d/1WFYJ-a5V1GBZzr99yglB4MUaW29z-qBze6cZ5m4cM8g/export?format=csv&gid=343531822'
+          response=$(curl -sS -L -o /dev/null -w '%{http_code} %{content_type}' --max-time 20 "$url")
+          echo "Google Sheets CSV HTTP response: $response"
+          [[ "$response" == 200\ text/csv* ]] || { echo 'Public CSV access is not ready; leave PR as draft.'; exit 1; }
