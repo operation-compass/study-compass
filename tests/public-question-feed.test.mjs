@@ -44,3 +44,32 @@ test('approved public question row is returned unchanged',async()=>{
   assert.equal(await res.text(),csv);
 });
 
+
+test('approved public CSV merges into legacy question schema without changing existing questions',async()=>{
+  const source=src+'\nexport { parsePublicCsv, addPublishedQuestions };';
+  const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+  const original='<!doctype html><script>const SOCIAL = '+JSON.stringify([{id:'old-1',subject:'社会',grade:'中3',unit:'歴史',field_name:'歴史',topic_name:'江戸',q:'旧問',answer:'旧答',options:['旧答','B','C','D'],ex:'説明'}])+';</script>';
+  const row=['new-1','1','社会','中3','歴史','江戸','mcq','新問','正解','誤答1','誤答2','誤答3','A','新解説','https://example.org'].join(',');
+  const oldFetch=globalThis.fetch;
+  globalThis.fetch=async()=>new Response(HEADER+'\n'+row+'\n',{status:200});
+  try{
+    const changed=await api.addPublishedQuestions(original);
+    const match=changed.match(/const SOCIAL = (\[[^;]+\]);/);
+    assert.ok(match);
+    const combined=JSON.parse(match[1]);
+    assert.equal(combined.length,2);
+    assert.equal(combined[0].id,'old-1');
+    assert.equal(combined[1].q,'新問');
+    assert.equal(combined[1].answer,'正解');
+    assert.deepEqual(combined[1].options,['正解','誤答1','誤答2','誤答3']);
+    assert.equal(combined[1].ex,'新解説');
+  }finally{globalThis.fetch=oldFetch;}
+});
+test('header-only public sheet keeps existing study page byte-for-byte',async()=>{
+  const source=src+'\nexport { addPublishedQuestions };';
+  const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+  const original='<script>const SOCIAL = [{"id":"old"}];</script>';
+  const oldFetch=globalThis.fetch;
+  globalThis.fetch=async()=>new Response(HEADER+'\n',{status:200});
+  try{assert.equal(await api.addPublishedQuestions(original),original);}finally{globalThis.fetch=oldFetch;}
+});
