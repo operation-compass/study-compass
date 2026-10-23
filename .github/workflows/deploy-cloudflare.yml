@@ -209,6 +209,16 @@ jobs:
           grep -q 'study-selection-active' /tmp/rendered-questions.html
           grep -q '問題だけ10問' /tmp/rendered-questions.html
           grep -q 'study-v2-runtime' /tmp/rendered-questions.html
+          echo "Testing isolated one-question publication preview..."
+          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=qa&published_preview=1&render=${GITHUB_SHA}" > /tmp/rendered-published-preview.html
+          grep -Fq '"id":"SC-SOC-HIS-WEB26-000006"' /tmp/rendered-published-preview.html
+          if grep -Fq '教材データに不整合があります' /tmp/rendered-published-preview.html; then
+            echo "::error::Published preview failed integrity gate"
+            exit 1
+          fi
+          python3 /tmp/check-study-dom.py /tmp/rendered-published-preview.html qa
+          echo "Isolated published-question preview passed."
+
           echo "All three study-entry modes rendered."
           echo "Rendered study page test passed."
 
