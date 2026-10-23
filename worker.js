@@ -107,12 +107,11 @@ export default {
       headers.set("Expires", "0");
       // Extend the existing question bank without altering its UI; on failure retain the legacy questions.
       let html = await response.text();
-      // Isolated one-question trial; the default learning page remains unchanged.
-      // Never expose a failed merge: preserve the verified legacy page.
-      if (url.searchParams.get("published_preview") === "1") {
-        try { html = await addPublishedQuestions(html, 1); }
-        catch (_) { /* retain the working legacy questions */ }
-      }
+      // Roll out one verified public question on the ordinary learning route.
+      // The opt-in preview can test all published questions before wider rollout.
+      try {
+        html = await addPublishedQuestions(html, url.searchParams.get("published_preview") === "1" ? Infinity : 1);
+      } catch (_) { /* preserve the working legacy questions on malformed public data */ }
       // HTML length changes when approved questions are appended; stale asset headers must not be reused.
       headers.delete("Content-Length");
       headers.delete("Content-Encoding");
