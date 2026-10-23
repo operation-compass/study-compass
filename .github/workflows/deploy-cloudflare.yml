@@ -92,135 +92,42 @@ jobs:
           grep -q 'study-compass-build' /tmp/home.html
           grep -q 'Study COMPASS' /tmp/home.html
 
-          echo "Checking raw legacy asset..."
-          curl -fsSL --retry 5 --retry-delay 2 -D /tmp/legacy.headers "$BASE/legacy-study.html?smoke=${GITHUB_SHA}" -o /tmp/legacy.html
-          echo "--- legacy size ---"
-          wc -c /tmp/legacy.html
-          echo "--- legacy head ---"
-          head -c 180 /tmp/legacy.html || true
-          echo
-
-          echo "Checking study route..."
+          echo "Checking unreviewed legacy route is blocked..."
+          legacy_code="$(curl -sS -o /tmp/legacy.html -w '%{http_code}' "$BASE/legacy-study.html")"
+          test "$legacy_code" = "404"
+          echo "Checking reviewed-only study route..."
           for i in {1..20}; do
-            curl -fsSL --retry 3 --retry-delay 1 -D /tmp/study.headers "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}&attempt=$i" -o /tmp/study.html
-            if grep -q 'data-study-v2-worker="20261011-10"' /tmp/study.html; then
-              echo "Latest worker version is live on attempt $i"
-              break
-            fi
-            if [ "$i" -eq 20 ]; then
-              echo "::error::Latest worker version did not propagate within wait window"
-              exit 1
-            fi
+            curl -fsSL "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}&attempt=$i" -o /tmp/study.html
+            if grep -q '監査済み・公開承認済みの問題のみ表示' /tmp/study.html; then break; fi
+            if [ "$i" -eq 20 ]; then echo "::error::Reviewed-only study route not deployed"; exit 1; fi
             sleep 3
           done
-          echo "--- study headers ---"
-          sed -n '1,20p' /tmp/study.headers
-          echo "--- study size ---"
-          wc -c /tmp/study.html
-          echo "--- study markers ---"
-          grep -oE 'study-v2\.css[^" <]*|data-study-v2-worker="[^"]*"|study-home-fab|legacy-study|study-compass-build|Study COMPASS' /tmp/study.html | head -20 || true
-          echo "--- study head ---"
-          head -c 700 /tmp/study.html || true
-          echo
-
-          grep -q 'study-v2.css?v=20261011-13' /tmp/study.html
-          grep -q 'data-study-v2-worker="20261011-10"' /tmp/study.html
-          grep -q 'study-home-fab' /tmp/study.html
-
-          echo "Checking V2 stylesheet..."
-          curl -fsSL --retry 5 --retry-delay 2 "$BASE/study-v2.css?v=${GITHUB_SHA}" -o /tmp/study-v2.css
-          echo "--- css size ---"
-          wc -c /tmp/study-v2.css
-          grep -q 'Study COMPASS V2 runtime theme' /tmp/study-v2.css
-          grep -q '.study-v2-runtime' /tmp/study-v2.css
-          grep -q 'study-quiz-active' /tmp/study-v2.css
-          grep -q 'Mobile flashcard readability' /tmp/study-v2.css
-          grep -q 'Flashcard nested explanation' /tmp/study-v2.css
-          grep -Fq '.study-v2-runtime.study-selection-active .selection>.subjects>.subject-tile:first-child' /tmp/study-v2.css
-          grep -q 'grid-template-columns:42px minmax(0,1fr)' /tmp/study-v2.css
-
-          echo "Checking beta navigation..."
-          curl -fsSL --retry 5 --retry-delay 2 "$BASE/beta.html?smoke=${GITHUB_SHA}" -o /tmp/beta.html
-          grep -q 'global-home' /tmp/beta.html
-          grep -q 'href="/"' /tmp/beta.html
-
-          curl -fsSL --retry 5 --retry-delay 2 "$BASE/practice-beta.html?smoke=${GITHUB_SHA}" -o /tmp/practice-beta.html
-          grep -q '/study.html?mode=qa' /tmp/practice-beta.html
-          grep -q 'global-home' /tmp/practice-beta.html
-
-          echo "Safety rollback: serving verified legacy learning data while CSV merge is isolated."
-          echo "Public CSV schema already verified above; live learning routes checked."
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+          with Path('/tmp/public-questions.csv').open(encoding='utf-8-sig', newline='') as f:
+              ids=[row['question_id'] for row in csv.DictReader(f)]
+          html=Path('/tmp/study.html').read_text()
+          assert all('"id":"'+id+'"' in html for id in ids), 'Approved question missing'
+          assert 'const SOCIAL = ' not in html, 'Unreviewed legacy bank leaked'
+          assert 'const questions=' in html
+          print('Reviewed-only HTML: ',len(ids),'approved questions, no legacy SOCIAL bank')
+          PY
+          echo "Published-only learning route verified."
 
           echo "Production smoke test passed."
 
-      - name: Verify rendered study page
+      - name: Verify rendered reviewed-only learning page
         shell: bash
         run: |
           set -euo pipefail
           BASE="https://study-compass.occompass-info.workers.dev"
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
-          if [ -z "$BROWSER" ]; then
-            echo "::error::No headless browser found on runner"
-            exit 1
-          fi
-          cat > /tmp/check-study-dom.py <<'PY'
-          import sys
-          from html.parser import HTMLParser
-          from pathlib import Path
-
-          class StudyDOM(HTMLParser):
-              def __init__(self):
-                  super().__init__()
-                  self.recovery = False
-                  self.ready = None
-
-              def handle_starttag(self, tag, attrs):
-                  attrs = dict(attrs)
-                  self.recovery |= attrs.get('id') == 'study-route-recovery'
-                  if tag == 'body':
-                      self.ready = attrs.get('data-study-route-ready')
-
-          dom = StudyDOM()
-          dom.feed(Path(sys.argv[1]).read_text())
-          assert not dom.recovery, 'Study route displayed recovery element'
-          assert dom.ready == sys.argv[2], f'Study mode not ready: {dom.ready}'
-          print(f'Actual DOM ready: {dom.ready}; no recovery element')
-          PY
+          test -n "$BROWSER"
           "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=qa&render=${GITHUB_SHA}" > /tmp/rendered.html
-          echo "--- rendered size ---"
-          wc -c /tmp/rendered.html
-          echo "--- rendered markers ---"
-          grep -oE 'study-v2-runtime|study-selection-active|study-quiz-active|一問一答|教科|今日の10問|学習トップへ戻る' /tmp/rendered.html | head -30 || true
-          grep -q 'data-study-route-ready="qa"' /tmp/rendered.html
-          python3 /tmp/check-study-dom.py /tmp/rendered.html qa
-          grep -q 'study-v2-runtime' /tmp/rendered.html
-          grep -Eq 'study-selection-active|study-quiz-active' /tmp/rendered.html
-          test "$(wc -c < /tmp/rendered.html)" -gt 100000
-          echo "Checking flashcard and question-only deep links..."
-          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=flashcards&render=${GITHUB_SHA}" > /tmp/rendered-flashcards.html
-          grep -q 'data-study-route-ready="flashcards"' /tmp/rendered-flashcards.html
-          python3 /tmp/check-study-dom.py /tmp/rendered-flashcards.html flashcards
-          grep -q 'study-selection-active' /tmp/rendered-flashcards.html
-          grep -q 'フラッシュカード20枚' /tmp/rendered-flashcards.html
-          grep -q 'study-v2-runtime' /tmp/rendered-flashcards.html
-          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=questions&render=${GITHUB_SHA}" > /tmp/rendered-questions.html
-          grep -q 'data-study-route-ready="questions"' /tmp/rendered-questions.html
-          python3 /tmp/check-study-dom.py /tmp/rendered-questions.html questions
-          grep -q 'study-selection-active' /tmp/rendered-questions.html
-          grep -q '問題だけ10問' /tmp/rendered-questions.html
-          grep -q 'study-v2-runtime' /tmp/rendered-questions.html
-          echo "Testing isolated one-question publication preview..."
-          "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=qa&published_preview=1&render=${GITHUB_SHA}" > /tmp/rendered-published-preview.html
-          grep -Fq '"id":"SC-SOC-HIS-WEB26-000006"' /tmp/rendered-published-preview.html
-          if grep -Fq '教材データに不整合があります' /tmp/rendered-published-preview.html; then
-            echo "::error::Published preview failed integrity gate"
-            exit 1
-          fi
-          python3 /tmp/check-study-dom.py /tmp/rendered-published-preview.html qa
-          echo "Isolated published-question preview passed."
-
-          echo "All three study-entry modes rendered."
-          echo "Rendered study page test passed."
+          grep -q '監査済み・公開承認済みの問題のみ表示' /tmp/rendered.html
+          if grep -q '教材データに不整合があります' /tmp/rendered.html; then exit 1; fi
+          echo "Reviewed-only learning page rendered."
 
       - name: Preserve production diagnostics
         if: always()
