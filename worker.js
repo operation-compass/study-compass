@@ -7,6 +7,21 @@ export default {
       return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
     }
 
+    // Only the separately reviewed WEB QUESTIONS publication sheet is readable here.
+    if (request.method === "GET" && url.pathname === "/api/questions.csv") {
+      const urlCsv = "https://docs.google.com/spreadsheets/d/1WFYJ-a5V1GBZzr99yglB4MUaW29z-qBze6cZ5m4cM8g/export?format=csv&gid=343531822";
+      try {
+        const upstream = await fetch(urlCsv, { headers: { Accept: "text/csv" } });
+        if (!upstream.ok) throw new Error("csv unavailable");
+        const csv = await upstream.text();
+        const header = "question_id,version,subject,grade,unit_major,unit_minor,question_type,question_text,choice_a,choice_b,choice_c,choice_d,correct_answer,explanation,source_url";
+        if (csv.replace(/^\uFEFF/, "").split(/\r?\n/)[0] !== header) throw new Error("schema mismatch");
+        return new Response(csv, { headers: { "Content-Type": "text/csv; charset=utf-8", "Cache-Control": "no-store" } });
+      } catch (_) {
+        return new Response("Question feed unavailable", { status: 503, headers: { "Cache-Control": "no-store" } });
+      }
+    }
+
     if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       const homeUrl = new URL("/home-v2.html", url.origin);
       const response = await env.ASSETS.fetch(new Request(homeUrl.toString(), request));
