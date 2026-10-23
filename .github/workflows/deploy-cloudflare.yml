@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BASE="https://study-compass.occompass-info.workers.dev"
+              BASE="https://study-compass.occompass-info.workers.dev"
 
           echo "Checking live approved-only question CSV..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/api/questions.csv?smoke=${GITHUB_SHA}" -o /tmp/public-questions.csv
