@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import vm from 'node:vm';
 
 const src = await fs.readFile(new URL('../worker.js', import.meta.url),'utf8');
 const {default:worker} = await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
@@ -150,4 +151,40 @@ test('approved-only learning page fetches the current public CSV on each request
   assert.ok(secondHtml.includes('SC-UPDATE-001'));
   assert.ok(secondHtml.includes('SC-UPDATE-002'));
   assert.equal(second.headers.get('cache-control'),'no-store');
+});
+
+test('quiz interaction persists correct and incorrect attempts without double counting clicks',async()=>{
+  const row=['SC-BEHAVIOR-001','1','社会','中3','歴史','江戸','4択','江戸幕府を開いたのは？','徳川家康','豊臣秀吉','織田信長','源頼朝','A','解説','https://example.org'].join(',');
+  const response=await probe(new Response(HEADER+'\n'+row+'\n',{status:200}),'/study.html?subject=社会');
+  assert.equal(response.status,200);
+  const html=await response.text();
+  const script=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script,'quiz script exists');
+  const store=new Map();
+  const localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
+  const makeEl=()=>({children:[],hidden:false,dataset:{},classList:{add(){}},replaceChildren(){this.children=[]},appendChild(child){this.children.push(child);return child},click(){this.onclick?.()},setAttribute(){},textContent:''});
+  const run=()=>{
+    const nodes=new Map();
+    const get=id=>{if(!nodes.has(id))nodes.set(id,makeEl());return nodes.get(id)};
+    const document={getElementById:get,createElement:()=>makeEl()};
+    vm.runInNewContext(script,{document,location:{search:'?subject=社会'},URLSearchParams,localStorage,Date,Set});
+    return get;
+  };
+  let get=run();
+  assert.equal(get('unit-title').textContent,'社会｜単元を選ぶ');
+  get('unit-buttons').children[0].click();
+  assert.equal(get('choices').children.length,4);
+  get('choices').children[1].click();
+  get('choices').children[1].click();
+  const saved1=JSON.parse(store.get('studyCompassApprovedQuizV1'));
+  assert.equal(saved1.answers.length,1,'repeated click after disabling must not create extra attempts');
+  assert.equal(saved1.answers[0].correct,false);
+  assert.equal(saved1.answers[0].question_id,'SC-BEHAVIOR-001');
+  get=run();
+  get('unit-buttons').children[0].click();
+  get('choices').children[0].click();
+  const saved2=JSON.parse(store.get('studyCompassApprovedQuizV1'));
+  assert.equal(saved2.answers.length,2);
+  assert.equal(saved2.answers[1].correct,true);
+  assert.equal(new Set(saved2.answers.map(a=>a.question_id)).size,1);
 });
