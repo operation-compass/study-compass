@@ -85,6 +85,15 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
   </a>
 </section>
 
+<section class="stats" aria-label="一問一答の学習実績">
+  <div class="stats-head"><span>一問一答の学習実績</span><span>この端末</span></div>
+  <div class="stats-grid">
+    <div class="statbox"><small>解答済み問題</small><strong id="quizDistinct">0問</strong></div>
+    <div class="statbox"><small>累計回答回数</small><strong id="quizAttempts">0回</strong></div>
+    <div class="statbox"><small>正答率</small><strong id="quizAccuracy">—</strong></div>
+  </div>
+  <p id="quizHistoryStatus" role="status" style="font-size:12px;color:var(--compass-muted);margin:10px 3px 0">一問一答の回答履歴から集計します。未学習の場合は0問です。</p>
+</section>
 <section class="stats" aria-label="この端末の学習履歴">
   <div class="stats-head"><span>これまでのβ教材確認数</span><span id="today"></span></div>
   <div class="stats-grid">
@@ -109,6 +118,19 @@ linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-fam
 (function(){
  document.getElementById("today").textContent="端末内の記録";
  let w=0,g=0,storageOkay=true;
+ try {
+   const raw=localStorage.getItem("studyCompassApprovedQuizV1");
+   if(raw!==null){
+     const q=JSON.parse(raw);
+     if(!q||!Array.isArray(q.answers))throw Error("invalid quiz history");
+     const valid=q.answers.filter(a=>a&&typeof a.question_id==="string"&&a.question_id&&typeof a.correct==="boolean");
+     document.getElementById("quizDistinct").textContent=new Set(valid.map(a=>a.question_id)).size+"問";
+     document.getElementById("quizAttempts").textContent=valid.length+"回";
+     document.getElementById("quizAccuracy").textContent=valid.length?Math.round(valid.filter(a=>a.correct).length/valid.length*100)+"%":"—";
+   }
+ }catch(e){
+   document.getElementById("quizHistoryStatus").textContent="⚠ 一問一答の履歴を読み取れません。元の記録は変更していません。";
+ }
  try{
    const probe="studyCompassStorageProbe";
    localStorage.setItem(probe,"1");

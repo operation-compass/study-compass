@@ -4,6 +4,7 @@ on:
     paths:
       - 'worker.js'
       - 'tests/public-question-feed.test.mjs'
+      - 'tests/browser-quiz-smoke.mjs'
       - '.github/workflows/test-public-questions.yml'
   workflow_dispatch:
 
@@ -35,6 +36,38 @@ jobs:
           console.log('Legacy schema field names:',Object.keys(rows[0]||{}).join(','));
           console.log('Legacy first row field types:',JSON.stringify(Object.fromEntries(Object.entries(rows[0]||{}).map(([k,v])=>[k,Array.isArray(v)?'array':typeof v]))));
           NODE
+
+  verify-browser-quiz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated browser test runner
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Exercise real Chromium without deploying
+        run: node tests/browser-quiz-smoke.mjs
+
+  verify-production-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run existing deployment safety checks without deploying
+        run: |
+          set -euo pipefail
+          node --check worker.js
+          node scripts/check-question-release.cjs
+          node scripts/check-history.cjs
+          node scripts/check-beta.cjs
+          node scripts/check-home-safety.cjs
+          node scripts/check-approval-contract.cjs
+          node scripts/audit-drive-export.cjs --self-test
 
   verify-google-csv-access:
     runs-on: ubuntu-latest

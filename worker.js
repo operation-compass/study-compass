@@ -87,6 +87,20 @@ function approvedOnlyHtml(questions) {
   </main><footer>Study COMPASS｜公開品質を優先しています</footer>
   <script>const questions=${json};let selected=[],current=0,score=0;
   const el=id=>document.getElementById(id);
+  const HISTORY_KEY="studyCompassApprovedQuizV1";
+  function recordAnswer(q,correct){
+    try{
+      const old=localStorage.getItem(HISTORY_KEY);
+      const saved=old?JSON.parse(old):{schema_version:1,answers:[]};
+      if(!saved||!Array.isArray(saved.answers))throw Error("Invalid quiz history");
+      saved.answers.push({question_id:q.id,subject:q.subject,correct:correct,answered_at:new Date().toISOString()});
+      localStorage.setItem(HISTORY_KEY,JSON.stringify(saved));
+    }catch(e){
+      let note=el("storage-warning");
+      if(!note){note=document.createElement("p");note.id="storage-warning";note.setAttribute("role","status");el("quiz").appendChild(note)}
+      note.textContent="⚠ 回答履歴を保存できません。既存データは削除しません。";
+    }
+  }
   const subjectOrder=["社会","理科","英語","国語","数学"];
   const groups=[...new Set(questions.map(q=>q.subject))].sort((a,b)=>{const x=subjectOrder.indexOf(a),y=subjectOrder.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
   function clear(node){node.replaceChildren()}
@@ -101,7 +115,7 @@ function approvedOnlyHtml(questions) {
   function begin(items){selected=items;current=0;score=0;el("selector").hidden=true;el("quiz").hidden=false;show()}
   function show(){const q=selected[current];el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
-    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;
+    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;recordAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
       if(!correct)b.classList.add("bad");el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
@@ -110,6 +124,8 @@ function approvedOnlyHtml(questions) {
   el("back").onclick=()=>{el("quiz").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
+  const requestedSubject=new URLSearchParams(location.search).get("subject");
+  if(requestedSubject&&groups.includes(requestedSubject))chooseSubject(requestedSubject);
   </script></body></html>`;
 }
 
