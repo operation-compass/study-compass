@@ -118,7 +118,7 @@ test('real legacy Study HTML retains all existing questions when public CSV adds
 
 test('approved-only quiz includes subject deep-link and separate persistent history',async()=>{
   const row=['SC-SUBJECT-001','1','社会','中3','歴史','江戸','4択','江戸幕府を開いた人物は？','徳川家康','豊臣秀吉','織田信長','源頼朝','A','1603年。','https://example.org'].join(',');
-  const res=await probe(new Response(HEADER+'\\n'+row+'\\n',{status:200}),'/study.html?subject=社会');
+  const res=await probe(new Response(HEADER+'\n'+row+'\n',{status:200}),'/study.html?subject=社会');
   assert.equal(res.status,200);
   const html=await res.text();
   assert.match(html,/new URLSearchParams\(location.search\).get\("subject"\)/);
