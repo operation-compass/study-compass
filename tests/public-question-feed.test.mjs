@@ -136,3 +136,18 @@ test('home displays quiz stats independently of the original beta totals',async(
   assert.ok(html.includes('studyCompassWrittenBetaV1'));
   assert.ok(html.includes('studyCompassGeneratedBetaV1'));
 });
+
+test('approved-only learning page fetches the current public CSV on each request',async()=>{
+  const makeRow=(id,prompt)=>[id,'1','社会','中3','歴史','江戸','4択',prompt,'正答','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const first=await probe(new Response(HEADER+'\n'+makeRow('SC-UPDATE-001','公開済み問題')+'\n',{status:200}),'/study.html?subject=社会');
+  assert.equal(first.status,200);
+  const firstHtml=await first.text();
+  assert.ok(firstHtml.includes('SC-UPDATE-001'));
+  assert.ok(!firstHtml.includes('SC-UPDATE-002'));
+  const second=await probe(new Response(HEADER+'\n'+makeRow('SC-UPDATE-001','公開済み問題')+'\n'+makeRow('SC-UPDATE-002','追加された新しい問題')+'\n',{status:200}),'/study.html?subject=社会');
+  assert.equal(second.status,200);
+  const secondHtml=await second.text();
+  assert.ok(secondHtml.includes('SC-UPDATE-001'));
+  assert.ok(secondHtml.includes('SC-UPDATE-002'));
+  assert.equal(second.headers.get('cache-control'),'no-store');
+});
