@@ -213,3 +213,23 @@ test('home executes quiz progress calculation while preserving legacy beta histo
   assert.equal(nodes.get('total').textContent,'3 / 64');
   for(const [key,value] of originalRecords)assert.equal(records.get(key),value,'existing history must remain unchanged');
 });
+
+test('quiz preserves existing storage and warns if a saved history is malformed',async()=>{
+  const row=['SC-SAFE-001','1','社会','中3','歴史','江戸','4択','徳川幕府は？','徳川家康','豊臣秀吉','源頼朝','織田信長','A','解説','https://example.org'].join(',');
+  const response=await probe(new Response(HEADER+'\n'+row+'\n',{status:200}),'/study.html?subject=社会');
+  assert.equal(response.status,200);
+  const script=(await response.text()).match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script);
+  const store=new Map([['studyCompassApprovedQuizV1','{invalid-history'],['studyCompassWrittenBetaV1','original-beta-data']]);
+  const localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
+  const makeEl=()=>({children:[],hidden:false,dataset:{},classList:{add(){}},replaceChildren(){this.children=[]},appendChild(c){this.children.push(c);return c},click(){if(!this.disabled)this.onclick?.()},setAttribute(){},textContent:''});
+  const nodes=new Map();
+  const get=id=>{if(!nodes.has(id))nodes.set(id,makeEl());return nodes.get(id)};
+  const document={getElementById:get,createElement:()=>makeEl()};
+  vm.runInNewContext(script,{document,location:{search:'?subject=社会'},URLSearchParams,localStorage,Date,Set});
+  get('unit-buttons').children[0].click();
+  get('choices').children[0].click();
+  assert.match(get('storage-warning').textContent,/保存できません/);
+  assert.equal(store.get('studyCompassApprovedQuizV1'),'{invalid-history');
+  assert.equal(store.get('studyCompassWrittenBetaV1'),'original-beta-data');
+});
