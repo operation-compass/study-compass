@@ -162,7 +162,7 @@ test('quiz interaction persists correct and incorrect attempts without double co
   assert.ok(script,'quiz script exists');
   const store=new Map();
   const localStorage={getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
-  const makeEl=()=>({children:[],hidden:false,dataset:{},classList:{add(){}},replaceChildren(){this.children=[]},appendChild(child){this.children.push(child);return child},click(){this.onclick?.()},setAttribute(){},textContent:''});
+  const makeEl=()=>({children:[],hidden:false,dataset:{},classList:{add(){}},replaceChildren(){this.children=[]},appendChild(child){this.children.push(child);return child},click(){if(!this.disabled)this.onclick?.()},setAttribute(){},textContent:''});
   const run=()=>{
     const nodes=new Map();
     const get=id=>{if(!nodes.has(id))nodes.set(id,makeEl());return nodes.get(id)};
