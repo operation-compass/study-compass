@@ -188,3 +188,28 @@ test('quiz interaction persists correct and incorrect attempts without double co
   assert.equal(saved2.answers[1].correct,true);
   assert.equal(new Set(saved2.answers.map(a=>a.question_id)).size,1);
 });
+
+test('home executes quiz progress calculation while preserving legacy beta history',async()=>{
+  const html=await fs.readFile(new URL('../home-v2.html',import.meta.url),'utf8');
+  const script=html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(script,'home inline script exists');
+  const records=new Map([
+    ['studyCompassApprovedQuizV1',JSON.stringify({schema_version:1,answers:[
+      {question_id:'Q1',correct:false},{question_id:'Q1',correct:true},{question_id:'Q2',correct:true}
+    ]})],
+    ['studyCompassWrittenBetaV1',JSON.stringify({scores:{W1:1},checked:{W2:true}})],
+    ['studyCompassGeneratedBetaV1',JSON.stringify({answered:{G1:true}})]
+  ]);
+  const originalRecords=new Map(records);
+  const localStorage={getItem:k=>records.get(k)??null,setItem:(k,v)=>records.set(k,v),removeItem:k=>records.delete(k)};
+  const nodes=new Map();
+  const document={getElementById(id){if(!nodes.has(id))nodes.set(id,{textContent:'',style:{}});return nodes.get(id)}};
+  vm.runInNewContext(script,{document,localStorage,JSON,Set,Object,Math});
+  assert.equal(nodes.get('quizDistinct').textContent,'2問');
+  assert.equal(nodes.get('quizAttempts').textContent,'3回');
+  assert.equal(nodes.get('quizAccuracy').textContent,'67%');
+  assert.equal(nodes.get('written').textContent,'2 / 40');
+  assert.equal(nodes.get('generated').textContent,'1 / 24');
+  assert.equal(nodes.get('total').textContent,'3 / 64');
+  for(const [key,value] of originalRecords)assert.equal(records.get(key),value,'existing history must remain unchanged');
+});
