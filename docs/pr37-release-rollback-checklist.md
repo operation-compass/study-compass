@@ -29,3 +29,13 @@
 
 ## 無変更範囲
 OC/K3、X/Buffer/GAS、既存の問題収集・監査・公開スケジュール、Webのデザイン方針。
+
+## Cloudflareの復旧方法（公式仕様・2026-10-31確認）
+- 公式: https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/
+- 公式コマンド: https://developers.cloudflare.com/workers/wrangler/commands/workers/
+- 復旧可能な正常版は、Cloudflare管理画面の Workers & Pages → `study-compass` → Deployments から選ぶか、読み取り操作 `npx wrangler deployments list --name study-compass` で確認する。
+- 直前に**正常動作を確認したVersion ID**を必ず記録。単純に1つ前のバージョンを正常と決めつけない。
+- 明示的に選んだVersion IDへ `npx wrangler rollback <VERSION_ID> --name study-compass` で戻せる仕様。ただしこれは本番トラフィックを即変更する操作であり、ユーザー確認と権限・Version ID検証なしに実行しない。
+- ダッシュボードからは対象バージョンの3点メニューのRollbackで復帰できる。最新100バージョンの制約、既存バインディングの互換性制約に注意。
+- Cloudflareのロールバックは接続先のGoogle Sheetsを以前の状態に戻すものではない。公開データ破壊・学習履歴削除の復旧を兼ねると誤認しない。
+- 本番実行権限・正常Version ID・復旧実証は**未確認**。本書は「公式手順確認済み」であって「ロールバック実施済み」ではない。
