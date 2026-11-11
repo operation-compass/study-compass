@@ -1,0 +1,20 @@
+name: Verify Drive connectivity probe (no credentials required)
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-drive-connection.cjs'
+      - 'scripts/test-drive-connection.cjs'
+      - '.github/workflows/check-drive-connection.yml'
+      - '.github/workflows/test-drive-connection.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  no-credential-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove the connection check fails closed
+        run: |
+          node --check scripts/check-drive-connection.cjs
+          node scripts/test-drive-connection.cjs
