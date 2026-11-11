@@ -1,0 +1,14 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const fields=['id','subject','grade','unit_major','unit_minor','question_type','question_text','choice_a','choice_b','choice_c','choice_d','correct_answer','explanation'];
+global.STUDY={spreadsheetId:'sheet',source:'問題MASTER'};
+global.STUDY_FIELDS_V2=fields;
+global.studySha_=(q)=>crypto.createHash('sha256').update(JSON.stringify(fields.map(k=>String(q[k]??'')))).digest('hex');
+let rows=[];
+global.SpreadsheetApp={openById:id=>{assert.equal(id,'sheet');return {getSheetByName:()=>({})}}};
+global.studyRows_=()=>rows;
+const {studyMasterPreflightPreview}=require('../gas/sc-master-preflight-preview.gs');
+const make=(id,answer)=>({question_id:id,status:'CHECK',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'奈良・文化',question_type:'4択',question_text:'四択の正答は？',choice_a:'甲',choice_b:'乙',choice_c:'丙',choice_d:'丁',correct_answer:answer,explanation:'説明',source_url:'https://example.org/source',version:'v0.1',publish_flag:'FALSE'});
+test('authentic master shape: 3 pending questions report A/B/C and remain HOLD',()=>{rows=[make('W1','甲'),make('W2','乙'),make('W3','丙')];const before=JSON.stringify(rows),out=studyMasterPreflightPreview(['W1','W2','W3']);assert.deepEqual(out.results.map(x=>x.answer_position),[1,2,3]);assert(out.results.every(x=>x.automatic_preflight_ok&&x.formal_review==='PENDING'&&x.production_permission==='HOLD'&&/^[a-f0-9]{64}$/.test(x.sha256_v2)));assert.equal(out.production_updated,false);assert.equal(out.published,0);assert.equal(JSON.stringify(rows),before)});
+test('invalid answer and duplicate options fail closed',()=>{rows=[{...make('BAD','甲'),choice_b:'甲'},make('WRONG','戊')];const out=studyMasterPreflightPreview(['BAD','WRONG']);assert(out.results[0].technical_errors.includes('DUPLICATE_OR_BLANK_CHOICES'));assert(out.results[0].technical_errors.includes('INVALID_ANSWER'));assert(out.results[1].technical_errors.includes('INVALID_ANSWER'))});
+test('unknown and already-public questions never pass',()=>{rows=[{...make('PUBLIC','甲'),status:'PUBLIC',publish_flag:'TRUE'}];const out=studyMasterPreflightPreview(['PUBLIC','MISSING']);assert(out.results.every(x=>!x.automatic_preflight_ok));assert(out.results.some(x=>x.technical_errors.includes('NOT_PENDING_UNPUBLISHED')));assert(out.results.some(x=>x.technical_errors.includes('MASTER_ID_NOT_FOUND')));});

@@ -1,0 +1,12 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const {inspect}=require('./inspect-drive-snapshot.cjs');
+const {hashV2}=require('./simple-three-check-gate.cjs');
+const now=new Date('2026-10-23T00:00:00Z');
+const q={id:'Q1',version:'v0.1',subject:'社会',grade:'中1',unit_major:'歴史',unit_minor:'奈良',question_type:'4択',question_text:'問題',choice_a:'A',choice_b:'B',choice_c:'C',choice_d:'D',correct_answer:'A',explanation:'解説'};
+const item={...q,sha256:hashV2(q)};
+const base={fetched_at:now.toISOString(),questions:[item],reviews:[],approvals:[]};
+test('well-formed structure never gives deployment permission',()=>{const r=inspect(base,now);assert.equal(r.valid,true);assert.equal(r.can_deploy,false);assert.equal(r.provenance,'NOT_AUTHENTICATED')});
+test('missing sheets or stale extraction rejected',()=>{assert.equal(inspect({...base,approvals:undefined},now).valid,false);assert(inspect({...base,fetched_at:'2026-10-22T23:00:00Z'},now).errors.includes('SNAPSHOT_STALE'))});
+test('tampered question hash and duplicate identifiers rejected',()=>{assert(inspect({...base,questions:[{...item,question_text:'改変'}]},now).errors.some(x=>x.startsWith('CONTENT_HASH_MISMATCH')));assert(inspect({...base,questions:[item,item]},now).errors.includes('DUPLICATE_OR_INVALID_ID'))});
+test('approval metadata duplication rejected',()=>{assert(inspect({...base,approvals:[{id:'Q1'},{id:'Q1'}]},now).errors.includes('DUPLICATE_APPROVALS'))});
