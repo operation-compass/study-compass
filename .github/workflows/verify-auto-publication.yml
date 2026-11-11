@@ -10,6 +10,7 @@ on:
       - 'scripts/verify-auto-publication.cjs'
       - 'scripts/test-auto-publication.cjs'
       - 'scripts/test-auto-publication-controller.cjs'
+      - 'scripts/test-auto-publish-hold.cjs'
       - 'test/fixtures/audited-release-20261016/**'
       - 'scripts/select-ready-candidates.cjs'
       - 'scripts/adapt-drive-to-web.cjs'
@@ -33,3 +34,4 @@ jobs:
           node scripts/test-adapt-drive-to-web.cjs
           node scripts/test-auto-publication.cjs
           node scripts/test-auto-publication-controller.cjs
+          node scripts/test-auto-publish-hold.cjs
