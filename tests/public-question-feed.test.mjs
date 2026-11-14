@@ -115,3 +115,37 @@ test('real legacy Study HTML retains all existing questions when public CSV adds
     assert.equal(changed.slice(0,html.indexOf(marker)),html.slice(0,html.indexOf(marker)));
   } finally {globalThis.fetch=oldFetch;}
 });
+
+test('approved-only Worker learning route serves only CSV-reviewed questions',async()=>{
+  const row=['SC-REGRESSION-001','v0.3','国語','中1','文法','語彙','4択','正しい読み方を選ぶ','正答','誤答1','誤答2','誤答3','正答','正答は1つ。','https://example.org/source'].join(',');
+  const res=await probe(new Response(HEADER+'\n'+row+'\n',{status:200}),'/study.html?mode=qa');
+  assert.equal(res.status,200);
+  assert.match(res.headers.get('content-type')||'',/text\/html/);
+  const html=await res.text();
+  assert.match(html,/監査済み・公開承認済みの問題のみ表示/);
+  assert.match(html,/SC-REGRESSION-001/);
+  assert.match(html,/正しい読み方を選ぶ/);
+  assert.match(html,/option===q.answer/);
+  assert.match(html,/不正解/);
+  assert.match(html,/正解/);
+  assert.match(html,/el\("next"\)/);
+  assert.doesNotMatch(html,/const SOCIAL = /,'unreviewed legacy question bank must not leak');
+});
+
+test('approved-only learning route fails closed when CSV is inaccessible',async()=>{
+  const res=await probe(new Response('Forbidden',{status:403}),'/study.html');
+  assert.equal(res.status,503);
+  assert.match(await res.text(),/公開を一時停止/);
+});
+
+test('approved-only learning route rejects duplicate source question IDs',async()=>{
+  const row=['SC-DUP-001','1','理科','中1','生物','植物','4択','重複検出','正答','誤答1','誤答2','誤答3','正答','理由','https://example.org'].join(',');
+  const res=await probe(new Response(HEADER+'\n'+row+'\n'+row+'\n',{status:200}),'/study.html');
+  assert.equal(res.status,503);
+  assert.match(await res.text(),/公開を一時停止/);
+});
+
+test('unreviewed legacy route is not publicly accessible',async()=>{
+  const res=await probe(new Response(HEADER+'\n',{status:200}),'/legacy-study.html');
+  assert.equal(res.status,404);
+});
