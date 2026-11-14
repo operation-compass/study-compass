@@ -49,7 +49,7 @@ test('approved public CSV merges into legacy question schema without changing ex
   const source=src+'\nexport { parsePublicCsv, addPublishedQuestions };';
   const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
   const original='<!doctype html><script>const SOCIAL = '+JSON.stringify([{id:'old-1',subject:'社会',grade:'中3',unit:'歴史',field_name:'歴史',topic_name:'江戸',q:'旧問',answer:'旧答',options:['旧答','B','C','D'],ex:'説明'}])+';</script>';
-  const row=['new-1','1','社会','中3','歴史','江戸','mcq','新問','正解','誤答1','誤答2','誤答3','A','新解説','https://example.org'].join(',');
+  const row=['new-1','1','社会','中3','歴史','江戸','4択','新問','正解','誤答1','誤答2','誤答3','A','新解説','https://example.org'].join(',');
   const oldFetch=globalThis.fetch;
   globalThis.fetch=async()=>new Response(HEADER+'\n'+row+'\n',{status:200});
   try{
@@ -79,7 +79,7 @@ test('question text cannot break out of embedded HTML script',async()=>{
   const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
   const original='<script>const SOCIAL = [];</script>';
   const payload='</script><script>alert(1)</script>';
-  const fields=['escape-test','1','社会','中1','歴史','近世','mcq',payload,'a','b','c','d','A','説明','https://example.org'];
+  const fields=['escape-test','1','社会','中1','歴史','近世','4択',payload,'a','b','c','d','A','説明','https://example.org'];
   const escapeCsv=v=>'"'+String(v).replaceAll('"','""')+'"';
   const csv=HEADER+'\n'+fields.map(escapeCsv).join(',')+'\n';
   const oldFetch=globalThis.fetch;
