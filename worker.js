@@ -123,7 +123,7 @@ footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{disp
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
     q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
-      if(!correct)b.classList.add("bad");el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
+      if(!correct)b.classList.add("bad");const panel=el("answer");panel.replaceChildren();const headline=document.createElement("strong");headline.textContent=(correct?"✓ 正解":"✕ 不正解")+"　正解："+q.answer;panel.append(headline);if(q.ex){const detail=document.createElement("div");detail.textContent=q.ex;detail.style.marginTop="10px";panel.append(detail)}
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
   el("next").onclick=()=>{if(current===selected.length-1){el("back").click()}else{current++;show()}};
