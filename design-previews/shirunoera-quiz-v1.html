@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA — 一問一答トップ（検証用）</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA — 高校受験 一問一答（検証用）</title>
 <style>
 :root{--bg:#faf8f4;--paper:#fff;--ink:#292d33;--muted:#6a6e75;--line:#e6e1da;--wine:#6d3046;--copper:#a47763}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.65}
 button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--copper);outline-offset:3px}header{background:var(--paper);border-bottom:1px solid var(--line)}.wrap{max-width:680px;margin:auto;padding:0 20px}
 header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font:700 22px Georgia,serif;letter-spacing:.10em;color:var(--wine)}.header-sub{font-size:11px;color:var(--muted);letter-spacing:.05em}
-main{padding:44px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-size:12px;font-weight:700}.intro{margin-bottom:30px}.intro h1{font-size:clamp(28px,5vw,38px);letter-spacing:.02em;margin:10px 0 7px;line-height:1.45}.intro p{font-size:15px;color:var(--muted);margin:0}
+main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-size:12px;font-weight:700}.intro{margin-bottom:30px}.intro h1{font-size:clamp(28px,5vw,38px);letter-spacing:.02em;margin:10px 0 7px;line-height:1.45}.intro p{font-size:15px;color:var(--muted);margin:0}
 .subjects{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.subject{background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;min-height:68px;padding:12px 4px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--ink);box-shadow:0 2px 9px rgba(25,20,15,.025)}.subject:hover{border-color:var(--wine)}.subject strong{font-size:16px;font-weight:700}.arrow{color:var(--copper);font-size:13px}
-.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.subject-heading{font-size:16px;font-weight:700;letter-spacing:.03em;margin:10px 0 14px}.home-head{padding:12px 0 14px}.home-head p{color:var(--muted);font-size:13px;margin:0}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 .subpage{display:none}.subpage.active{display:block}.home.hidden{display:none}.back{border:0;background:transparent;color:var(--wine);padding:0 0 18px;font-weight:700}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:20px}
 label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:100%;background:white;padding:14px;border:1px solid #c9c4be;border-radius:8px;font-size:16px;color:var(--ink)}.num{display:flex;gap:8px;margin-top:10px}.num button{flex:1;background:white;border:1px solid var(--line);padding:14px 0;border-radius:8px}.num button[aria-pressed=true]{background:#f4e8ec;border:2px solid var(--wine);font-weight:700;color:var(--wine)}.primary{background:var(--wine);color:white;border:0;border-radius:8px;padding:17px;display:block;width:100%;font-weight:700;font-size:16px;margin-top:24px}.hint{font-size:12px;color:var(--muted);margin-top:12px}
 .preview{margin-top:20px;padding:18px;background:#f2eee7;border-radius:10px}.preview h2{font-size:21px;margin:5px 0}.preview p{margin:0}
@@ -15,7 +15,7 @@ label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:1
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
-  <div class="intro"><div class="eyebrow">STUDY COMPASS</div><h1>教科を選んで、<br>すぐに学ぼう。</h1><p>5教科の一問一答。毎日少しずつ、自分のペースで。</p></div>
+  <div class="home-head"><h1 class="subject-heading">一問一答</h1><p>学びたい教科を選択</p></div>
   <div class="subjects" aria-label="教科を選択">
     <button class="subject" data-subject="国語"><strong>国語</strong><span class="arrow" aria-hidden="true">↗</span></button>
     <button class="subject" data-subject="数学"><strong>数学</strong><span class="arrow" aria-hidden="true">↗</span></button>
@@ -23,21 +23,21 @@ label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:1
     <button class="subject" data-subject="理科"><strong>理科</strong><span class="arrow" aria-hidden="true">↗</span></button>
     <button class="subject" data-subject="社会"><strong>社会</strong><span class="arrow" aria-hidden="true">↗</span></button>
   </div>
-  <p class="note">登録不要。まずは教科を選んでください。</p>
+  
   <section class="history" aria-labelledby="history-title">
-    <h2 id="history-title">解いた問題と結果</h2>
-    <p class="history-desc">学習の進み具合をここで確認できます。</p>
+    <h2 id="history-title">学習記録</h2>
+    <p class="history-desc">これまでの学習状況</p>
     <div class="history-overview" aria-label="学習結果">
       <div class="history-stat"><small>解いた問題</small><strong id="answered">—</strong></div>
       <div class="history-stat"><small>正答率</small><strong id="accuracy">—</strong></div>
       <div class="history-stat"><small>間違えた問題</small><strong id="mistakes">—</strong></div>
     </div>
-    <div class="history-empty" id="history-empty">まだ学習結果はありません。教科を選んで始めましょう。</div>
+    <div class="history-empty" id="history-empty">学習を始めると、ここに記録が表示されます。</div>
     <p class="note">※ この検証ページでは実際の学習結果を取得しません。既存履歴を0件と誤表示しないよう、連携前は「—」と表示します。</p>
   </section>
 </section>
 <section id="configure" class="subpage" aria-label="出題設定">
-  <button id="back" class="back">← 教科一覧に戻る</button><div class="eyebrow">STUDY COMPASS</div><h1 id="subject-title">社会の一問一答</h1>
+  <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
   <p class="note">分野・単元と問題数を選んでスタート。</p>
   <div class="panel"><label for="unit">出題する分野</label>
     <select id="unit"></select>
@@ -47,7 +47,7 @@ label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:1
     <p class="hint">検証用の画面です。実際の問題データ・学習記録・本番サイトには接続していません。</p>
   </div><div id="selection" class="preview" hidden aria-live="polite"></div>
 </section></div></main>
-<footer class="footer">SHIRUNOERA / STUDY COMPASS — UI PREVIEW ONLY</footer>
+<footer class="footer">SHIRUNOERA — UI PREVIEW ONLY</footer>
 <script>
 "use strict";
 const units={"国語":["すべて","漢字","語彙","熟語"],"数学":["すべて","数と式","方程式","関数","図形"],"英語":["すべて","英単語","文法","語順"],"理科":["すべて","物理","化学","生物","地学"],"社会":["すべて","地理","歴史","公民"]};
