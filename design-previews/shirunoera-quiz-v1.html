@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA — 高校受験 一問一答（検証用）</title>
+<style>
+:root{--bg:#faf8f4;--paper:#fff;--ink:#292d33;--muted:#6a6e75;--line:#e6e1da;--wine:#6d3046;--copper:#a47763}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.65}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--copper);outline-offset:3px}header{background:var(--paper);border-bottom:1px solid var(--line)}.wrap{max-width:680px;margin:auto;padding:0 20px}
+header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font:700 22px Georgia,serif;letter-spacing:.10em;color:var(--wine)}.header-sub{font-size:11px;color:var(--muted);letter-spacing:.05em}
+main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-size:12px;font-weight:700}.intro{margin-bottom:30px}.intro h1{font-size:clamp(28px,5vw,38px);letter-spacing:.02em;margin:10px 0 7px;line-height:1.45}.intro p{font-size:15px;color:var(--muted);margin:0}
+.subjects{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.subject{background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;min-height:68px;padding:12px 4px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--ink);box-shadow:0 2px 9px rgba(25,20,15,.025)}.subject:hover{border-color:var(--wine)}.subject strong{font-size:16px;font-weight:700}.arrow{color:var(--copper);font-size:13px}
+.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.subject-heading{font-size:16px;font-weight:700;letter-spacing:.03em;margin:10px 0 14px}.home-head{padding:12px 0 14px}.home-head p{color:var(--muted);font-size:13px;margin:0}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.subpage{display:none}.subpage.active{display:block}.home.hidden{display:none}.back{border:0;background:transparent;color:var(--wine);padding:0 0 18px;font-weight:700}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:20px}
+.field-stack{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-stack label{margin-top:0}.field-stack select{min-width:0}@media(max-width:480px){.field-stack{grid-template-columns:1fr}}label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:100%;background:white;padding:14px;border:1px solid #c9c4be;border-radius:8px;font-size:16px;color:var(--ink)}.num{display:flex;gap:8px;margin-top:10px}.num button{flex:1;background:white;border:1px solid var(--line);padding:14px 0;border-radius:8px}.num button[aria-pressed=true]{background:#f4e8ec;border:2px solid var(--wine);font-weight:700;color:var(--wine)}.primary{background:var(--wine);color:white;border:0;border-radius:8px;padding:17px;display:block;width:100%;font-weight:700;font-size:16px;margin-top:24px}.hint{font-size:12px;color:var(--muted);margin-top:12px}
+.preview{margin-top:20px;padding:18px;background:#f2eee7;border-radius:10px}.preview h2{font-size:21px;margin:5px 0}.preview p{margin:0}
+@media(max-width:480px){.wrap{padding:0 16px}main{padding-top:35px}.subjects{gap:5px}.subject{min-height:60px;padding:9px 2px;flex-direction:column;gap:1px}.subject strong{font-size:14px}.arrow{font-size:11px}.history-stat strong{font-size:18px}.logo{font-size:19px}.header-sub{font-size:10px}}
+
+/* Editorial fashion-banner concept. Hero only: learning UI remains practical. */
+.hero-banner{position:relative;isolation:isolate;overflow:hidden;min-height:244px;margin:0 0 24px;padding:25px 29px 20px;border-radius:5px;color:#faf4ef;background:linear-gradient(113deg,rgba(30,22,28,.96),rgba(77,36,50,.87) 60%,rgba(127,72,76,.7)),radial-gradient(ellipse at 79% 40%,#c2a28b,#3f2631 65%);display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.hero-banner::before{content:"";position:absolute;z-index:-1;right:-62px;top:-85px;width:360px;height:360px;border:1px solid rgba(239,213,193,.34);border-radius:50%;box-shadow:0 0 0 43px #efcfb010,0 0 0 97px #efcfb00b;transform:rotate(-20deg)}
+.hero-banner::after{content:"S";position:absolute;right:20px;top:7px;color:rgba(239,213,193,.16);font:italic 240px/1 Georgia,"Times New Roman",serif;transform:rotate(-12deg);pointer-events:none;z-index:-1}
+.banner-head,.banner-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+.banner-kicker,.banner-number,.banner-foot{font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#ead5c9}
+.banner-number{white-space:nowrap}.banner-copy{position:relative;z-index:1;max-width:100%}.hero-banner h1{font:normal clamp(37px,7.6vw,64px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.055em;color:#fff9f1;margin:0;text-transform:uppercase;text-shadow:0 2px 15px #21181c30}
+.hero-banner h1 em{font-style:italic;font-weight:400;color:#efc6b2;letter-spacing:-.07em}.banner-foot{border-top:1px solid #f4dfd454;padding-top:10px;letter-spacing:.15em}.banner-foot span:last-child{letter-spacing:.12em}
+@media(max-width:480px){.hero-banner{min-height:188px;padding:18px 17px 15px;border-radius:4px;margin-bottom:22px}.hero-banner::before{width:230px;height:230px;right:-83px;top:-35px}.hero-banner::after{font-size:155px;right:0;top:21px}.hero-banner h1{font-size:clamp(32px,9vw,42px)}.banner-kicker,.banner-number,.banner-foot{font-size:8px;letter-spacing:.14em}}
+
+/* Learning record V1 — clear missing-data states, no invented metrics */
+.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.record-panel{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:17px}
+.record-panel h3{font-size:15px;margin:0 0 8px}.record-panel p{color:var(--muted);font-size:12px;margin:0 0 9px}
+.record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
+.record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}
+.record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+.section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
+.section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
+.video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
+#analytics-note{font-size:11px;color:var(--muted);margin-top:17px}
+@media(max-width:520px){.record-grid{grid-template-columns:1fr}.record-panel{padding:15px}}
+</style></head><body>
+<header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
+<main><div class="wrap"><section class="home" id="home">
+  <section class="hero-banner" aria-label="SHIRUNOERA learning editorial banner"><div class="banner-head"><span class="banner-kicker">SHIRUNOERA — THE LEARNING EDITION</span><span class="banner-number">ISSUE 001</span></div><div class="banner-copy"><h1>THE ART<br>OF <em>KNOWING.</em></h1></div><div class="banner-foot"><span>STUDY WITH CURIOSITY</span><span>EST. 2026</span></div></section>
+  <div class="home-head"><h1 class="subject-heading">一問一答</h1><p>学びたい教科を選択</p></div>
+  <div class="subjects" aria-label="教科を選択">
+    <button class="subject" data-subject="国語"><strong>国語</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="数学"><strong>数学</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="英語"><strong>英語</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="理科"><strong>理科</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="社会"><strong>社会</strong><span class="arrow" aria-hidden="true">↗</span></button>
+  </div>
+  
+  <section class="history" aria-labelledby="history-title">
+    <h2 id="history-title">学習記録</h2>
+    <p class="history-desc">これまでの学習状況</p>
+    <div class="history-overview" aria-label="学習結果">
+      <div class="history-stat"><small>解いた問題</small><strong id="answered">—</strong></div>
+      <div class="history-stat"><small>正答率</small><strong id="accuracy">—</strong></div>
+      <div class="history-stat"><small>間違えた問題</small><strong id="mistakes">—</strong></div>
+    </div>
+    <div class="history-empty" id="history-empty">学習を始めると、ここに記録が表示されます。</div>
+    <p class="note">※ この検証ページでは実際の学習結果を取得しません。既存履歴を0件と誤表示しないよう、連携前は「—」と表示します。</p>
+    <div class="record-grid">
+      <section class="record-panel" aria-labelledby="radar-title">
+        <h3 id="radar-title">5教科の学習バランス</h3>
+        <p>各教科の<strong>解答済み率</strong>。未学習は正答率0％とは区別します。</p>
+        <svg class="record-radar" id="record-radar" viewBox="0 0 300 300" role="img" aria-label="5教科の解答済み率。記録がない教科は未学習として表示します"></svg>
+        <div class="record-legend">表示基準：解答した問題IDの種類 ÷ 各教科の公開問題数。正答率ではありません。</div>
+      </section>
+      <section class="record-panel" aria-labelledby="weak-title">
+        <h3 id="weak-title">次に取り組みたい分野</h3>
+        <p>正答率が低い単元を優先表示します（5問以上回答した単元が対象）。</p>
+        <ul class="record-items" id="weak-units"><li>まだ分析できる解答記録がありません。</li></ul>
+        <h3 style="margin-top:18px">まだ解いていない教科</h3>
+        <ul class="record-items" id="untouched-subjects"><li>5教科とも未学習です。</li></ul>
+      </section>
+    </div>
+    <p id="analytics-note">学習記録はこの端末だけで保存する設計です。サイト管理者向けアクセス解析とは分離します。</p>
+  </section>
+</section>
+<section id="configure" class="subpage" aria-label="出題設定">
+  <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
+  <p class="note">分野・単元と問題数を選んでスタート。</p>
+  <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select></div></div><p class="note" id="available" aria-live="polite"></p>
+    <label style="margin-top:22px">問題数</label>
+    <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
+    <button class="primary" id="start">この条件で始める →</button>
+    <p class="hint">検証用の画面です。実際の問題データ・学習記録・本番サイトには接続していません。</p>
+  </div>
+  <section class="section-video" aria-label="単元別解説動画">
+    <h2>単元別 解説動画</h2><p class="note">選択した分野・単元に対応する動画を、後日ここへ追加できる構成です。</p>
+    <div class="video-placeholder"><span class="video-icon" aria-hidden="true">▶</span><span id="video-label">動画は準備中です。公開後は該当単元の解説へ案内します。</span></div>
+  </section><div id="selection" class="preview" hidden aria-live="polite"></div>
+</section></div></main>
+<footer class="footer">SHIRUNOERA — UI PREVIEW ONLY</footer>
+<script>
+"use strict";
+// Real taxonomy and per-unit counts verified from the approved WEB QUESTIONS CSV.
+// Design preview only: counts are a snapshot, not a live feed; no answer data is read or written.
+const taxonomy={"社会":{"地理":{"世界":13,"日本":18},"歴史":{"古代":54,"中世":36,"近世":45,"近現代":47},"公民":{"政治":12,"国際":10,"権利":7,"経済":12}},"国語":{"漢字":{"漢字の読み":3},"表現":{"表現技法":7,"文章構成":2,"意見文":1},"語彙":{"語句・熟語":8,"四字熟語":50,"ことわざ":20,"慣用句":20,"故事成語":15,"類義語・対義語":8,"熟語の構成":2},"文法":{"文法基礎":9,"接続詞・接続関係":1},"古典":{"古文・漢文":8,"古文":2,"漢文":1},"読解":{"読解基礎":9}},"数学":{"数と式":{"正負の数":1,"文字式":2,"正負の数・文字式":7},"方程式":{"一次方程式":9},"関数":{"一次関数":9,"二次関数":4},"図形":{"三平方の定理":1,"平面図形":8,"平行線":1},"データ":{"平均":1,"データの活用":9},"確率":{"確率":8}},"理科":{"化学":{"物質":1,"酸・アルカリ":1,"化学変化":8,"化学変化とイオン":1},"物理":{"力":1,"電流":2,"電圧":1,"運動とエネルギー":6,"電流とその利用":2},"地学":{"天体":2,"岩石":1,"地震":7,"気象":2},"生命":{"植物・生物":7,"植物":1,"人体":1,"消化":1}},"英語":{"文法":{"be動詞":9,"一般動詞":10,"過去形":11,"関係代名詞":4}}};
+const byId=id=>document.getElementById(id);
+let subject="",amount="10";
+function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
+function countFor(){const majors=taxonomy[subject]||{},m=byId("major").value,n=byId("unit").value;let total=0;for(const [k,minors] of Object.entries(majors)){if(m!=="all"&&k!==m)continue;for(const [name,count] of Object.entries(minors)){if(n!=="all"&&name!==n)continue;total+=count}}return total}
+function fillUnits(){const minor=byId("unit"),major=byId("major").value;minor.replaceChildren();addOption(minor,"all","すべての単元");if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject][major]))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
+function refreshCount(){const count=countFor();byId("available").textContent="選択範囲の公開CSV登録数："+count+"問（2026年11月23日時点の確認値）";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=n!=="all"&&Number(n)>count;btn.title=btn.disabled?"選択範囲の問題数より多いため選択できません":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.n===amount)));byId("selection").hidden=true}
+document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
+ subject=btn.dataset.subject;byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
+ const m=byId("major");m.replaceChildren();addOption(m,"all","すべての分野");for(const [name,minors] of Object.entries(taxonomy[subject])){const count=Object.values(minors).reduce((a,b)=>a+b,0);addOption(m,name,name+"（"+count+"問）")}fillUnits();window.scrollTo(0,0)
+}));
+byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
+byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
+document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
+byId("start").addEventListener("click",()=>{const box=byId("selection");box.hidden=false;box.replaceChildren();const h=document.createElement("h2");h.textContent="出題設定の確認";const p=document.createElement("p");p.textContent=subject+" ／ "+byId("major").selectedOptions[0].textContent+" ／ "+byId("unit").selectedOptions[0].textContent+" ／ "+(amount==="all"?"全問":amount+"問")+"。公開用データ連携後、この条件で問題演習が始まります。";box.append(h,p)});
+</script>
+<script>
+"use strict";
+/* Prototype-only record adapter. Called only after a real quiz supplies a verified
+   question ID, subject, major, minor, and correctness. No fabricated demo history.
+   No network requests, visitor identifiers, or cross-device synchronization. */
+(function(){
+const KEY="shirunoera.learning.v1";
+const subjectOrder=["国語","数学","英語","理科","社会"];
+const tally={};for(const s of subjectOrder)tally[s]=Object.values(taxonomy[s]).reduce((a,units)=>a+Object.values(units).reduce((x,y)=>x+y,0),0);
+function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"{}");return v&&v.schema===1&&v.answers&&typeof v.answers==="object"&&!Array.isArray(v.answers)?v.answers:{}}catch(e){return {}}}
+function recordAnswer({questionId,subject,major,minor,correct}){
+  if(typeof questionId!=="string"||!questionId||!Object.prototype.hasOwnProperty.call(tally,subject)||!taxonomy[subject][major]||!Object.prototype.hasOwnProperty.call(taxonomy[subject][major],minor)||typeof correct!=="boolean")return false;
+  const current=read(),prev=current[questionId],now={subject,major,minor,correct,attempts:(Number.isSafeInteger(prev?.attempts)&&prev.attempts>0?prev.attempts:0)+1,lastAnswered:new Date().toISOString()};
+  current[questionId]=now;
+  try{localStorage.setItem(KEY,JSON.stringify({schema:1,answers:current}));render();return true}catch(e){return false}
+}
+// Exposed only for future quiz-to-dashboard integration; not invoked by this preview.
+window.ShirunoeraLearning={recordAnswer};
+const svgNS="http://www.w3.org/2000/svg";
+function elem(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e}
+function renderRadar(done){
+  const svg=document.getElementById("record-radar");svg.replaceChildren();
+  const vertex=(i,p)=>{const a=-Math.PI/2+2*Math.PI*i/5;return [150+105*p*Math.cos(a),150+105*p*Math.sin(a)]};
+  const pts=p=>subjectOrder.map((s,i)=>vertex(i,p).map(n=>n.toFixed(1)).join(",")).join(" ");
+  for(const p of [.25,.5,.75,1])svg.append(elem("polygon",{points:pts(p),fill:"none",stroke:"#e6e1da","stroke-width":"1"}));
+  for(let i=0;i<5;i++){const [x,y]=vertex(i,1);svg.append(elem("line",{x1:150,y1:150,x2:x,y2:y,stroke:"#e6e1da"}))}
+  const ratios=subjectOrder.map(s=>Math.min(1,(done[s]?.size||0)/tally[s]));
+  if(ratios.some(r=>r>0))svg.append(elem("polygon",{points:subjectOrder.map((s,i)=>vertex(i,ratios[i]).join(",")).join(" "),fill:"#6d304644",stroke:"#6d3046","stroke-width":2}));
+  subjectOrder.forEach((s,i)=>{const [x,y]=vertex(i,1.22);const t=elem("text",{x,y,"text-anchor":"middle","dominant-baseline":"central",fill:"#292d33","font-size":"13"});t.textContent=s;svg.append(t)});
+  const desc=elem("title",{});desc.textContent=subjectOrder.map(s=>s+"："+(done[s]?.size||0)+"/"+tally[s]+"問").join("、");svg.append(desc);
+}
+function render(){
+  const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&Object.prototype.hasOwnProperty.call(tally,r.subject)&&taxonomy[r.subject]?.[r.major]?.[r.minor]);
+  const done={};for(const s of subjectOrder)done[s]=new Set();
+  const weak={};let correct=0,incorrect=0;
+  for(const [id,r] of entries){done[r.subject].add(id);correct+=r.correct?1:0;incorrect+=r.correct?0:1;const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
+  byId("answered").textContent=entries.length?entries.length+"問":"—";
+  byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
+  byId("mistakes").textContent=entries.length?incorrect+"問":"—";
+  byId("history-empty").hidden=entries.length>0;
+  renderRadar(done);
+  const untouched=subjectOrder.filter(s=>done[s].size===0);
+  const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
+  if(!untouched.length){const li=document.createElement("li");li.textContent="全教科で学習記録があります。";untouchedNode.append(li)}
+  for(const s of untouched){const li=document.createElement("li");li.textContent=s+"（未学習）";untouchedNode.append(li)}
+  const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
+  const node=byId("weak-units");node.replaceChildren();
+  if(!list.length){const li=document.createElement("li");li.textContent="5問以上回答した単元がまだありません。";node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");li.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問）";node.append(li)}
+}
+render();
+})();
+</script></body></html>

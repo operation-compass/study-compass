@@ -68,7 +68,7 @@ async function addPublishedQuestions(html, maxQuestions = Infinity) {
 // Approved-only learning interface: no embedded legacy question bank is served publicly.
 function approvedOnlyHtml(questions) {
   const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Study COMPASS｜監査済み教材</title><style>
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜一問一答</title><style>
   :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#07152b;color:#f0f7ff}*{box-sizing:border-box}
   body{margin:0;min-height:100vh;background:linear-gradient(155deg,#07152b,#122a52)}
   header,main{max-width:720px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #38517a}
@@ -80,13 +80,23 @@ function approvedOnlyHtml(questions) {
   #next{background:#1974d2;border:0;text-align:center;font-weight:700;margin-top:22px}
   #answer{font-size:17px;line-height:1.6}footer{text-align:center;color:#afc1dc;padding:20px}
   [hidden]{display:none!important}
-  </style></head><body><header><h1>Study COMPASS</h1><a href="/">ホームへ戻る</a></header>
+  </style></head><body><header><h1>SHIRUNOERA</h1><a href="/">ホームへ戻る</a></header>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
   <section id="quiz" class="card" hidden><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p><h2 id="question"></h2><div id="choices"></div><p id="answer" aria-live="polite"></p><button id="next" hidden>次の問題へ</button></section>
-  </main><footer>Study COMPASS｜公開品質を優先しています</footer>
+  </main><footer>SHIRUNOERA｜公開品質を優先しています</footer>
   <script>const questions=${json};let selected=[],current=0,score=0;
   const el=id=>document.getElementById(id);
+  function saveLearningAnswer(q,correct){
+    try{
+      const key="shirunoera.learning.v1";
+      const data=JSON.parse(localStorage.getItem(key)||"{}");
+      const answers=data&&data.schema===1&&data.answers&&typeof data.answers==="object"&&!Array.isArray(data.answers)?data.answers:{};
+      const old=answers[q.id];
+      answers[q.id]={subject:q.subject,major:q.field_name,minor:q.topic_name,correct,attempts:(Number.isSafeInteger(old?.attempts)&&old.attempts>0?old.attempts:0)+1,lastAnswered:new Date().toISOString()};
+      localStorage.setItem(key,JSON.stringify({schema:1,answers}));
+    }catch(e){/* storage unavailable: keep quiz usable without changing prior records */}
+  }
   const subjectOrder=["社会","理科","英語","国語","数学"];
   const groups=[...new Set(questions.map(q=>q.subject))].sort((a,b)=>{const x=subjectOrder.indexOf(a),y=subjectOrder.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
   function clear(node){node.replaceChildren()}
@@ -101,7 +111,7 @@ function approvedOnlyHtml(questions) {
   function begin(items){selected=items;current=0;score=0;el("selector").hidden=true;el("quiz").hidden=false;show()}
   function show(){const q=selected[current];el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
-    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;
+    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
       if(!correct)b.classList.add("bad");el("answer").textContent=(correct?"正解！":"不正解")+"　正解："+q.answer+(q.ex?"　"+q.ex:"");
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
@@ -110,6 +120,15 @@ function approvedOnlyHtml(questions) {
   el("back").onclick=()=>{el("quiz").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
+  const params=new URLSearchParams(location.search);
+  const requested=params.get("subject");
+  if(requested&&groups.includes(requested)){
+    chooseSubject(requested);
+    const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
+    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(minor==="all"||q.topic_name===minor));
+    const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
+    if(limit>0)begin(pool.slice(0,limit));
+  }
   </script></body></html>`;
 }
 
