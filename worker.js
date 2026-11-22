@@ -69,21 +69,31 @@ async function addPublishedQuestions(html, maxQuestions = Infinity) {
 function approvedOnlyHtml(questions) {
   const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜一問一答</title><style>
-  :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;background:#07152b;color:#f0f7ff}*{box-sizing:border-box}
-  body{margin:0;min-height:100vh;background:linear-gradient(155deg,#07152b,#122a52)}
-  header,main{max-width:720px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid #38517a}
-  a{color:#8cddff}h1{font-size:21px;margin:0}.tag{color:#9de5df;font-size:12px}
-  .card{border:1px solid #44608e;border-radius:18px;background:#14294c;padding:24px;margin-top:22px}
-  .muted{color:#afc1dc}h2{font-size:23px;line-height:1.55}h3{margin:10px 0}
-  button{display:block;width:100%;text-align:left;border:1px solid #5976a6;border-radius:12px;padding:15px;margin:10px 0;background:#1a3969;color:#fff;font-size:17px;cursor:pointer}
-  button:disabled{opacity:.85;cursor:default}button.ok{border-color:#65dab2;background:#14554b}button.bad{border-color:#ff9696;background:#673040}
-  #next{background:#1974d2;border:0;text-align:center;font-weight:700;margin-top:22px}
-  #answer{font-size:17px;line-height:1.6}footer{text-align:center;color:#afc1dc;padding:20px}
-  [hidden]{display:none!important}
-  </style></head><body><header><h1>SHIRUNOERA</h1><a href="/">ホームへ戻る</a></header>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#29232a;background:#faf8f4;--wine:#632b40;--ink:#29232a;--muted:#69636a;--line:#e0d6d0;--paper:#fffdfb;--blue:#294454;--accent:#bd9d88}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#faf8f4;color:var(--ink);line-height:1.65}a{color:var(--wine);text-decoration:none}
+button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #b78563;outline-offset:3px}
+.site-header{background:#fffdfb;border-bottom:1px solid var(--line)}.header-inner{max-width:960px;margin:auto;padding:13px 20px;display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.18em;font-size:23px;font-weight:600;color:var(--wine)}.home-link{font-size:13px;white-space:nowrap}
+.hero-strip{background:linear-gradient(116deg,#331923,#662b40 62%,#314959);color:#fff6ef;min-height:120px;padding:22px 20px;position:relative;overflow:hidden;text-align:center}.hero-strip:before{content:"";position:absolute;right:-50px;top:-120px;width:350px;height:350px;border:1px solid #d9b9a653;border-radius:50%;box-shadow:0 0 0 38px #d9b9a612,0 0 0 90px #d9b9a60d}.hero-strip small{display:block;font:10px Georgia,serif;letter-spacing:.22em;color:#e9d1c8}.hero-strip h1{position:relative;font:italic 38px/1 Georgia,serif;margin:14px 0 0;letter-spacing:.025em;font-weight:400}
+main{max-width:960px;margin:auto;padding:20px 20px 64px}.tag{font-size:11px;color:var(--wine);letter-spacing:.08em}.breadcrumb{color:var(--muted);font-size:13px;margin-bottom:13px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:25px;margin:20px 0;box-shadow:0 8px 30px rgba(58,33,39,.035)}h2{font-size:clamp(21px,3vw,29px);line-height:1.65}h3{margin:12px 0;font-size:18px}.muted{color:var(--muted)}
+#selector button{background:#fff;border:1px solid var(--line);color:var(--wine);border-radius:7px;display:inline-block;margin:6px 7px 6px 0;padding:12px 19px;font-weight:600}
+#selector button:hover{border-color:var(--wine);background:#fcf3f1}
+#quiz{padding:0;overflow:hidden}.quiz-head{background:var(--wine);color:#fff7f3;display:flex;gap:15px;align-items:center;justify-content:space-between;padding:14px 22px}.quiz-head strong{font-size:20px;letter-spacing:.10em}.quiz-head small{font:11px Georgia,serif;letter-spacing:.14em;color:#eecdc6}
+.quiz-inner{padding:22px 27px 27px}.quiz-nav{display:flex;justify-content:space-between;align-items:center;gap:14px}.quiz-nav button{font-size:12px;color:var(--wine);background:transparent;border:1px solid var(--line);padding:9px 13px;border-radius:7px}
+#progress{font-size:13px;letter-spacing:.04em;text-align:right}.quiz-question-label{font:12px Georgia,serif;letter-spacing:.14em;color:var(--wine);margin-top:23px}
+#question{font-weight:650;font-size:clamp(20px,2.8vw,26px);line-height:1.8;border-left:3px solid var(--wine);padding-left:18px;margin:12px 0 25px}
+#choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}#choices button{display:flex;align-items:center;gap:12px;text-align:left;background:#fffdfa;color:var(--ink);border:1px solid #cfbeb5;border-radius:8px;min-height:75px;padding:15px 18px;font-size:17px;margin:0;transition:background .15s,border-color .15s}#choices button:hover:not(:disabled){border-color:var(--wine);background:#fcf3f1}
+#choices button:disabled{cursor:default;opacity:1}#choices button.ok{border:2px solid #53775d;background:#f0f6ee;color:#203c2b}#choices button.bad{border:2px solid #a95566;background:#fff0f1;color:#7a293b}
+#answer{font-size:16px;line-height:1.8;white-space:pre-wrap;margin-top:22px;border:1px solid #d6c0b9;background:#fbf4f0;border-radius:9px;padding:20px}
+#answer:empty{display:none}#answer strong{color:var(--wine)}
+#next{display:block;width:100%;max-width:360px;margin:25px auto 4px;text-align:center;background:var(--wine);border:0;color:#fff;border-radius:7px;padding:16px 22px;font-weight:700;font-size:17px}
+.video-card{margin-top:18px;border:1px solid var(--line);border-radius:9px;padding:19px 23px;background:#fffdfb}.video-card h3{font-size:17px;margin:0 0 5px;color:var(--wine)}.video-card p{font-size:12px;margin:0;color:var(--muted)}.video-placeholder{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:6px;background:#f1efed;padding:12px;color:#646b75;font-size:13px}.video-placeholder span:first-child{font-size:24px}
+footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{display:none!important}
+@media(max-width:620px){.header-inner{padding:11px 14px}.brand{font-size:18px;letter-spacing:.10em}.hero-strip{min-height:100px;padding:20px 12px}.hero-strip h1{font-size:29px}main{padding:12px 12px 48px}.card{padding:17px;margin:13px 0}.quiz-head{padding:11px 14px}.quiz-head strong{font-size:17px}.quiz-inner{padding:17px 15px 20px}#choices{grid-template-columns:1fr;gap:9px}#choices button{min-height:57px;padding:12px 13px;font-size:16px}#question{font-size:20px;margin-bottom:17px;padding-left:13px}.video-card{padding:16px}}
+</style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/" class="home-link">ホームへ戻る ↗</a></div></header><div class="hero-strip"><small>SHIRUNOERA — THE LEARNING EDITION</small><h1>THE ART OF KNOWING.</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p><h2 id="question"></h2><div id="choices"></div><p id="answer" aria-live="polite"></p><button id="next" hidden>次の問題へ</button></section>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>QUICK STUDY</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">QUESTION / 問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="unit-video" class="video-card" hidden><h3>▣ 単元別 解説動画　<small>EXPLANATION VIDEOS</small></h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
   </main><footer>SHIRUNOERA｜公開品質を優先しています</footer>
   <script>const questions=${json};let selected=[],current=0,score=0;
   const el=id=>document.getElementById(id);
@@ -109,7 +119,7 @@ function approvedOnlyHtml(questions) {
     for(const unit of units){const list=subset.filter(q=>(q.topic_name||q.unit||"総合")===unit);container.appendChild(makeButton(unit+"（"+list.length+"問）",()=>begin(list)))}
   }
   function begin(items){selected=items;current=0;score=0;el("selector").hidden=true;el("quiz").hidden=false;show()}
-  function show(){const q=selected[current];el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
+  function show(){const q=selected[current];el("unit-video").hidden=false;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+q.topic_name;el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
     q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
@@ -117,7 +127,7 @@ function approvedOnlyHtml(questions) {
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
   el("next").onclick=()=>{if(current===selected.length-1){el("back").click()}else{current++;show()}};
-  el("back").onclick=()=>{el("quiz").hidden=true;el("selector").hidden=false};
+  el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
   const params=new URLSearchParams(location.search);
