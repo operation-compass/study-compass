@@ -22,6 +22,19 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 .banner-number{white-space:nowrap}.banner-copy{position:relative;z-index:1;max-width:100%}.hero-banner h1{font:normal clamp(37px,7.6vw,64px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.055em;color:#fff9f1;margin:0;text-transform:uppercase;text-shadow:0 2px 15px #21181c30}
 .hero-banner h1 em{font-style:italic;font-weight:400;color:#efc6b2;letter-spacing:-.07em}.banner-foot{border-top:1px solid #f4dfd454;padding-top:10px;letter-spacing:.15em}.banner-foot span:last-child{letter-spacing:.12em}
 @media(max-width:480px){.hero-banner{min-height:188px;padding:18px 17px 15px;border-radius:4px;margin-bottom:22px}.hero-banner::before{width:230px;height:230px;right:-83px;top:-35px}.hero-banner::after{font-size:155px;right:0;top:21px}.hero-banner h1{font-size:clamp(32px,9vw,42px)}.banner-kicker,.banner-number,.banner-foot{font-size:8px;letter-spacing:.14em}}
+
+/* Learning record V1 — clear missing-data states, no invented metrics */
+.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.record-panel{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:17px}
+.record-panel h3{font-size:15px;margin:0 0 8px}.record-panel p{color:var(--muted);font-size:12px;margin:0 0 9px}
+.record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
+.record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}
+.record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+.section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
+.section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
+.video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
+#analytics-note{font-size:11px;color:var(--muted);margin-top:17px}
+@media(max-width:520px){.record-grid{grid-template-columns:1fr}.record-panel{padding:15px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
@@ -45,6 +58,22 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
     </div>
     <div class="history-empty" id="history-empty">学習を始めると、ここに記録が表示されます。</div>
     <p class="note">※ この検証ページでは実際の学習結果を取得しません。既存履歴を0件と誤表示しないよう、連携前は「—」と表示します。</p>
+    <div class="record-grid">
+      <section class="record-panel" aria-labelledby="radar-title">
+        <h3 id="radar-title">5教科の学習バランス</h3>
+        <p>各教科の<strong>解答済み率</strong>。未学習は正答率0％とは区別します。</p>
+        <svg class="record-radar" id="record-radar" viewBox="0 0 300 300" role="img" aria-label="5教科の解答済み率。記録がない教科は未学習として表示します"></svg>
+        <div class="record-legend">表示基準：解答した問題IDの種類 ÷ 各教科の公開問題数。正答率ではありません。</div>
+      </section>
+      <section class="record-panel" aria-labelledby="weak-title">
+        <h3 id="weak-title">次に取り組みたい分野</h3>
+        <p>正答率が低い単元を優先表示します（5問以上回答した単元が対象）。</p>
+        <ul class="record-items" id="weak-units"><li>まだ分析できる解答記録がありません。</li></ul>
+        <h3 style="margin-top:18px">まだ解いていない教科</h3>
+        <ul class="record-items" id="untouched-subjects"><li>5教科とも未学習です。</li></ul>
+      </section>
+    </div>
+    <p id="analytics-note">学習記録はこの端末だけで保存する設計です。サイト管理者向けアクセス解析とは分離します。</p>
   </section>
 </section>
 <section id="configure" class="subpage" aria-label="出題設定">
@@ -55,7 +84,11 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
     <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
     <button class="primary" id="start">この条件で始める →</button>
     <p class="hint">検証用の画面です。実際の問題データ・学習記録・本番サイトには接続していません。</p>
-  </div><div id="selection" class="preview" hidden aria-live="polite"></div>
+  </div>
+  <section class="section-video" aria-label="単元別解説動画">
+    <h2>単元別 解説動画</h2><p class="note">選択した分野・単元に対応する動画を、後日ここへ追加できる構成です。</p>
+    <div class="video-placeholder"><span class="video-icon" aria-hidden="true">▶</span><span id="video-label">動画は準備中です。公開後は該当単元の解説へ案内します。</span></div>
+  </section><div id="selection" class="preview" hidden aria-live="polite"></div>
 </section></div></main>
 <footer class="footer">SHIRUNOERA — UI PREVIEW ONLY</footer>
 <script>
@@ -77,4 +110,57 @@ byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
 byId("start").addEventListener("click",()=>{const box=byId("selection");box.hidden=false;box.replaceChildren();const h=document.createElement("h2");h.textContent="出題設定の確認";const p=document.createElement("p");p.textContent=subject+" ／ "+byId("major").selectedOptions[0].textContent+" ／ "+byId("unit").selectedOptions[0].textContent+" ／ "+(amount==="all"?"全問":amount+"問")+"。公開用データ連携後、この条件で問題演習が始まります。";box.append(h,p)});
+</script>
+<script>
+"use strict";
+/* Prototype-only record adapter. Called only after a real quiz supplies a verified
+   question ID, subject, major, minor, and correctness. No fabricated demo history.
+   No network requests, visitor identifiers, or cross-device synchronization. */
+(function(){
+const KEY="shirunoera.learning.v1";
+const subjectOrder=["国語","数学","英語","理科","社会"];
+const tally={};for(const s of subjectOrder)tally[s]=Object.values(taxonomy[s]).reduce((a,units)=>a+Object.values(units).reduce((x,y)=>x+y,0),0);
+function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"{}");return v&&v.schema===1&&v.answers&&typeof v.answers==="object"&&!Array.isArray(v.answers)?v.answers:{}}catch(e){return {}}}
+function recordAnswer({questionId,subject,major,minor,correct}){
+  if(typeof questionId!=="string"||!questionId||!Object.prototype.hasOwnProperty.call(tally,subject)||!taxonomy[subject][major]||!Object.prototype.hasOwnProperty.call(taxonomy[subject][major],minor)||typeof correct!=="boolean")return false;
+  const current=read(),prev=current[questionId],now={subject,major,minor,correct,attempts:(Number.isSafeInteger(prev?.attempts)&&prev.attempts>0?prev.attempts:0)+1,lastAnswered:new Date().toISOString()};
+  current[questionId]=now;
+  try{localStorage.setItem(KEY,JSON.stringify({schema:1,answers:current}));render();return true}catch(e){return false}
+}
+// Exposed only for future quiz-to-dashboard integration; not invoked by this preview.
+window.ShirunoeraLearning={recordAnswer};
+const svgNS="http://www.w3.org/2000/svg";
+function elem(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e}
+function renderRadar(done){
+  const svg=document.getElementById("record-radar");svg.replaceChildren();
+  const vertex=(i,p)=>{const a=-Math.PI/2+2*Math.PI*i/5;return [150+105*p*Math.cos(a),150+105*p*Math.sin(a)]};
+  const pts=p=>subjectOrder.map((s,i)=>vertex(i,p).map(n=>n.toFixed(1)).join(",")).join(" ");
+  for(const p of [.25,.5,.75,1])svg.append(elem("polygon",{points:pts(p),fill:"none",stroke:"#e6e1da","stroke-width":"1"}));
+  for(let i=0;i<5;i++){const [x,y]=vertex(i,1);svg.append(elem("line",{x1:150,y1:150,x2:x,y2:y,stroke:"#e6e1da"}))}
+  const ratios=subjectOrder.map(s=>Math.min(1,(done[s]?.size||0)/tally[s]));
+  if(ratios.some(r=>r>0))svg.append(elem("polygon",{points:subjectOrder.map((s,i)=>vertex(i,ratios[i]).join(",")).join(" "),fill:"#6d304644",stroke:"#6d3046","stroke-width":2}));
+  subjectOrder.forEach((s,i)=>{const [x,y]=vertex(i,1.22);const t=elem("text",{x,y,"text-anchor":"middle","dominant-baseline":"central",fill:"#292d33","font-size":"13"});t.textContent=s;svg.append(t)});
+  const desc=elem("title",{});desc.textContent=subjectOrder.map(s=>s+"："+(done[s]?.size||0)+"/"+tally[s]+"問").join("、");svg.append(desc);
+}
+function render(){
+  const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&Object.prototype.hasOwnProperty.call(tally,r.subject)&&taxonomy[r.subject]?.[r.major]?.[r.minor]);
+  const done={};for(const s of subjectOrder)done[s]=new Set();
+  const weak={};let correct=0,incorrect=0;
+  for(const [id,r] of entries){done[r.subject].add(id);correct+=r.correct?1:0;incorrect+=r.correct?0:1;const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
+  byId("answered").textContent=entries.length?entries.length+"問":"—";
+  byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
+  byId("mistakes").textContent=entries.length?incorrect+"問":"—";
+  byId("history-empty").hidden=entries.length>0;
+  renderRadar(done);
+  const untouched=subjectOrder.filter(s=>done[s].size===0);
+  const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
+  if(!untouched.length){const li=document.createElement("li");li.textContent="全教科で学習記録があります。";untouchedNode.append(li)}
+  for(const s of untouched){const li=document.createElement("li");li.textContent=s+"（未学習）";untouchedNode.append(li)}
+  const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
+  const node=byId("weak-units");node.replaceChildren();
+  if(!list.length){const li=document.createElement("li");li.textContent="5問以上回答した単元がまだありません。";node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");li.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問）";node.append(li)}
+}
+render();
+})();
 </script></body></html>
