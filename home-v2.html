@@ -1,124 +1,170 @@
 <!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Study COMPASS｜高校受験サポート</title>
-<meta name="theme-color" content="#010a19">
-<meta name="study-compass-build" content="2026-10-22-learning-home-r1">
-<link rel="stylesheet" href="./compass-theme.css">
+<html lang="ja"><head><meta charset="utf-8"><meta name="study-compass-build" content="2026-11-23-shirunoera-learning-v1"><meta name="legacy-brand-reference" content="Study COMPASS"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜高校受験 一問一答</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
-a{text-decoration:none;color:inherit}.wrap{max-width:820px;margin:auto;padding:calc(10px + env(safe-area-inset-top)) 12px calc(76px + env(safe-area-inset-bottom))}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 10px}.brand-mini{font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.08em;font-size:20px;color:var(--compass-silver)}.menu{font-size:28px;line-height:1;color:var(--compass-silver)}
-.hero{position:relative;overflow:hidden;border:1px solid var(--compass-line);border-radius:24px;padding:26px 20px 22px;min-height:245px;background:
-radial-gradient(circle at 72% 30%,rgba(49,215,255,.22),transparent 25%),
-radial-gradient(circle at 65% 42%,rgba(23,105,255,.20),transparent 38%),
-linear-gradient(160deg,rgba(1,10,25,.96),rgba(6,21,44,.98));box-shadow:var(--compass-glow)}
-.hero:before{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(49,215,255,.28);border-radius:50%;right:-55px;top:12px;box-shadow:0 0 40px rgba(0,168,255,.18),inset 0 0 40px rgba(0,168,255,.08)}
-.compass-mark{position:absolute;right:34px;top:48px;width:174px;height:174px;border-radius:50%;border:2px solid rgba(204,219,224,.78);box-shadow:0 0 28px rgba(49,215,255,.35),inset 0 0 28px rgba(49,215,255,.10);background:radial-gradient(circle at center,#0b2d61 0 12%,#dce7ed 13% 15%,#082347 16% 34%,transparent 35%)}.compass-mark:before,.compass-mark:after{content:"";position:absolute;left:50%;top:50%;width:24px;height:122px;transform-origin:50% 50%;background:linear-gradient(180deg,#31d7ff 0 48%,#dce7ed 49% 100%);clip-path:polygon(50% 0,100% 50%,50% 42%,0 50%);filter:drop-shadow(0 0 8px rgba(49,215,255,.75))}.compass-mark:before{transform:translate(-50%,-50%)}.compass-mark:after{transform:translate(-50%,-50%) rotate(90deg)}.compass-ring{position:absolute;inset:17px;border-radius:50%;border:1px solid rgba(49,215,255,.55)}
-.eyebrow{font-size:12px;letter-spacing:.22em;color:var(--compass-cyan);font-weight:800}.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:42px;line-height:1.05;margin:14px 0 6px;letter-spacing:.04em}.hero h1 small{display:block;font-size:16px;letter-spacing:.18em;margin-bottom:6px;color:var(--compass-silver)}
-.catch{font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-size:24px;line-height:1.55;margin:18px 0 6px;max-width:58%}.sub{color:var(--compass-muted);font-size:14px;line-height:1.7;max-width:62%}.goldline{width:150px;height:1px;background:linear-gradient(90deg,var(--compass-gold),transparent);margin:14px 0}
-.subjects{display:grid;grid-template-columns:repeat(5,minmax(62px,1fr));gap:8px;margin:12px 0;overflow-x:auto;scrollbar-width:none}.subjects::-webkit-scrollbar{display:none}.subject{padding:10px 4px;border-radius:13px;text-align:center;font-size:12px;border:1px solid var(--compass-line);background:rgba(7,24,49,.82)}.subject b{display:block;font-size:14px;letter-spacing:.08em;margin-bottom:5px;font-weight:900}.jp b{color:#f2a8c0}.math b{color:#57b8ff}.eng b{color:#a991ff}.sci b{color:#63e0b0}.soc b{color:#e8c36a}
-.section-title{font-size:13px;letter-spacing:.12em;color:var(--compass-silver);margin:22px 4px 10px;font-weight:800}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.tile{position:relative;min-height:150px;border:1px solid var(--compass-line);border-radius:18px;padding:16px;background:
-linear-gradient(180deg,rgba(17,45,79,.78),rgba(3,15,33,.96));box-shadow:0 0 22px rgba(0,168,255,.12);overflow:hidden}.tile:after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-32px;top:-42px;background:radial-gradient(circle,rgba(49,215,255,.18),transparent 68%)}
-.icon{font-size:32px;margin-bottom:10px}.tile h3{margin:0 0 7px;font-size:19px}.tile p{margin:0;color:var(--compass-muted);font-size:12px;line-height:1.5;max-width:88%}.arrow{position:absolute;right:14px;bottom:13px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(204,219,224,.65);font-weight:900}
-.tile.beta{border-color:rgba(49,215,255,.55)}.tile.gold{border-color:rgba(232,195,106,.45)}
-.stats{border:1px solid var(--compass-line);border-radius:18px;margin-top:14px;padding:14px;background:linear-gradient(180deg,rgba(17,45,79,.6),rgba(3,15,33,.94))}
-.stats-head{display:flex;justify-content:space-between;color:var(--compass-silver);font-size:13px;margin-bottom:12px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.statbox{text-align:center;padding:10px 6px;border-right:1px solid rgba(107,134,157,.28)}.statbox:last-child{border-right:0}.statbox small{display:block;color:var(--compass-muted);font-size:11px}.statbox strong{display:block;font-size:22px;margin-top:4px}.bar{height:5px;background:#17304d;border-radius:99px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--compass-blue),var(--compass-cyan));border-radius:99px}.bar.gold i{background:linear-gradient(90deg,#b9933f,#ffd86a)}
-.banner{margin-top:14px;border:1px solid var(--compass-line);border-radius:18px;padding:18px;background:
-radial-gradient(circle at 85% 40%,rgba(232,195,106,.15),transparent 26%),
-linear-gradient(135deg,rgba(10,34,68,.92),rgba(2,12,27,.98))}.banner h3{font-family:Georgia,"Yu Mincho",serif;font-size:21px;margin:0 0 7px}.banner p{color:var(--compass-muted);font-size:12px;line-height:1.7;margin:0}.bottom-nav{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:20;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px;border:1px solid var(--compass-line);border-radius:16px;background:rgba(1,10,25,.90);backdrop-filter:blur(14px);box-shadow:0 8px 28px rgba(0,0,0,.30)}.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;color:var(--compass-muted);font-size:10px}.bottom-nav a b{font-size:18px;color:var(--compass-silver)}.bottom-nav a.active{background:rgba(23,105,255,.18);color:var(--compass-cyan)}
-.beta-badge{display:inline-block;font-size:10px;padding:3px 7px;border-radius:999px;background:rgba(49,215,255,.14);color:var(--compass-cyan);border:1px solid rgba(49,215,255,.35);margin-left:6px;vertical-align:middle}
-@media(max-width:520px){.wrap{padding-left:10px;padding-right:10px}.brand-mini{font-size:18px}.menu{font-size:24px}.hero{min-height:205px;padding:18px 15px;border-radius:20px}.eyebrow{font-size:9px;letter-spacing:.16em}.hero h1{font-size:31px;margin-top:10px}.hero h1 small{font-size:13px}.catch{font-size:20px;line-height:1.45;max-width:78%;margin:13px 0 4px}.goldline{width:116px;margin:10px 0}.sub{max-width:88%;font-size:12px;line-height:1.6}.compass-mark{width:90px;height:90px;right:12px;top:60px;opacity:.55}.compass-mark:before,.compass-mark:after{height:82px;width:18px}.compass-ring{inset:13px}.subjects{gap:6px;margin:10px 0}.subject{font-size:10px;padding:8px 2px;border-radius:11px;min-height:54px}.subject b{font-size:12px}.section-title{margin:17px 3px 8px;font-size:11px}.grid{gap:8px}.tile{min-height:136px;padding:12px;border-radius:15px}.icon{font-size:27px;margin-bottom:7px}.tile h3{font-size:15px;line-height:1.25;margin-bottom:5px}.tile p{font-size:10.5px;line-height:1.45;max-width:82%}.arrow{width:27px;height:27px;right:10px;bottom:10px}.beta-badge{font-size:9px;padding:2px 5px}.stats{padding:12px}.stats-head{font-size:11px}.stats-grid{gap:2px}.statbox{padding:8px 3px}.statbox small{font-size:9px}.statbox strong{font-size:16px}.banner{padding:15px}.banner h3{font-size:18px}.bottom-nav{margin-top:12px;padding:6px}.bottom-nav a{padding:7px 3px}.bottom-nav a b{font-size:17px}}
- .start-panel{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 10px;padding:17px 18px;border-radius:18px;background:linear-gradient(120deg,#1769ff,#00a8ff);color:#fff;box-shadow:0 10px 26px rgba(0,168,255,.2)}.start-panel strong{display:block;font-size:19px}.start-panel small{display:block;margin-top:5px;font-size:12px;line-height:1.55;color:#eef8ff}.start-panel .go{font-size:24px;font-weight:900}.section-help{color:var(--compass-muted);font-size:12px;margin:-4px 4px 12px;line-height:1.6}.topbar .menu{font-size:13px;letter-spacing:0;border:1px solid var(--compass-line);border-radius:10px;padding:9px 12px}.tile:focus-visible,.start-panel:focus-visible,.subject:focus-visible{outline:3px solid #f4c95d;outline-offset:3px}@media(max-width:520px){.start-panel{padding:15px}.start-panel strong{font-size:17px}.start-panel small{font-size:11px}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<header class="topbar">
-  <div class="brand-mini">Study COMPASS</div>
-  <a class="menu" href="./practice-beta.html" aria-label="学習メニューを見る">学習メニュー ›</a>
-</header>
+:root{--bg:#faf8f4;--paper:#fff;--ink:#292d33;--muted:#6a6e75;--line:#e6e1da;--wine:#6d3046;--copper:#a47763}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.65}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--copper);outline-offset:3px}header{background:var(--paper);border-bottom:1px solid var(--line)}.wrap{max-width:680px;margin:auto;padding:0 20px}
+header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font:700 22px Georgia,serif;letter-spacing:.10em;color:var(--wine)}.header-sub{font-size:11px;color:var(--muted);letter-spacing:.05em}
+main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-size:12px;font-weight:700}.intro{margin-bottom:30px}.intro h1{font-size:clamp(28px,5vw,38px);letter-spacing:.02em;margin:10px 0 7px;line-height:1.45}.intro p{font-size:15px;color:var(--muted);margin:0}
+.subjects{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.subject{background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;min-height:68px;padding:12px 4px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--ink);box-shadow:0 2px 9px rgba(25,20,15,.025)}.subject:hover{border-color:var(--wine)}.subject strong{font-size:16px;font-weight:700}.arrow{color:var(--copper);font-size:13px}
+.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.subject-heading{font-size:16px;font-weight:700;letter-spacing:.03em;margin:10px 0 14px}.home-head{padding:12px 0 14px}.home-head p{color:var(--muted);font-size:13px;margin:0}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.subpage{display:none}.subpage.active{display:block}.home.hidden{display:none}.back{border:0;background:transparent;color:var(--wine);padding:0 0 18px;font-weight:700}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:20px}
+.field-stack{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-stack label{margin-top:0}.field-stack select{min-width:0}@media(max-width:480px){.field-stack{grid-template-columns:1fr}}label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:100%;background:white;padding:14px;border:1px solid #c9c4be;border-radius:8px;font-size:16px;color:var(--ink)}.num{display:flex;gap:8px;margin-top:10px}.num button{flex:1;background:white;border:1px solid var(--line);padding:14px 0;border-radius:8px}.num button[aria-pressed=true]{background:#f4e8ec;border:2px solid var(--wine);font-weight:700;color:var(--wine)}.primary{background:var(--wine);color:white;border:0;border-radius:8px;padding:17px;display:block;width:100%;font-weight:700;font-size:16px;margin-top:24px}.hint{font-size:12px;color:var(--muted);margin-top:12px}
+.preview{margin-top:20px;padding:18px;background:#f2eee7;border-radius:10px}.preview h2{font-size:21px;margin:5px 0}.preview p{margin:0}
+@media(max-width:480px){.wrap{padding:0 16px}main{padding-top:35px}.subjects{gap:5px}.subject{min-height:60px;padding:9px 2px;flex-direction:column;gap:1px}.subject strong{font-size:14px}.arrow{font-size:11px}.history-stat strong{font-size:18px}.logo{font-size:19px}.header-sub{font-size:10px}}
 
-<section class="hero">
-  <div class="compass-mark" aria-hidden="true"><span class="compass-ring"></span></div>
-  <div class="eyebrow">HIGH SCHOOL ENTRANCE EXAM SUPPORT</div>
-  <div class="catch">学びが、<br>未来の方向をつくる。</div>
-  <div class="goldline"></div>
-  <h1><small>Study</small>COMPASS</h1>
-  <div class="sub">基礎・暗記・記述・資料読解まで。高校受験に必要な学びを、1つの場所に。</div>
-</section>
+/* Editorial fashion-banner concept. Hero only: learning UI remains practical. */
+.hero-banner{position:relative;isolation:isolate;overflow:hidden;min-height:244px;margin:0 0 24px;padding:25px 29px 20px;border-radius:5px;color:#faf4ef;background:linear-gradient(113deg,rgba(30,22,28,.96),rgba(77,36,50,.87) 60%,rgba(127,72,76,.7)),radial-gradient(ellipse at 79% 40%,#c2a28b,#3f2631 65%);display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.hero-banner::before{content:"";position:absolute;z-index:-1;right:-62px;top:-85px;width:360px;height:360px;border:1px solid rgba(239,213,193,.34);border-radius:50%;box-shadow:0 0 0 43px #efcfb010,0 0 0 97px #efcfb00b;transform:rotate(-20deg)}
+.hero-banner::after{content:"S";position:absolute;right:20px;top:7px;color:rgba(239,213,193,.16);font:italic 240px/1 Georgia,"Times New Roman",serif;transform:rotate(-12deg);pointer-events:none;z-index:-1}
+.banner-head,.banner-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+.banner-kicker,.banner-number,.banner-foot{font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#ead5c9}
+.banner-number{white-space:nowrap}.banner-copy{position:relative;z-index:1;max-width:100%}.hero-banner h1{font:normal clamp(37px,7.6vw,64px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.055em;color:#fff9f1;margin:0;text-transform:uppercase;text-shadow:0 2px 15px #21181c30}
+.hero-banner h1 em{font-style:italic;font-weight:400;color:#efc6b2;letter-spacing:-.07em}.banner-foot{border-top:1px solid #f4dfd454;padding-top:10px;letter-spacing:.15em}.banner-foot span:last-child{letter-spacing:.12em}
+@media(max-width:480px){.hero-banner{min-height:188px;padding:18px 17px 15px;border-radius:4px;margin-bottom:22px}.hero-banner::before{width:230px;height:230px;right:-83px;top:-35px}.hero-banner::after{font-size:155px;right:0;top:21px}.hero-banner h1{font-size:clamp(32px,9vw,42px)}.banner-kicker,.banner-number,.banner-foot{font-size:8px;letter-spacing:.14em}}
 
-<a class="start-panel" href="./study.html?mode=qa"><span><strong>まずは一問一答から始める</strong><small>無料・登録不要｜5教科から選んで学習</small></span><span class="go" aria-hidden="true">→</span></a>
-<div class="section-title">教科から選ぶ</div>
-<div class="subjects">
-  <a class="subject jp" href="./study.html?subject=国語"><b>JPN</b>国語</a>
-  <a class="subject math" href="./study.html?subject=数学"><b>MAT</b>数学</a>
-  <a class="subject eng" href="./study.html?subject=英語"><b>ENG</b>英語</a>
-  <a class="subject sci" href="./study.html?subject=理科"><b>SCI</b>理科</a>
-  <a class="subject soc" href="./study.html?subject=社会"><b>SOC</b>社会</a>
-</div>
-
-
-<div class="section-title">目的から選ぶ</div>
-<p class="section-help">覚える・考える・復習する。今やりたい学習を選んでください。</p>
-<section class="grid">
-  <a class="tile" href="./study.html?mode=qa">
-    <div class="icon">📖</div><h3>一問一答</h3><p>5教科を4択でテンポよく確認。基礎から入試対策まで。</p><span class="arrow">›</span>
-  </a>
-  <a class="tile beta" href="./written-practice.html">
-    <div class="icon">📝</div><h3>記述式トレーニング <span class="beta-badge">40問</span></h3><p>理由・根拠・途中過程を模範解答と比較。</p><span class="arrow">›</span>
-  </a>
-  <a class="tile beta" href="./generated-practice.html">
-    <div class="icon">✦</div><h3>生成資料トレーニング <span class="beta-badge">24問</span></h3><p>資料の形が変わっても考え方を使える力を鍛える。</p><span class="arrow">›</span>
-  </a>
-  <a class="tile" href="./study.html?mode=flashcards">
-    <div class="icon">▤</div><h3>フラッシュカード</h3><p>暗記項目を短時間で繰り返し定着。</p><span class="arrow">›</span>
-  </a>
-  <a class="tile" href="./study.html?mode=questions">
-    <div class="icon">☑</div><h3>問題だけ確認</h3><p>解説を隠して、自分の実力をすばやく確認。</p><span class="arrow">›</span>
-  </a>
-  <a class="tile gold" href="./study.html?mode=history">
-    <div class="icon">▥</div><h3>学習記録</h3><p>正答率や復習状況を確認し、次の学習へ。</p><span class="arrow">›</span>
-  </a>
-</section>
-
-<section class="stats" aria-label="この端末の学習履歴">
-  <div class="stats-head"><span>これまでのβ教材確認数</span><span id="today"></span></div>
-  <div class="stats-grid">
-    <div class="statbox"><small>記述式</small><strong id="written">0 / 40</strong><div class="bar"><i id="writtenBar" style="width:0%"></i></div></div>
-    <div class="statbox"><small>生成資料</small><strong id="generated">0 / 24</strong><div class="bar gold"><i id="generatedBar" style="width:0%"></i></div></div>
-    <div class="statbox"><small>合計</small><strong id="total">0 / 64</strong><div class="bar"><i id="totalBar" style="width:0%"></i></div></div>
+/* Learning record V1 — clear missing-data states, no invented metrics */
+.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:17px}
+.record-panel{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:17px}
+.record-panel h3{font-size:15px;margin:0 0 8px}.record-panel p{color:var(--muted);font-size:12px;margin:0 0 9px}
+.record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
+.record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}
+.record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+.section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
+.section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
+.video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
+#analytics-note{font-size:11px;color:var(--muted);margin-top:17px}
+@media(max-width:520px){.record-grid{grid-template-columns:1fr}.record-panel{padding:15px}}
+</style></head><body>
+<header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
+<main><div class="wrap"><section class="home" id="home">
+  <section class="hero-banner" aria-label="SHIRUNOERA learning editorial banner"><div class="banner-head"><span class="banner-kicker">SHIRUNOERA — THE LEARNING EDITION</span><span class="banner-number">ISSUE 001</span></div><div class="banner-copy"><h1>THE ART<br>OF <em>KNOWING.</em></h1></div><div class="banner-foot"><span>STUDY WITH CURIOSITY</span><span>EST. 2026</span></div></section>
+  <div class="home-head"><h1 class="subject-heading">一問一答</h1><p>学びたい教科を選択</p></div>
+  <div class="subjects" aria-label="まずは一問一答から始める">
+    <button class="subject" data-subject="国語"><strong>国語</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="数学"><strong>数学</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="英語"><strong>英語</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="理科"><strong>理科</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="社会"><strong>社会</strong><span class="arrow" aria-hidden="true">↗</span></button>
   </div>
-  <p id="storageStatus" role="status" style="font-size:12px;line-height:1.6;color:var(--compass-muted);margin:12px 3px 0">学習履歴はこの端末のブラウザに保存されます。登録は不要です。別端末やブラウザのデータ削除時には引き継がれません。</p>
+  
+  <section class="history" aria-labelledby="history-title">
+    <h2 id="history-title">学習記録</h2>
+    <p class="history-desc">これまでの学習状況</p>
+    <div class="history-overview" aria-label="学習結果">
+      <div class="history-stat"><small>解いた問題</small><strong id="answered">—</strong></div>
+      <div class="history-stat"><small>正答率</small><strong id="accuracy">—</strong></div>
+      <div class="history-stat"><small>間違えた問題</small><strong id="mistakes">—</strong></div>
+    </div>
+    <div class="history-empty" id="history-empty">学習を始めると、ここに記録が表示されます。</div>
+    <p class="note">学習記録はこの端末に保存されます。別の端末との自動同期はありません。</p>
+    <div class="record-grid">
+      <section class="record-panel" aria-labelledby="radar-title">
+        <h3 id="radar-title">5教科の学習バランス</h3>
+        <p>各教科の<strong>解答済み率</strong>。未学習は正答率0％とは区別します。</p>
+        <svg class="record-radar" id="record-radar" viewBox="0 0 300 300" role="img" aria-label="5教科の解答済み率。記録がない教科は未学習として表示します"></svg>
+        <div class="record-legend">表示基準：解答した問題IDの種類 ÷ 各教科の公開問題数。正答率ではありません。</div>
+      </section>
+      <section class="record-panel" aria-labelledby="weak-title">
+        <h3 id="weak-title">次に取り組みたい分野</h3>
+        <p>正答率が低い単元を優先表示します（5問以上回答した単元が対象）。</p>
+        <ul class="record-items" id="weak-units"><li>まだ分析できる解答記録がありません。</li></ul>
+        <h3 style="margin-top:18px">まだ解いていない教科</h3>
+        <ul class="record-items" id="untouched-subjects"><li>5教科とも未学習です。</li></ul>
+      </section>
+    </div>
+    <p id="analytics-note">学習記録はこの端末だけで保存する設計です。サイト管理者向けアクセス解析とは分離します。</p>
+  </section>
 </section>
-
-<section class="banner">
-  <h3>今の努力が、きっと未来につながる。</h3>
-  <p>Study COMPASSは、頑張る中学生の学びを、正確さと使いやすさを大切にしながら支えます。</p>
-</section>
-<nav class="bottom-nav" aria-label="クイックナビ">
-  <a class="active" href="/"><b>⌂</b>ホーム</a>
-  <a href="./study.html?mode=qa"><b>◎</b>一問一答</a>
-  <a href="./practice-beta.html"><b>✦</b>β学習</a>
-</nav>
-</div>
+<section id="configure" class="subpage" aria-label="出題設定">
+  <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
+  <p class="note">分野・単元と問題数を選んでスタート。</p>
+  <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select></div></div><p class="note" id="available" aria-live="polite"></p>
+    <label style="margin-top:22px">問題数</label>
+    <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
+    <button class="primary" id="start">この条件で始める →</button>
+    <p class="hint">公開済み問題から出題します。回答結果はこの端末に記録されます。</p>
+  </div>
+  <section class="section-video" aria-label="単元別解説動画">
+    <h2>単元別 解説動画</h2><p class="note">選択した分野・単元に対応する動画を、後日ここへ追加できる構成です。</p>
+    <div class="video-placeholder"><span class="video-icon" aria-hidden="true">▶</span><span id="video-label">動画は準備中です。公開後は該当単元の解説へ案内します。</span></div>
+  </section><div id="selection" class="preview" hidden aria-live="polite"></div>
+</section></div></main>
+<footer class="footer">SHIRUNOERA — LEARNING EDITION
+<details style="max-width:680px;margin:18px auto 0;text-align:left;font-size:12px"><summary>従来の学習機能（補助メニュー）</summary><nav style="display:flex;gap:12px;flex-wrap:wrap;padding-top:10px">
+<a href="./study.html?mode=qa">一問一答</a><a href="./study.html?mode=flashcards">フラッシュカード（旧）</a><a href="./study.html?mode=questions">問題を確認（旧）</a><a href="./study.html?mode=history">学習記録（旧）</a></nav></details>
+<div hidden aria-hidden="true"><div id="today"></div><div id="written"></div><div id="generated"></div><div id="total"></div><i id="writtenBar"></i><i id="generatedBar"></i><i id="totalBar"></i><p id="storageStatus"></p></div>
+</footer>
 <script>
-(function(){
- document.getElementById("today").textContent="端末内の記録";
- let w=0,g=0,storageOkay=true;
- try{
-   const probe="studyCompassStorageProbe";
-   localStorage.setItem(probe,"1");
-   localStorage.removeItem(probe);
- }catch(e){storageOkay=false}
- try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||Array.isArray(s)||!s.scores||typeof s.scores!=="object"||Array.isArray(s.scores)||(s.checked!==undefined&&(typeof s.checked!=="object"||Array.isArray(s.checked))))throw Error("invalid written");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{}).filter(id=>s.checked[id]===true)]).size;}}catch(e){storageOkay=false}
- try{const raw=localStorage.getItem("studyCompassGeneratedBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.answered||typeof s.answered!=="object")throw Error("invalid generated");g=Object.keys(s.answered).length;}}catch(e){storageOkay=false}
- if(!storageOkay){document.getElementById("storageStatus").textContent="⚠ このブラウザでは学習履歴の保存または読み込みを確認できません。表示件数が正確でない可能性があります。元の保存データは削除しません。";}
- document.getElementById("written").textContent=w+" / 40";document.getElementById("generated").textContent=g+" / 24";document.getElementById("total").textContent=(w+g)+" / 64";
- document.getElementById("writtenBar").style.width=Math.min(100,w/40*100)+"%";document.getElementById("generatedBar").style.width=Math.min(100,g/24*100)+"%";document.getElementById("totalBar").style.width=Math.min(100,(w+g)/64*100)+"%";
-})();
+"use strict";
+// Real taxonomy and per-unit counts verified from the approved WEB QUESTIONS CSV.
+// Design preview only: counts are a snapshot, not a live feed; no answer data is read or written.
+const taxonomy={"社会":{"地理":{"世界":13,"日本":18},"歴史":{"古代":54,"中世":36,"近世":45,"近現代":47},"公民":{"政治":12,"国際":10,"権利":7,"経済":12}},"国語":{"漢字":{"漢字の読み":3},"表現":{"表現技法":7,"文章構成":2,"意見文":1},"語彙":{"語句・熟語":8,"四字熟語":50,"ことわざ":20,"慣用句":20,"故事成語":15,"類義語・対義語":8,"熟語の構成":2},"文法":{"文法基礎":9,"接続詞・接続関係":1},"古典":{"古文・漢文":8,"古文":2,"漢文":1},"読解":{"読解基礎":9}},"数学":{"数と式":{"正負の数":1,"文字式":2,"正負の数・文字式":7},"方程式":{"一次方程式":9},"関数":{"一次関数":9,"二次関数":4},"図形":{"三平方の定理":1,"平面図形":8,"平行線":1},"データ":{"平均":1,"データの活用":9},"確率":{"確率":8}},"理科":{"化学":{"物質":1,"酸・アルカリ":1,"化学変化":8,"化学変化とイオン":1},"物理":{"力":1,"電流":2,"電圧":1,"運動とエネルギー":6,"電流とその利用":2},"地学":{"天体":2,"岩石":1,"地震":7,"気象":2},"生命":{"植物・生物":7,"植物":1,"人体":1,"消化":1}},"英語":{"文法":{"be動詞":9,"一般動詞":10,"過去形":11,"関係代名詞":4}}};
+const byId=id=>document.getElementById(id);
+let subject="",amount="10";
+function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
+function countFor(){const majors=taxonomy[subject]||{},m=byId("major").value,n=byId("unit").value;let total=0;for(const [k,minors] of Object.entries(majors)){if(m!=="all"&&k!==m)continue;for(const [name,count] of Object.entries(minors)){if(n!=="all"&&name!==n)continue;total+=count}}return total}
+function fillUnits(){const minor=byId("unit"),major=byId("major").value;minor.replaceChildren();addOption(minor,"all","すべての単元");if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject][major]))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
+function refreshCount(){const count=countFor();byId("available").textContent="公開用CSVの登録数（参考）："+count+"問（2026年11月23日時点。最新の出題数は実際の学習画面で確認してください）";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=n!=="all"&&Number(n)>count;btn.title=btn.disabled?"選択範囲の問題数より多いため選択できません":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.n===amount)));byId("selection").hidden=true}
+document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
+ subject=btn.dataset.subject;byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
+ const m=byId("major");m.replaceChildren();addOption(m,"all","すべての分野");for(const [name,minors] of Object.entries(taxonomy[subject])){const count=Object.values(minors).reduce((a,b)=>a+b,0);addOption(m,name,name+"（"+count+"問）")}fillUnits();window.scrollTo(0,0)
+}));
+byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
+byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
+document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
+byId("start").addEventListener("click",()=>{const qs=new URLSearchParams({subject,major:byId("major").value,unit:byId("unit").value,count:amount});location.assign("/study.html?"+qs.toString())});
 </script>
-</body></html>
+<script>
+"use strict";
+/* Prototype-only record adapter. Called only after a real quiz supplies a verified
+   question ID, subject, major, minor, and correctness. No fabricated demo history.
+   No network requests, visitor identifiers, or cross-device synchronization. */
+(function(){
+const KEY="shirunoera.learning.v1";
+const subjectOrder=["国語","数学","英語","理科","社会"];
+const tally={};for(const s of subjectOrder)tally[s]=Object.values(taxonomy[s]).reduce((a,units)=>a+Object.values(units).reduce((x,y)=>x+y,0),0);
+function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"{}");return v&&v.schema===1&&v.answers&&typeof v.answers==="object"&&!Array.isArray(v.answers)?v.answers:{}}catch(e){return {}}}
+function recordAnswer({questionId,subject,major,minor,correct}){
+  if(typeof questionId!=="string"||!questionId||!Object.prototype.hasOwnProperty.call(tally,subject)||!taxonomy[subject][major]||!Object.prototype.hasOwnProperty.call(taxonomy[subject][major],minor)||typeof correct!=="boolean")return false;
+  const current=read(),prev=current[questionId],now={subject,major,minor,correct,attempts:(Number.isSafeInteger(prev?.attempts)&&prev.attempts>0?prev.attempts:0)+1,lastAnswered:new Date().toISOString()};
+  current[questionId]=now;
+  try{localStorage.setItem(KEY,JSON.stringify({schema:1,answers:current}));render();return true}catch(e){return false}
+}
+// Exposed only for future quiz-to-dashboard integration; not invoked by this preview.
+window.ShirunoeraLearning={recordAnswer};
+const svgNS="http://www.w3.org/2000/svg";
+function elem(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e}
+function renderRadar(done){
+  const svg=document.getElementById("record-radar");svg.replaceChildren();
+  const vertex=(i,p)=>{const a=-Math.PI/2+2*Math.PI*i/5;return [150+105*p*Math.cos(a),150+105*p*Math.sin(a)]};
+  const pts=p=>subjectOrder.map((s,i)=>vertex(i,p).map(n=>n.toFixed(1)).join(",")).join(" ");
+  for(const p of [.25,.5,.75,1])svg.append(elem("polygon",{points:pts(p),fill:"none",stroke:"#e6e1da","stroke-width":"1"}));
+  for(let i=0;i<5;i++){const [x,y]=vertex(i,1);svg.append(elem("line",{x1:150,y1:150,x2:x,y2:y,stroke:"#e6e1da"}))}
+  const ratios=subjectOrder.map(s=>Math.min(1,(done[s]?.size||0)/tally[s]));
+  if(ratios.some(r=>r>0))svg.append(elem("polygon",{points:subjectOrder.map((s,i)=>vertex(i,ratios[i]).join(",")).join(" "),fill:"#6d304644",stroke:"#6d3046","stroke-width":2}));
+  subjectOrder.forEach((s,i)=>{const [x,y]=vertex(i,1.22);const t=elem("text",{x,y,"text-anchor":"middle","dominant-baseline":"central",fill:"#292d33","font-size":"13"});t.textContent=s;svg.append(t)});
+  const desc=elem("title",{});desc.textContent=subjectOrder.map(s=>s+"："+(done[s]?.size||0)+"/"+tally[s]+"問").join("、");svg.append(desc);
+}
+function render(){
+  const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&Object.prototype.hasOwnProperty.call(tally,r.subject)&&taxonomy[r.subject]?.[r.major]?.[r.minor]);
+  const done={};for(const s of subjectOrder)done[s]=new Set();
+  const weak={};let correct=0,incorrect=0;
+  for(const [id,r] of entries){done[r.subject].add(id);correct+=r.correct?1:0;incorrect+=r.correct?0:1;const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
+  byId("answered").textContent=entries.length?entries.length+"問":"—";
+  byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
+  byId("mistakes").textContent=entries.length?incorrect+"問":"—";
+  byId("history-empty").hidden=entries.length>0;
+  renderRadar(done);
+  const untouched=subjectOrder.filter(s=>done[s].size===0);
+  const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
+  if(!untouched.length){const li=document.createElement("li");li.textContent="全教科で学習記録があります。";untouchedNode.append(li)}
+  for(const s of untouched){const li=document.createElement("li");li.textContent=s+"（未学習）";untouchedNode.append(li)}
+  const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
+  const node=byId("weak-units");node.replaceChildren();
+  if(!list.length){const li=document.createElement("li");li.textContent="5問以上回答した単元がまだありません。";node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");li.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問）";node.append(li)}
+}
+render();
+})();
+</script><script>(function(){const $=id=>document.getElementById(id);let w=0,g=0,storageOkay=true;try{const probe="studyCompassStorageProbe";localStorage.setItem(probe,"1");localStorage.removeItem(probe)}catch(e){storageOkay=false}try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||Array.isArray(s)||!s.scores||typeof s.scores!=="object"||Array.isArray(s.scores)||(s.checked!==undefined&&(typeof s.checked!=="object"||Array.isArray(s.checked))))throw Error("invalid written");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{}).filter(id=>s.checked[id]===true)]).size}}catch(e){storageOkay=false}try{const raw=localStorage.getItem("studyCompassGeneratedBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.answered||typeof s.answered!=="object")throw Error("invalid generated");g=Object.keys(s.answered).length}}catch(e){storageOkay=false}if(!storageOkay)$("storageStatus").textContent="従来の履歴は読み込めませんでした。元データは保持されています。";$("written").textContent=String(w);$("generated").textContent=String(g);$("total").textContent=String(w+g)})();</script></body></html>
