@@ -35,10 +35,10 @@ jobs:
           worker = Path("worker.js").read_text()
           legacy = Path("legacy-study.html").read_text()
           home = Path("home-v2.html").read_text()
-          for mode, target in (("qa", "mcq"), ("flashcards", "flashcard"), ("questions", "question")):
-              assert f'mode==="{mode}"' in worker, f"missing deep link {mode}"
-              assert f'activateMode("{target}"' in worker, f"missing mode activation {mode}"
-              assert f'./study.html?mode={mode}' in home, f"missing home entry {mode}"
+          assert 'location.assign("/study.html?"' in home, "missing canonical question route"
+          for subject in ("国語", "数学", "英語", "理科", "社会"):
+              assert f'data-subject="{subject}"' in home, f"missing subject {subject}"
+          assert 'id="history-title">学習記録' in home, "missing learning record"
           for token in ('function setup()', 'function setStudyMode(m)', 'class="mode-switch three"'):
               assert token in legacy, f"missing legacy study structure: {token}"
           assert "data-study-route-ready" in worker
@@ -90,7 +90,7 @@ jobs:
           echo "Checking homepage..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
           grep -q 'study-compass-build' /tmp/home.html
-          grep -q 'Study COMPASS' /tmp/home.html
+          grep -q 'SHIRUNOERA' /tmp/home.html
 
           echo "Checking unreviewed legacy route is blocked..."
           legacy_code="$(curl -sS -o /tmp/legacy.html -w '%{http_code}' "$BASE/legacy-study.html")"
