@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHIRUNOERA / Study COMPASS — Design Preview</title>
+<style>
+:root{--ink:#292b31;--muted:#666b73;--ivory:#f7f4ee;--paper:#fffefa;--wine:#682c42;--copper:#ad795c;--slate:#65758a;--line:#e4ded6}*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.7}
+a{color:inherit}.container{max-width:1060px;padding:0 24px;margin:auto}.masthead{border-bottom:1px solid var(--line);background:var(--paper)}
+.masthead .container{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-family:Georgia,serif;letter-spacing:.14em;font-size:21px;color:var(--wine);font-weight:700}.byline{font-size:11px;letter-spacing:.18em;color:var(--muted)}
+.hero{padding:70px 0 44px;border-bottom:1px solid var(--line)}.eyebrow{font-size:11px;color:var(--wine);letter-spacing:.2em;font-weight:700}
+h1,h2,h3{font-family:"Yu Mincho","Hiragino Mincho ProN",Georgia,serif;font-weight:600}h1{font-size:clamp(36px,6vw,69px);line-height:1.35;letter-spacing:.06em;margin:17px 0}
+.hero p{color:var(--muted);max-width:540px;font-size:15px}.hero-grid{display:grid;grid-template-columns:1.4fr .6fr;gap:30px;align-items:center}
+.motif{height:230px;border:1px solid #ba9b8e;background:linear-gradient(140deg,#643044,#351e2b);display:grid;place-items:center;position:relative;overflow:hidden}
+.motif:before{content:"";width:175px;height:175px;border:1px solid #cba98c;border-radius:50%;position:absolute;box-shadow:0 0 0 26px #ffffff08,0 0 0 55px #ffffff05}
+.motif span{font:italic 90px Georgia,serif;color:#d7b89b;position:relative}.cta{display:inline-flex;background:var(--wine);border:1px solid var(--wine);color:white;padding:14px 25px;margin-top:16px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:.04em}
+.section{padding:36px 0 52px}.section-head{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:20px}.section h2{font-size:26px;margin:0 0 10px}.sub{color:var(--muted);font-size:12px}
+.subjects{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.subject{border:1px solid var(--line);background:var(--paper);padding:22px 10px;min-height:105px;cursor:pointer;text-align:center;color:var(--ink)}
+.subject:hover,.subject:focus-visible{outline:2px solid var(--wine);outline-offset:1px}.subject b{display:block;font-size:18px;margin-bottom:3px}.subject span{display:block;font-family:Georgia,serif;font-size:10px;color:var(--copper);letter-spacing:.12em}
+.practice{margin:10px 0 65px;background:var(--paper);border:1px solid var(--line);padding:30px;box-shadow:0 13px 45px #352b2612}
+.topline{display:flex;justify-content:space-between;gap:12px;color:var(--slate);font-size:12px;font-weight:600}.progress{margin:14px 0 32px;background:#e8e2dc;height:5px}.progress i{display:block;width:10%;height:100%;background:var(--wine)}
+.practice h2{font-size:clamp(23px,4vw,34px);margin:0 0 22px;line-height:1.65}.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{background:var(--paper);border:1px solid #cfc8c0;border-radius:2px;text-align:left;padding:18px;min-height:72px;font-size:16px;color:var(--ink);cursor:pointer}
+.option:hover,.option:focus-visible{border-color:var(--wine);outline:2px solid #682c4228}.option:disabled{cursor:default}.option.good{background:#e9f5ef;border-color:#397858}.option.bad{background:#f9e8e7;border-color:#b15c5c}
+.optletter{color:var(--wine);font-family:Georgia,serif;font-size:18px;margin-right:15px}.feedback{margin-top:20px;background:#f5f1eb;border-left:3px solid var(--wine);padding:20px}.feedback strong{color:var(--wine)}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
+.secondary{background:transparent;border:0;text-decoration:underline;color:var(--muted);padding:12px;cursor:pointer}.next{background:var(--wine);border:0;color:white;padding:14px 28px;font-size:15px;cursor:pointer}.next:disabled{opacity:.4;cursor:default}
+footer{border-top:1px solid var(--line);text-align:center;color:var(--muted);padding:28px;font-size:12px}
+[hidden]{display:none!important}@media(max-width:700px){.container{padding:0 16px}.masthead .container{min-height:64px}.brand{font-size:18px}.byline{font-size:9px}.hero{padding:43px 0 29px}.hero-grid{grid-template-columns:1fr}.motif{display:none}.subjects{grid-template-columns:repeat(2,1fr)}.subjects .subject:last-child{grid-column:span 2}.section{padding:28px 0}.practice{padding:21px 16px;margin-bottom:38px}.options{grid-template-columns:1fr}.option{min-height:64px}.actions{align-items:stretch}.next{flex:1}}
+@media(prefers-reduced-motion:no-preference){.option,.subject,.cta{transition:border-color .15s,background .15s}}
+</style></head><body>
+<header class="masthead"><div class="container"><div class="brand">SHIRUNOERA</div><div class="byline">STUDY COMPASS<br>LEARNING EDITION</div></div></header>
+<main><section class="hero"><div class="container hero-grid"><div><div class="eyebrow">THE ART OF LEARNING — 01</div><h1>知るたび、<br>世界がひらく。</h1><p>受験勉強を、もっと軽やかに。教科を選び、10問ずつ、自分のペースで積み重ねよう。</p><a href="#practice" class="cta">今日の10問をはじめる　↗</a></div><div class="motif" aria-hidden="true"><span>S.</span></div></div></section>
+<section class="section"><div class="container"><div class="section-head"><h2>教科を選ぶ</h2><span class="sub">FIVE SUBJECTS</span></div><div class="subjects">
+<button class="subject" data-subject="国語"><b>国語</b><span>JAPANESE</span></button><button class="subject" data-subject="数学"><b>数学</b><span>MATHEMATICS</span></button><button class="subject" data-subject="英語"><b>英語</b><span>ENGLISH</span></button><button class="subject" data-subject="理科"><b>理科</b><span>SCIENCE</span></button><button class="subject" data-subject="社会"><b>社会</b><span>SOCIAL STUDIES</span></button>
+</div><p class="sub">※ このファイルはデザイン・操作の検証専用です。実際の教科別問題データには接続していません。</p></div></section>
+<div class="container"><section class="practice" id="practice" aria-label="一問一答デモ"><div class="topline"><span id="unit">社会 ／ 地理</span><span id="progressText">QUESTION 01 / 02</span></div><div class="progress"><i id="bar"></i></div><h2 id="question">赤道の緯度は何度？</h2><div class="options" id="options"></div><div class="feedback" id="feedback" aria-live="polite" hidden></div><div class="actions"><button class="secondary" id="reset">最初から</button><button class="next" id="next" disabled>次の問題 →</button></div></section></div></main>
+<footer>SHIRUNOERA / Study COMPASS<br>DESIGN PREVIEW · NOT CONNECTED TO PRODUCTION</footer>
+<script>
+"use strict";
+const DEMO=[{q:"赤道の緯度は何度？",o:["北緯35度","北緯90度","0度","北緯23.4度"],a:2,e:"赤道は緯度0度を示します。"}, {q:"日本標準時の基準となる経線は？",o:["東経140度","東経120度","東経130度","東経135度"],a:3,e:"日本標準時は東経135度を基準にしています。"}];
+let index=0,selected=-1,score=0;
+const $=id=>document.getElementById(id);
+function render(){const q=DEMO[index];selected=-1;$("unit").textContent="社会 ／ 地理";$("progressText").textContent="QUESTION "+String(index+1).padStart(2,"0")+" / "+String(DEMO.length).padStart(2,"0");$("bar").style.width=(index+1)/DEMO.length*100+"%";$("question").textContent=q.q;$("feedback").hidden=true;$("options").replaceChildren();$("next").disabled=true;$("next").textContent=index===DEMO.length-1?"結果を見る →":"次の問題 →";q.o.forEach((answer,i)=>{const b=document.createElement("button");b.className="option";b.type="button";const letter=document.createElement("span");letter.className="optletter";letter.textContent=String.fromCharCode(65+i);b.append(letter,document.createTextNode(answer));b.addEventListener("click",()=>choose(i));$("options").append(b)})}
+function choose(i){if(selected!==-1)return;selected=i;const q=DEMO[index];if(i===q.a)score++;[...$("options").children].forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("good");else if(j===i)b.classList.add("bad")});$("feedback").hidden=false;$("feedback").replaceChildren();const title=document.createElement("strong");title.textContent=i===q.a?"正解！":"正解："+q.o[q.a];$("feedback").append(title,document.createElement("br"),document.createTextNode(q.e));$("next").disabled=false}
+$("next").addEventListener("click",()=>{if(index<DEMO.length-1){index++;render()}else{$("question").textContent="学習おつかれさま！";$("options").replaceChildren();$("feedback").hidden=false;$("feedback").textContent=DEMO.length+"問中 "+score+"問正解。復習して、次の学びにつなげよう。";$("next").disabled=true;$("progressText").textContent="FINISHED"}});
+$("reset").addEventListener("click",()=>{index=0;score=0;render()});
+document.querySelectorAll("[data-subject]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-subject]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));$("unit").textContent=b.dataset.subject+" ／ デザインデモ";$("practice").scrollIntoView({behavior:"smooth",block:"start"})}));
+render();
+</script></body></html>
