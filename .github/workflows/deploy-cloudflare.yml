@@ -92,6 +92,7 @@ jobs:
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
           grep -q 'study-compass-build' /tmp/home.html
           grep -q 'SHIRUNOERA' /tmp/home.html
+          grep -q 'id="first-accuracy"' /tmp/home.html
 
           echo "Checking unreviewed legacy route is blocked..."
           legacy_code="$(curl -sS -o /tmp/legacy.html -w '%{http_code}' "$BASE/legacy-study.html")"
@@ -99,7 +100,7 @@ jobs:
           echo "Checking reviewed-only study route..."
           for i in {1..20}; do
             curl -fsSL "$BASE/study.html?mode=qa&smoke=${GITHUB_SHA}&attempt=$i" -o /tmp/study.html
-            if grep -q '監査済み・公開承認済みの問題のみ表示' /tmp/study.html; then break; fi
+            if grep -q '監査済み・公開承認済みの問題のみ表示' /tmp/study.html && grep -q 'function selectQuizQuestions' /tmp/study.html; then break; fi
             if [ "$i" -eq 20 ]; then echo "::error::Reviewed-only study route not deployed"; exit 1; fi
             sleep 3
           done
