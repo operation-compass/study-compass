@@ -146,6 +146,33 @@ footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{disp
   el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
+  // Mix new questions with recent mistakes; avoid always serving the first ten rows.
+  function selectQuizQuestions(pool,limit){
+    let history={};
+    try{
+      const raw=localStorage.getItem("shirunoera.learning.v1");
+      const state=raw?JSON.parse(raw):null;
+      if(state?.schema===1&&state.answers&&typeof state.answers==="object"&&!Array.isArray(state.answers))history=state.answers;
+    }catch(e){/* quizzes remain usable without browser storage */}
+    const incorrect=[],unseen=[],previouslyCorrect=[];
+    for(const q of pool){
+      const past=history[q.id];
+      if(past&&past.correct===false)incorrect.push(q);
+      else if(past&&past.correct===true)previouslyCorrect.push(q);
+      else unseen.push(q);
+    }
+    const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a};
+    shuffle(incorrect);shuffle(unseen);shuffle(previouslyCorrect);
+    const chosen=[];
+    // One earlier mistake for roughly every two unattempted items.
+    while(chosen.length<limit&&(incorrect.length||unseen.length)){
+      const preferred=chosen.length%3===0?incorrect:unseen;
+      const alternative=preferred===incorrect?unseen:incorrect;
+      chosen.push((preferred.length?preferred:alternative).pop());
+    }
+    while(chosen.length<limit&&previouslyCorrect.length)chosen.push(previouslyCorrect.pop());
+    return shuffle(chosen);
+  }
   const params=new URLSearchParams(location.search);
   const requested=params.get("subject");
   if(requested&&groups.includes(requested)){
@@ -153,7 +180,7 @@ footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{disp
     const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
     const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(minor==="all"||q.topic_name===minor));
     const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
-    if(limit>0)begin(pool.slice(0,limit));
+    if(limit>0)begin(count==="all"?pool:selectQuizQuestions(pool,limit));
   }
   </script></body></html>`;
 }
