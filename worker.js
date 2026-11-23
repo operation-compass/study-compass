@@ -104,11 +104,20 @@ footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{disp
   function saveLearningAnswer(q,correct){
     try{
       const key="shirunoera.learning.v1";
-      const data=JSON.parse(localStorage.getItem(key)||"{}");
-      const answers=data&&data.schema===1&&data.answers&&typeof data.answers==="object"&&!Array.isArray(data.answers)?data.answers:{};
+      const raw=localStorage.getItem(key);
+      const data=raw===null?{schema:1,answers:{}}:JSON.parse(raw);
+      // If storage belongs to an unfamiliar schema, do not overwrite it.
+      if(!data||data.schema!==1||!data.answers||typeof data.answers!=="object"||Array.isArray(data.answers))return;
+      const answers=data.answers;
       const old=answers[q.id];
-      answers[q.id]={subject:q.subject,major:q.field_name,minor:q.topic_name,correct,attempts:(Number.isSafeInteger(old?.attempts)&&old.attempts>0?old.attempts:0)+1,lastAnswered:new Date().toISOString()};
-      localStorage.setItem(key,JSON.stringify({schema:1,answers}));
+      const now=new Date().toISOString();
+      const previousAttempts=Number.isSafeInteger(old?.attempts)&&old.attempts>0?old.attempts:0;
+      // Historical rows lack the original result. Never guess their first attempt.
+      const firstCorrect=typeof old?.firstCorrect==="boolean"?old.firstCorrect:(old?null:correct);
+      const firstAnswered=typeof old?.firstAnswered==="string"?old.firstAnswered:(old?null:now);
+      answers[q.id]={subject:q.subject,major:q.field_name,minor:q.topic_name,correct,
+        attempts:previousAttempts+1,firstCorrect,firstAnswered,lastAnswered:now};
+      localStorage.setItem(key,JSON.stringify(data));
     }catch(e){/* storage unavailable: keep quiz usable without changing prior records */}
   }
   const subjectOrder=["社会","理科","英語","国語","数学"];
