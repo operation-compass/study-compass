@@ -28,6 +28,7 @@ jobs:
           node scripts/check-history.cjs
           node scripts/check-beta.cjs
           node scripts/check-home-safety.cjs
+          node scripts/check-shirunoera-quiz-rotation.cjs
           node scripts/check-approval-contract.cjs
           node scripts/audit-drive-export.cjs --self-test
           python3 - <<'PY'
