@@ -28,7 +28,7 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 .record-panel{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:17px}
 .record-panel h3{font-size:15px;margin:0 0 8px}.record-panel p{color:var(--muted);font-size:12px;margin:0 0 9px}
 .record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
-.record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}
+.record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}.record-items a{display:block;color:var(--wine);text-decoration:none;font-weight:600;line-height:1.6;padding:3px 0}.record-items a:hover{text-decoration:underline}.record-items a:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
 .record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
 .section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
 .section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
@@ -129,7 +129,7 @@ function recordAnswer({questionId,subject,major,minor,correct}){
   current[questionId]=now;
   try{localStorage.setItem(KEY,JSON.stringify({schema:1,answers:current}));render();return true}catch(e){return false}
 }
-// Exposed only for future quiz-to-dashboard integration; not invoked by this preview.
+// Optional hook for an in-page quiz; the current live quiz writes the same localStorage schema.
 window.ShirunoeraLearning={recordAnswer};
 const svgNS="http://www.w3.org/2000/svg";
 function elem(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e}
@@ -157,11 +157,11 @@ function render(){
   const untouched=subjectOrder.filter(s=>done[s].size===0);
   const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
   if(!untouched.length){const li=document.createElement("li");li.textContent="全教科で学習記録があります。";untouchedNode.append(li)}
-  for(const s of untouched){const li=document.createElement("li");li.textContent=s+"（未学習）";untouchedNode.append(li)}
+  for(const s of untouched){const li=document.createElement("li");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major:"all",unit:"all",count:"10"}).toString();a.textContent=s+"（未学習） → 10問に挑戦";a.setAttribute("aria-label",s+"の一問一答10問を開始");li.append(a);untouchedNode.append(li)}
   const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
   const node=byId("weak-units");node.replaceChildren();
   if(!list.length){const li=document.createElement("li");li.textContent="5問以上回答した単元がまだありません。";node.append(li)}
-  for(const [k,v] of list){const li=document.createElement("li");li.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問）";node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:minor,count:"10"}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問） → 復習";a.setAttribute("aria-label",k+"の一問一答に再挑戦");li.append(a);node.append(li)}
 }
 render();
 })();
