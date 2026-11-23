@@ -87,15 +87,19 @@ main{max-width:960px;margin:auto;padding:20px 20px 64px}.tag{font-size:11px;colo
 #answer{font-size:16px;line-height:1.8;white-space:pre-wrap;margin-top:22px;border:1px solid #d6c0b9;background:#fbf4f0;border-radius:9px;padding:20px}
 #answer:empty{display:none}#answer strong{color:var(--wine)}
 #next{display:block;width:100%;max-width:360px;margin:25px auto 4px;text-align:center;background:var(--wine);border:0;color:#fff;border-radius:7px;padding:16px 22px;font-weight:700;font-size:17px}
+.results-card{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:28px;margin:20px 0;text-align:center}
+.results-card h2{font-size:27px;margin:5px 0}.results-eyebrow{font:12px Georgia,serif;color:var(--wine);letter-spacing:.15em}.result-score{font:italic 48px Georgia,serif;color:var(--wine);margin:18px 0 8px}.results-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px}
+.results-actions button,.results-actions a{min-height:45px;border-radius:7px;padding:11px 17px;font-size:15px;font-weight:700;text-decoration:none;background:#fff;border:1px solid var(--wine);color:var(--wine)}.results-actions .primary{background:var(--wine);color:#fff}
+.results-card .summary-note{color:var(--muted);font-size:13px}
 .video-card{margin-top:18px;border:1px solid var(--line);border-radius:9px;padding:19px 23px;background:#fffdfb}.video-card h3{font-size:17px;margin:0 0 5px;color:var(--wine)}.video-card p{font-size:12px;margin:0;color:var(--muted)}.video-placeholder{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:6px;background:#f1efed;padding:12px;color:#646b75;font-size:13px}.video-placeholder span:first-child{font-size:24px}
 footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{display:none!important}
 @media(max-width:620px){.header-inner{padding:11px 14px}.brand{font-size:18px;letter-spacing:.10em}.hero-strip{min-height:100px;padding:20px 12px}.hero-strip h1{font-size:29px}main{padding:12px 12px 48px}.card{padding:17px;margin:13px 0}.quiz-head{padding:11px 14px}.quiz-head strong{font-size:17px}.quiz-inner{padding:17px 15px 20px}#choices{grid-template-columns:1fr;gap:9px}#choices button{min-height:57px;padding:12px 13px;font-size:16px}#question{font-size:20px;margin-bottom:17px;padding-left:13px}.video-card{padding:16px}}
 </style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/" class="home-link">ホームへ戻る ↗</a></div></header><div class="hero-strip"><small>SHIRUNOERA — THE LEARNING EDITION</small><h1>THE ART OF KNOWING.</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>QUICK STUDY</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">QUESTION / 問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="unit-video" class="video-card" hidden><h3>▣ 単元別 解説動画　<small>EXPLANATION VIDEOS</small></h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>QUICK STUDY</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">QUESTION / 問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">YOUR LEARNING RESULT</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>▣ 単元別 解説動画　<small>EXPLANATION VIDEOS</small></h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
   </main><footer>SHIRUNOERA｜公開品質を優先しています</footer>
-  <script>const questions=${json};let selected=[],current=0,score=0;
+  <script>const questions=${json};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
   const el=id=>document.getElementById(id);
   function saveLearningAnswer(q,correct){
     try{
@@ -118,16 +122,19 @@ footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{disp
     container.appendChild(makeButton("すべての単元（"+subset.length+"問）",()=>begin(subset)));
     for(const unit of units){const list=subset.filter(q=>(q.topic_name||q.unit||"総合")===unit);container.appendChild(makeButton(unit+"（"+list.length+"問）",()=>begin(list)))}
   }
-  function begin(items){selected=items;current=0;score=0;el("selector").hidden=true;el("quiz").hidden=false;show()}
+  function begin(items){if(!items.length)return;selected=items.slice();sessionBase=items.slice();sessionAnswers=[];current=0;score=0;el("results").hidden=true;el("selector").hidden=true;el("quiz").hidden=false;show()}
+  function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const pct=total?Math.round(score/total*100):0;el("result-score").textContent=score+" / "+total+"問";el("result-detail").textContent="正答率 "+pct+"%　・　間違い "+wrong.length+"問";el("result-mistakes").textContent=wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;window.scrollTo(0,0)}
+  el("review-wrong").onclick=()=>{const wrongIds=new Set(sessionAnswers.filter(x=>!x.correct).map(x=>x.id));begin(selected.filter(q=>wrongIds.has(q.id)))};
+  el("retry-all").onclick=()=>begin(sessionBase);
   function show(){const q=selected[current];el("unit-video").hidden=false;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+q.topic_name;el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
-    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;saveLearningAnswer(q,correct);
+    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
       if(!correct)b.classList.add("bad");const panel=el("answer");panel.replaceChildren();const headline=document.createElement("strong");headline.textContent=(correct?"✓ 正解":"✕ 不正解")+"　正解："+q.answer;panel.append(headline);if(q.ex){const detail=document.createElement("div");detail.textContent=q.ex;detail.style.marginTop="10px";panel.append(detail)}
-      el("next").hidden=false;el("next").textContent=current===selected.length-1?"選択画面に戻る":"次の問題へ"});
+      el("next").hidden=false;el("next").textContent=current===selected.length-1?"結果を見る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
-  el("next").onclick=()=>{if(current===selected.length-1){el("back").click()}else{current++;show()}};
-  el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("selector").hidden=false};
+  el("next").onclick=()=>{if(current===selected.length-1){showResults()}else{current++;show()}};
+  el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
   const params=new URLSearchParams(location.search);
