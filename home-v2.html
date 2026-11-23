@@ -7,7 +7,7 @@ button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--
 header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font:700 22px Georgia,serif;letter-spacing:.10em;color:var(--wine)}.header-sub{font-size:11px;color:var(--muted);letter-spacing:.05em}
 main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-size:12px;font-weight:700}.intro{margin-bottom:30px}.intro h1{font-size:clamp(28px,5vw,38px);letter-spacing:.02em;margin:10px 0 7px;line-height:1.45}.intro p{font-size:15px;color:var(--muted);margin:0}
 .subjects{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.subject{background:var(--paper);border:1px solid var(--line);border-radius:10px;text-align:center;min-height:68px;padding:12px 4px;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--ink);box-shadow:0 2px 9px rgba(25,20,15,.025)}.subject:hover{border-color:var(--wine)}.subject strong{font-size:16px;font-weight:700}.arrow{color:var(--copper);font-size:13px}
-.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.subject-heading{font-size:16px;font-weight:700;letter-spacing:.03em;margin:10px 0 14px}.home-head{padding:12px 0 14px}.home-head p{color:var(--muted);font-size:13px;margin:0}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.progress-compare{margin-top:20px;padding:16px;border:1px solid var(--line);background:var(--paper);border-radius:10px}.progress-compare h3{margin:0 0 4px;font-size:17px}.progress-compare .history-stat{background:#faf7f3}.progress-compare .history-desc{margin-bottom:13px}.progress-compare .note{margin:12px 0 0}.history{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}.history h2{font-size:21px;margin:0 0 4px}.history-desc{color:var(--muted);font-size:13px;margin:0 0 15px}.history-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.history-stat{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:13px 8px;text-align:center}.history-stat small{display:block;color:var(--muted);font-size:11px}.history-stat strong{display:block;font-size:20px;margin-top:3px}.history-empty{padding:20px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:13px;margin-top:10px}.subject-heading{font-size:16px;font-weight:700;letter-spacing:.03em;margin:10px 0 14px}.home-head{padding:12px 0 14px}.home-head p{color:var(--muted);font-size:13px;margin:0}.note{font-size:12px;color:var(--muted);margin:17px 0 0}.footer{padding:22px;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 .subpage{display:none}.subpage.active{display:block}.home.hidden{display:none}.back{border:0;background:transparent;color:var(--wine);padding:0 0 18px;font-weight:700}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:20px}
 .field-stack{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-stack label{margin-top:0}.field-stack select{min-width:0}@media(max-width:480px){.field-stack{grid-template-columns:1fr}}label{font-size:14px;font-weight:700;display:block;margin:0 0 8px}select{width:100%;background:white;padding:14px;border:1px solid #c9c4be;border-radius:8px;font-size:16px;color:var(--ink)}.num{display:flex;gap:8px;margin-top:10px}.num button{flex:1;background:white;border:1px solid var(--line);padding:14px 0;border-radius:8px}.num button[aria-pressed=true]{background:#f4e8ec;border:2px solid var(--wine);font-weight:700;color:var(--wine)}.primary{background:var(--wine);color:white;border:0;border-radius:8px;padding:17px;display:block;width:100%;font-weight:700;font-size:16px;margin-top:24px}.hint{font-size:12px;color:var(--muted);margin-top:12px}
 .preview{margin-top:20px;padding:18px;background:#f2eee7;border-radius:10px}.preview h2{font-size:21px;margin:5px 0}.preview p{margin:0}
@@ -57,6 +57,16 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
       <div class="history-stat"><small>間違えた問題</small><strong id="mistakes">—</strong></div>
     </div>
     <div class="history-empty" id="history-empty">学習の解答記録はまだありません。まずは上の教科を選んでください。</div>
+    <section class="progress-compare" aria-labelledby="progress-compare-title">
+      <h3 id="progress-compare-title">学習の伸び</h3>
+      <p class="history-desc">初回と直近の正答率を、同じ問題で比較します。</p>
+      <div class="history-overview">
+        <div class="history-stat"><small>初回正答率</small><strong id="first-accuracy">—</strong></div>
+        <div class="history-stat"><small>直近正答率</small><strong id="latest-accuracy">—</strong></div>
+        <div class="history-stat"><small>改善幅</small><strong id="improvement">—</strong></div>
+      </div>
+      <p id="progress-compare-note" class="note">初回記録のある問題が増えると比較できます。</p>
+    </section>
     <p class="note">学習記録はこの端末に保存されます。別の端末との自動同期はありません。</p>
     <div class="record-grid">
       <section class="record-panel" aria-labelledby="radar-title">
@@ -153,6 +163,18 @@ function render(){
   byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
   byId("mistakes").textContent=entries.length?incorrect+"問":"—";
   byId("history-empty").hidden=entries.length>0;
+  // Compare the same set of IDs; older records without firstCorrect are not retroactively guessed.
+  const comparable=entries.filter(([,r])=>typeof r.firstCorrect==="boolean");
+  const known=comparable.length;
+  const initial=comparable.reduce((n,[,r])=>n+(r.firstCorrect?1:0),0);
+  const latest=comparable.reduce((n,[,r])=>n+(r.correct?1:0),0);
+  byId("first-accuracy").textContent=known?Math.round(initial/known*100)+"%":"—";
+  byId("latest-accuracy").textContent=known?Math.round(latest/known*100)+"%":"—";
+  const delta=known?Math.round((latest-initial)/known*100):0;
+  byId("improvement").textContent=known?(delta>0?"+":"")+delta+"pt":"—";
+  byId("progress-compare-note").textContent=known
+    ?"初回記録がある"+known+"問を比較しています。昔の履歴の初回正誤は推測していません。"
+    :"初回記録を持つ新しい解答から比較を開始します。過去の履歴は保持しています。";
   renderRadar(done);
   const untouched=subjectOrder.filter(s=>done[s].size===0);
   const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
