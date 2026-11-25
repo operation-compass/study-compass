@@ -1,58 +1,45 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜知ることから、世界は広がる。</title><meta name="description" content="SHIRUNOERA（シルノエラ）は、知ることから世界を広げる学習メディア。高校受験の5教科の一問一答と学習記録を無料で利用できます。"><meta name="theme-color" content="#d8abb5"><link rel="canonical" href="https://shirunoera.occompass-info.workers.dev/"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="SHIRUNOERA"><meta property="og:title" content="SHIRUNOERA｜知ることから、世界は広がる。"><meta property="og:description" content="高校受験の5教科を一問一答で学ぶ。学習記録と復習で、毎日の学びを確かな力に。"><meta property="og:url" content="https://shirunoera.occompass-info.workers.dev/"><meta property="og:image" content="https://shirunoera.occompass-info.workers.dev/assets/portal/hero.webp"><meta property="og:image:width" content="1440"><meta property="og:image:height" content="640"><meta name="twitter:card" content="summary_large_image"><style>*{box-sizing:border-box}body{margin:0;background:#F8F4EF;color:#252327;font:16px/1.7 system-ui,sans-serif}header,footer{border-bottom:1px solid #c9bdb2;padding:20px;text-align:center}header{font:600 28px Georgia,serif;letter-spacing:.12em;color:#622B45}main{max-width:860px;margin:auto;padding:26px 18px 45px}.hero{padding:32px 0 25px;border-bottom:1px solid #c9bdb2;margin-bottom:25px}h1{font-size:clamp(26px,5vw,44px);margin:0;color:#622B45}p{margin:6px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tile{display:block;background:#fffdf9;color:inherit;text-decoration:none;border:1px solid #c9bdb2;overflow:hidden;border-radius:8px}.tile .portal-art,.select .portal-art{display:block;width:100%;height:auto}.copy{padding:16px}h2{font-size:clamp(19px,3vw,26px);margin:0}.copy p{font-size:13px}.copy span{display:block;font-size:13px;color:#622B45;margin-top:10px}.active{border:2px solid #622B45}.active .copy{background:#622B45;color:#fff}.active span{color:#fff}a:focus-visible{outline:3px solid #C98A78;outline-offset:4px}.select{margin-top:28px;border:1px solid #c9bdb2;background:#fffdf9;display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden;border-radius:8px}.select h2{font-family:Georgia,serif;color:#622B45;letter-spacing:.1em}footer{border-top:1px solid #c9bdb2;border-bottom:0;font-size:12px}@media(max-width:520px){.grid{gap:10px}.copy{padding:12px}.copy p{font-size:12px}.select{grid-template-columns:1fr}.hero{padding:12px 0 20px}}
-/* Editorial refinement: independent of the learning application. */
-:root{--wine:#622B45;--ivory:#F8F4EF;--ink:#252327;--rule:#c9bdb2}header{padding:29px 16px 24px;font-size:clamp(25px,4vw,36px);letter-spacing:.17em;border-bottom:1px solid var(--rule)}main{max-width:1080px;padding:32px 24px 64px}.hero{padding:42px 0 36px;margin-bottom:32px;display:grid;grid-template-columns:1.5fr 1fr;align-items:end;gap:24px}.hero h1{font-family:"Yu Mincho","Hiragino Mincho ProN",Georgia,serif;font-weight:500;line-height:1.4;letter-spacing:.04em;font-size:clamp(28px,4.5vw,52px)}.hero p{color:#62565b;font-size:14px;text-align:right}.grid{gap:24px}.tile{border-radius:2px;border:1px solid var(--rule);transition:transform .2s,box-shadow .2s}.tile .copy{padding:22px 24px}.tile h2{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-weight:600;letter-spacing:.04em}.tile .portal-art,.select .portal-art{aspect-ratio:24/11;object-fit:cover}.tile .copy span,.select .copy span{display:inline-block;border-top:1px solid currentColor;padding-top:8px;margin-top:14px;font-size:12px;letter-spacing:.06em}.active{border:1px solid var(--wine)}.active:hover{transform:translateY(-3px);box-shadow:0 12px 30px #622b4520}.select{margin-top:42px;border-radius:2px;grid-template-columns:1.1fr 1fr}.select .copy{padding:28px}.select h2{font-weight:400;font-size:32px;letter-spacing:.17em}.select .copy p:first-of-type{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:18px}footer{letter-spacing:.13em;padding:26px}@media(max-width:600px){header{padding:22px 12px}main{padding:20px 15px 40px}.hero{display:block;padding:22px 0 24px;margin-bottom:20px}.hero p{text-align:left;margin-top:12px}.grid{gap:12px}.tile .copy{padding:12px}.tile h2{font-size:19px}.tile .copy p{min-height:3.4em;line-height:1.7}.tile .copy span{font-size:11px}.select{margin-top:26px;grid-template-columns:1fr}.select .copy{padding:20px}.select h2{font-size:27px}}@media(prefers-reduced-motion:reduce){.tile{transition:none}.active:hover{transform:none}}
-
-/* Magazine layout, ready for independently replaceable photography. */
-header{background:#391c2a;color:#fff7ef;border-color:#a77d86}
-main{max-width:1440px;padding:0 32px 48px}
-.hero{margin:0 -32px 28px;padding:clamp(40px,6vw,88px) 24px;min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;text-align:center;color:#fff8f0;background:radial-gradient(ellipse at 85% 20%,#9a6b61 0,transparent 45%),linear-gradient(115deg,#351722,#622B45 64%,#47222c);border:0}
-.hero h1{color:inherit;font-size:clamp(30px,4vw,56px);line-height:1.45}
-.hero p{color:#f4e5da;text-align:center;letter-spacing:.1em}
-.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
-.tile{position:relative;display:flex;flex-direction:column;border:1px solid #9b7e80;background:#391c2a;color:#fff8f0}
-.tile .portal-art{aspect-ratio:4/3;object-fit:cover}
-.tile .copy,.active .copy{flex:1;background:#391c2a;color:#fff8f0;padding:18px 16px}
-.tile .copy span{color:#e9d6c8}
-.tile.active{outline:1px solid #622B45;outline-offset:3px}
-.tile h2{font-size:clamp(18px,2.1vw,27px)}
-.select{margin-top:30px;grid-template-columns:1.2fr 1fr;background:#eee3da}
-.select .portal-art{aspect-ratio: 24/11}
-.select .copy{padding:26px 32px}
-@media(max-width:760px){main{padding:0 16px 32px}.hero{margin:0 -16px 20px;min-height:190px;padding:30px 16px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile .copy,.active .copy{padding:12px}.tile .copy p{font-size:12px;min-height:3.4em}.tile h2{font-size:19px}.select{grid-template-columns:1fr;margin-top:24px}.select .copy{padding:20px}.hero p{margin-top:0}}
-@media(max-width:350px){.tile h2{font-size:16px}.tile .copy,.active .copy{padding:9px}.grid{gap:9px}}
-
-/* Original SHIRUNOERA photography, local WebP files. */
-.hero{min-height:clamp(270px,30vw,420px);background:#391c2a;background-image:linear-gradient(90deg,rgba(31,14,20,.48),rgba(31,14,20,.78) 50%,rgba(31,14,20,.45)),url('/assets/portal/hero.webp');background-size:cover;background-position:center;gap:14px}
-.hero h1,.hero p{text-shadow:0 2px 7px #160a0e}
-.tile .portal-art{aspect-ratio:4/3;object-fit:cover}
-.select .portal-art{aspect-ratio:100/46;object-fit:cover}
-@media(max-width:760px){.hero{min-height:230px;background-position:50% 45%;padding:32px 16px}.hero h1{font-size:clamp(29px,7vw,40px)}}
-
-/* Sunlit editorial palette — preserve original photographs and learning links. */
-:root{--wine:#622b45;--ink:#382b32;--rule:#d7bdb3;--rose:#c78f9b;--gold:#c6a16c;--sage:#799a91}
-body{background:radial-gradient(ellipse at 88% 18%,#e5e8dc 0,transparent 38%),linear-gradient(135deg,#edd6d5 0%,#f3e6d7 52%,#e8d6c8 100%);color:var(--ink)}
-header{background:linear-gradient(115deg,#d8abb5,#ebc9c3 48%,#e9d4b8);color:#51243a;border-bottom:1px solid #bd987a;font-weight:600;box-shadow:0 2px 12px #622b4510}
-.hero{position:relative;isolation:isolate;overflow:hidden;background:#d4b4a4;min-height:clamp(270px,30vw,420px);display:flex;align-items:center;justify-content:center}
-.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:url('/assets/portal/hero.webp') center/cover no-repeat;filter:brightness(1.18) contrast(.94) saturate(.98)}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(115deg,#e7bfc224,transparent 60%,#edc88726);pointer-events:none}
-.hero-copy{padding:22px 38px 20px;background:linear-gradient(135deg,rgba(245,224,214,.96),rgba(226,190,198,.92));border:1px solid #fff1dc99;border-radius:3px;box-shadow:0 8px 28px #40223325;max-width:100%;text-align:center}
-.hero h1{color:#54283d;font-weight:600;text-shadow:none;font-size:clamp(28px,3.8vw,48px);line-height:1.4}
-.hero p{color:#65424c;text-shadow:none;margin:8px 0 0;text-align:center}
-.tile,.tile.active{background:#ead8d2;border:1px solid #d7bdb3;border-radius:5px;outline:none;box-shadow:0 5px 17px #69453c12}
-.tile .portal-art,.select .portal-art{filter:brightness(1.15) contrast(.95) saturate(.98)}
-.tile .copy,.active .copy{color:var(--ink);border-top:3px solid #c6a16c;background:linear-gradient(145deg,#f3e5d5,#e8d4bf)}
-.tile:nth-child(2) .copy{background:linear-gradient(145deg,#f0e3db,#e2cdd0);border-top-color:#b78b9a}
-.tile:nth-child(3) .copy{background:linear-gradient(145deg,#e8eee2,#cbded0);border-top-color:#799a91}
-.tile:nth-child(4) .copy{background:linear-gradient(145deg,#f5e8cf,#ead3ab);border-top-color:#c6a16c}
-.tile.active .copy{background:linear-gradient(145deg,#f4e1df,#e6c0c9);border-top:3px solid #82445e}
-.tile h2{color:#622b45}
-.tile .copy p{color:#57454d}
-.tile .copy span{color:#65505a;border-top-color:#bba0a1}
-.tile.active .copy span{background:linear-gradient(110deg,#622b45,#9a506a);color:#fff6ef;border:0;border-radius:3px;padding:9px 12px}
-.tile.active:focus-visible{outline:3px solid #622b45;outline-offset:4px}
-.select{background:linear-gradient(115deg,#e6c1c9,#eed4be 65%,#d5dfce);color:#51343e;border-color:#caa89b;border-radius:5px;box-shadow:0 8px 24px #583a351a}
-.select h2{color:#622b45}
-.select .copy span{color:#405d52;border-top-color:#8ca69b}
-footer{background:linear-gradient(110deg,#e0bfc4,#ead3bb);color:#593447;border-top-color:#c6a49c}
-@media(max-width:760px){.hero{min-height:230px;padding:24px 12px}.hero::before{background-position:50% 45%}.hero-copy{padding:16px 19px}.hero h1{font-size:clamp(26px,6.8vw,38px)}.hero p{font-size:12px}.tile.active .copy span{padding:8px 9px}.tile .copy p{color:#57454d}}
-</style></head><body><header>SHIRUNOERA</header><main><section class="hero"><div class="hero-copy"><h1>知ることから、<br>世界は広がる。</h1><p>あなたの学びを、ここから。</p></div></section><section class="grid" aria-label="学習目的"><a href="/high-school" class="tile active"><img class="portal-art" src="/assets/portal/high-school.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>高校受験</h2><p>5教科の一問一答・学習記録</p><span>学習を始める →</span></div></a><article class="tile "><img class="portal-art" src="/assets/portal/university.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>大学受験</h2><p>大学入試・共通テスト</p><span>準備中</span></div></article><article class="tile "><img class="portal-art" src="/assets/portal/school-test.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>定期テスト</h2><p>教科別・単元別の学習</p><span>準備中</span></div></article><article class="tile "><img class="portal-art" src="/assets/portal/certification.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>資格・検定</h2><p>英検・漢検・TOEIC・宅建など</p><span>準備中</span></div></article></section><section class="select"><img class="portal-art" src="/assets/portal/select.webp" alt="" width="1000" height="460" decoding="async" loading="lazy"><div class="copy"><h2>SELECT</h2><p>学ぶ時間を、もっと豊かに。</p><p>参考書・書籍・文房具・学習用品</p><span>公開準備中</span></div></section></main><footer>© SHIRUNOERA</footer></body></html>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜知ることから、世界は広がる。</title><meta name="description" content="SHIRUNOERA（シルノエラ）は、知ることから世界を広げる学習メディア。高校受験の5教科の一問一答と学習記録を無料で利用できます。"><meta name="theme-color" content="#d8abb5"><link rel="canonical" href="https://shirunoera.occompass-info.workers.dev/"><meta property="og:type" content="website"><meta property="og:locale" content="ja_JP"><meta property="og:site_name" content="SHIRUNOERA"><meta property="og:title" content="SHIRUNOERA｜知ることから、世界は広がる。"><meta property="og:description" content="高校受験の5教科を一問一答で学ぶ。学習記録と復習で、毎日の学びを確かな力に。"><meta property="og:url" content="https://shirunoera.occompass-info.workers.dev/"><meta property="og:image" content="https://shirunoera.occompass-info.workers.dev/assets/portal/hero.webp"><meta property="og:image:width" content="1440"><meta property="og:image:height" content="640"><meta name="twitter:card" content="summary_large_image"><style>
+/* SHIRUNOERA editorial — one coherent, responsive design system. */
+:root{--wine:#622b45;--wine-dark:#472335;--ink:#352b2f;--muted:#66525a;--paper:#f0e2d3;--rose:#d7aab6;--gold:#b59162;--sage:#779589;--rule:#c9ada3;--serif:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",Georgia,serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 33%),linear-gradient(125deg,#ead3d4 0%,#f2e5d5 49%,#e3d4c3 100%);color:var(--ink);font:16px/1.65 system-ui,-apple-system,sans-serif}
+header{position:relative;text-align:center;padding:22px 16px 20px;background:linear-gradient(105deg,#e3bcc6,#edd3ca 52%,#e9d4b4);border-top:4px solid var(--wine);border-bottom:1px solid var(--rule);color:var(--wine-dark);font:500 clamp(26px,4.2vw,42px)/1.2 Georgia,serif;letter-spacing:.16em}
+main{max-width:1440px;margin:auto;padding:30px 36px 52px}
+.hero{display:grid;grid-template-columns:minmax(0, .85fr) minmax(0,1.4fr);background:linear-gradient(145deg,#e9cbd0,#f1e1cd 80%);border:1px solid var(--rule);min-height:340px;overflow:hidden;box-shadow:0 12px 36px #68423315}
+.hero-copy{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(25px,4vw,64px);min-width:0}
+.hero-copy::before{content:"";display:block;width:48px;height:3px;background:linear-gradient(90deg,var(--wine),var(--gold));margin-bottom:24px}
+.hero h1{font:600 clamp(30px,3.5vw,53px)/1.5 var(--serif);letter-spacing:.025em;color:var(--wine-dark);margin:0;white-space:nowrap}
+.hero p{font-size:14px;letter-spacing:.08em;color:var(--muted);margin:20px 0 0}
+.hero-art{display:block;width:100%;height:100%;min-height:340px;object-fit:cover;object-position:50% 50%;filter:brightness(1.12) contrast(.96) saturate(1.02)}
+.section-heading{display:flex;align-items:center;gap:18px;margin:38px 0 18px}
+.section-heading h2{font:600 clamp(19px,2.4vw,27px)/1.4 var(--serif);letter-spacing:.09em;color:var(--wine-dark);margin:0;white-space:nowrap}
+.section-heading::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--gold),#c9ada35e)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.tile{--accent:#a67b85;--tint:#ebd7d7;display:flex;flex-direction:column;min-width:0;color:inherit;text-decoration:none;border:1px solid #c9ada3;background:linear-gradient(150deg,#f3e8db,var(--tint));overflow:hidden;box-shadow:0 5px 18px #68423312}
+.tile.active{--accent:#82445e;--tint:#e6c1cb;border-color:#ab7b8d}
+.tile:nth-child(2){--accent:#ab8f81;--tint:#e5d5cb}
+.tile:nth-child(3){--accent:#779589;--tint:#d3e0d0}
+.tile:nth-child(4){--accent:#b59162;--tint:#e9d3ac}
+.portal-art{display:block;width:100%;height:auto;object-fit:cover;filter:brightness(1.12) contrast(.96) saturate(1.02)}
+.tile .portal-art{aspect-ratio:4/3}
+.tile .copy{flex:1;display:flex;flex-direction:column;align-items:flex-start;padding:19px 18px 20px;border-top:3px solid var(--accent)}
+.tile h2{font:600 clamp(18px,2.05vw,26px)/1.4 var(--serif);margin:0;color:var(--wine-dark);letter-spacing:.025em}
+.tile .copy p{font-size:13px;line-height:1.65;color:var(--muted);margin:9px 0 16px;overflow-wrap:anywhere}
+.tile .copy span{display:inline-block;margin-top:auto;font-size:12px;color:#62505a;letter-spacing:.04em;border-top:1px solid #bda29e;padding-top:8px}
+.tile.active .copy span{background:linear-gradient(110deg,#622b45,#88465f);border:0;color:#fff5eb;border-radius:2px;padding:10px 12px;font-weight:600}
+.tile.active{transition:transform .22s,box-shadow .22s}
+@media(hover:hover){.tile.active:hover{transform:translateY(-4px);box-shadow:0 12px 26px #622b4528}}
+a:focus-visible{outline:3px solid var(--wine);outline-offset:4px}
+.select{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);margin-top:40px;background:linear-gradient(120deg,#e9cbd0,#eddbbc 72%,#d5dfcd);border:1px solid var(--rule);overflow:hidden;box-shadow:0 8px 28px #68423316}
+.select .portal-art{aspect-ratio:100/46;height:100%}
+.select .copy{padding:30px 36px;align-self:center}
+.select h2{font:400 clamp(34px,4.5vw,60px)/1.05 Georgia,serif;letter-spacing:.13em;color:var(--wine);margin:0 0 16px}
+.select p{margin:6px 0;color:var(--muted);font-size:13px}
+.select p:first-of-type{font:600 20px/1.6 var(--serif);color:var(--wine-dark)}
+.select span{display:inline-block;margin-top:17px;border-top:1px solid #8fa597;padding-top:8px;color:#405b50;font-size:12px}
+footer{text-align:center;background:linear-gradient(110deg,#d8b4be,#e6cdb1);border-top:1px solid var(--rule);color:#573849;font:12px/1.6 Georgia,serif;letter-spacing:.14em;padding:24px}
+@media(max-width:1000px) and (min-width:761px){main{padding:24px 24px 40px}.grid{gap:14px}.hero-copy{padding:26px}.hero h1{font-size:clamp(27px,3.35vw,34px)}.tile .copy{padding:14px 11px}.tile .copy p{font-size:12px}.select .copy{padding:24px}}
+@media(max-width:760px){header{padding:17px 10px 16px;font-size:clamp(24px,6vw,31px)}main{padding:18px 15px 34px}.hero{grid-template-columns:1fr;min-height:0}.hero-art{grid-row:1;min-height:0;height:auto;aspect-ratio: 16/8;object-position:center}.hero-copy{padding:20px 22px 23px;align-items:flex-start}.hero-copy::before{width:34px;height:2px;margin-bottom:11px}.hero h1{font-size:clamp(26px,6.5vw,37px);line-height:1.4}.hero p{font-size:12px;margin-top:10px}.section-heading{margin:27px 0 13px;gap:12px}.section-heading h2{font-size:20px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tile .copy{padding:13px 11px 14px}.tile h2{font-size:19px}.tile .copy p{font-size:12px;margin:7px 0 12px;min-height:3.3em}.tile .copy span{font-size:11px}.tile.active .copy span{padding:8px 9px;white-space:nowrap}.select{grid-template-columns:1fr;margin-top:26px}.select .portal-art{height:auto}.select .copy{padding:22px}.select h2{font-size:39px}.select p:first-of-type{font-size:18px}}
+@media(max-width:350px){main{padding-inline:10px}.grid{gap:8px}.tile .copy{padding-inline:8px}.tile h2{font-size:16px}.tile.active .copy span{padding:7px 5px;font-size:10px}.hero-copy{padding-inline:16px}.hero h1{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.tile.active{transition:none}.tile.active:hover{transform:none}}
+</style></head><body><header>SHIRUNOERA</header><main><section class="hero"><div class="hero-copy"><h1>知ることから、<br>世界は広がる。</h1><p>あなたの学びを、ここから。</p></div><img class="hero-art" src="/assets/portal/hero.webp" alt="" width="1440" height="640" fetchpriority="high" decoding="async"></section><div class="section-heading"><h2>学びを選ぶ</h2></div><section class="grid" aria-label="学習目的"><a href="/high-school" class="tile active"><img class="portal-art" src="/assets/portal/high-school.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>高校受験</h2><p>5教科の一問一答・学習記録</p><span>学習を始める →</span></div></a><article class="tile "><img class="portal-art" src="/assets/portal/university.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>大学受験</h2><p>大学入試・共通テスト</p><span>準備中</span></div></article><article class="tile "><img class="portal-art" src="/assets/portal/school-test.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>定期テスト</h2><p>教科別・単元別の学習</p><span>準備中</span></div></article><article class="tile "><img class="portal-art" src="/assets/portal/certification.webp" alt="" width="720" height="540" decoding="async"><div class="copy"><h2>資格・検定</h2><p>英検・漢検・TOEIC・宅建など</p><span>準備中</span></div></article></section><section class="select"><img class="portal-art" src="/assets/portal/select.webp" alt="" width="1000" height="460" decoding="async" loading="lazy"><div class="copy"><h2>SELECT</h2><p>学ぶ時間を、もっと豊かに。</p><p>参考書・書籍・文房具・学習用品</p><span>公開準備中</span></div></section></main><footer>© SHIRUNOERA</footer></body></html>
