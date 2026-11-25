@@ -95,9 +95,1074 @@ function recordTraffic(request,env,url,page){
   }catch(_){/* analytics must never interrupt learning */}
 }
 
+// Display-only snapshot of the 262 already public social questions; no private MASTER data.
+// Original field_name/topic_name and question IDs remain unchanged for old links and history.
+const SOCIAL_DISPLAY = {
+  "SC-SOC-GEO-000015": [
+    "世界と日本の姿",
+    "地球儀と地図"
+  ],
+  "SC-SOC-GEO-000016": [
+    "世界と日本の姿",
+    "日本の位置と領域"
+  ],
+  "SC-SOC-GEO-000017": [
+    "世界と日本の姿",
+    "日本の位置と領域"
+  ],
+  "SC-SOC-GEO-000018": [
+    "世界と日本の姿",
+    "世界の姿"
+  ],
+  "SC-SOC-GEO-000019": [
+    "世界と日本の姿",
+    "地球儀と地図"
+  ],
+  "SC-SOC-GEO-000020": [
+    "世界と日本の姿",
+    "日本の位置と領域"
+  ],
+  "SC-SOC-HIS-000022": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000024": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000027": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000029": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000031": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000036": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-GEO-000039": [
+    "世界と日本の姿",
+    "地球儀と地図"
+  ],
+  "SC-SOC-GEO-000041": [
+    "日本の地域的特色",
+    "自然環境"
+  ],
+  "SC-SOC-GEO-000042": [
+    "世界と日本の姿",
+    "日本の位置と領域"
+  ],
+  "SC-SOC-CIV-000045": [
+    "民主政治",
+    "地方自治"
+  ],
+  "SC-SOC-CIV-000048": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-CIV-000049": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-CIV-000050": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000051": [
+    "経済と生活",
+    "市場経済"
+  ],
+  "SC-SOC-CIV-000052": [
+    "経済と生活",
+    "市場経済"
+  ],
+  "SC-SOC-CIV-000053": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000054": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000055": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-CIV-000057": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000059": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-CIV-000061": [
+    "国際社会",
+    "国際社会の仕組み"
+  ],
+  "SC-SOC-CIV-000062": [
+    "経済と生活",
+    "市場経済"
+  ],
+  "SC-SOC-CIV-000063": [
+    "経済と生活",
+    "市場経済"
+  ],
+  "SC-SOC-GEO-000065": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-GEO-000066": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-HIS-000067": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000068": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000069": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000070": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000071": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000072": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000073": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000074": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000075": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000076": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000077": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000078": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000080": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-000081": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-000082": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000083": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000084": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000085": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000087": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000088": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000089": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000090": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000091": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000092": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000094": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000095": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000096": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000097": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000098": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000099": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000100": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000101": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000102": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000103": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000104": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000105": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000106": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000107": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000108": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000109": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000110": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000111": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000112": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000113": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000114": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000115": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000116": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000117": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000118": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000119": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000120": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000121": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000122": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000123": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000124": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000125": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000126": [
+    "二つの世界大戦",
+    "昭和戦前"
+  ],
+  "SC-SOC-HIS-000127": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000128": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000129": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000130": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000131": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000132": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000133": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000134": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-000135": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-000136": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000137": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000138": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000139": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000140": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000141": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000142": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000143": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000144": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000145": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000146": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000147": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000148": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000149": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000152": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000153": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000154": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000155": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000156": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000157": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000158": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000159": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000160": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000161": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000162": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000163": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000164": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000165": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000166": [
+    "二つの世界大戦",
+    "昭和戦前・戦中"
+  ],
+  "SC-SOC-HIS-000167": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000168": [
+    "戦後・現代",
+    "高度経済成長"
+  ],
+  "SC-SOC-HIS-000169": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000170": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000171": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000172": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000173": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000174": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000175": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000176": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000177": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000178": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000179": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-000180": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000181": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000182": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000183": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000184": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000185": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000186": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000188": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000189": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000190": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000192": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000194": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000196": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000197": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000198": [
+    "二つの世界大戦",
+    "昭和戦前"
+  ],
+  "SC-SOC-HIS-000199": [
+    "二つの世界大戦",
+    "昭和戦前"
+  ],
+  "SC-SOC-HIS-000200": [
+    "二つの世界大戦",
+    "昭和戦前・戦中"
+  ],
+  "SC-SOC-HIS-000201": [
+    "二つの世界大戦",
+    "昭和戦前・戦中"
+  ],
+  "SC-SOC-HIS-000202": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000203": [
+    "戦後・現代",
+    "高度経済成長"
+  ],
+  "SC-SOC-GEO-000204": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-GEO-000205": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-GEO-000206": [
+    "日本の地域的特色",
+    "自然環境"
+  ],
+  "SC-SOC-GEO-000207": [
+    "日本の地域的特色",
+    "人口・都市"
+  ],
+  "SC-SOC-GEO-000208": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-CIV-000209": [
+    "民主政治",
+    "国会"
+  ],
+  "SC-SOC-CIV-000210": [
+    "民主政治",
+    "裁判所"
+  ],
+  "SC-SOC-CIV-000211": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000212": [
+    "経済と生活",
+    "市場経済"
+  ],
+  "SC-SOC-CIV-000213": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-HIS-000214": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000215": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000216": [
+    "中世",
+    "戦国時代"
+  ],
+  "SC-SOC-HIS-000217": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000218": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000220": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000221": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000223": [
+    "原始・古代",
+    "飛鳥時代"
+  ],
+  "SC-SOC-HIS-000224": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-000225": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-000226": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000227": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-000228": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-000230": [
+    "近世",
+    "安土桃山時代"
+  ],
+  "SC-SOC-HIS-000231": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000232": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000233": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000234": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000235": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000236": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000237": [
+    "近代",
+    "明治時代"
+  ],
+  "SC-SOC-HIS-000238": [
+    "二つの世界大戦",
+    "大正時代"
+  ],
+  "SC-SOC-HIS-000239": [
+    "二つの世界大戦",
+    "昭和戦前"
+  ],
+  "SC-SOC-HIS-000240": [
+    "二つの世界大戦",
+    "昭和戦前・戦中"
+  ],
+  "SC-SOC-HIS-000241": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000242": [
+    "戦後・現代",
+    "高度経済成長"
+  ],
+  "SC-SOC-GEO-000243": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-GEO-000244": [
+    "世界と日本の姿",
+    "地理の基礎"
+  ],
+  "SC-SOC-GEO-000245": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-GEO-000246": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-GEO-000247": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-GEO-000248": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-GEO-000249": [
+    "日本の地域的特色",
+    "自然環境"
+  ],
+  "SC-SOC-GEO-000250": [
+    "日本の地域的特色",
+    "自然環境"
+  ],
+  "SC-SOC-GEO-000251": [
+    "世界の気候と生活",
+    "世界の気候"
+  ],
+  "SC-SOC-GEO-000252": [
+    "世界の諸地域",
+    "人口と社会"
+  ],
+  "SC-SOC-CIV-000253": [
+    "民主政治",
+    "国会"
+  ],
+  "SC-SOC-CIV-000254": [
+    "民主政治",
+    "内閣"
+  ],
+  "SC-SOC-CIV-000255": [
+    "民主政治",
+    "地方自治"
+  ],
+  "SC-SOC-CIV-000256": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000257": [
+    "経済と生活",
+    "金融と経済"
+  ],
+  "SC-SOC-CIV-000258": [
+    "経済と生活",
+    "金融と経済"
+  ],
+  "SC-SOC-CIV-000259": [
+    "国際社会",
+    "国際連合"
+  ],
+  "SC-SOC-CIV-000260": [
+    "持続可能な社会",
+    "地球規模の課題"
+  ],
+  "SC-SOC-CIV-000261": [
+    "経済と生活",
+    "社会保障と労働"
+  ],
+  "SC-SOC-CIV-000262": [
+    "民主政治",
+    "裁判所"
+  ],
+  "SC-SOC-HIS-000263": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000264": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-GEO-000266": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-CIV-000267": [
+    "経済と生活",
+    "社会保障と労働"
+  ],
+  "SC-SOC-CIV-000268": [
+    "民主政治",
+    "地方自治"
+  ],
+  "SC-SOC-HIS-000272": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SC-SOC-HIS-000274": [
+    "原始・古代",
+    "原始・古代のまとめ"
+  ],
+  "SC-SOC-HIS-000275": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000279": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000283": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000284": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000288": [
+    "二つの世界大戦",
+    "昭和戦前"
+  ],
+  "SC-SOC-HIS-000289": [
+    "二つの世界大戦",
+    "昭和戦前・戦中"
+  ],
+  "SC-SOC-HIS-000290": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000291": [
+    "近代",
+    "幕末・開国"
+  ],
+  "SC-SOC-HIS-000292": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-HIS-000293": [
+    "戦後・現代",
+    "戦後の日本"
+  ],
+  "SC-SOC-GEO-000294": [
+    "日本の地域的特色",
+    "人口・都市"
+  ],
+  "SC-SOC-GEO-000295": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-GEO-000296": [
+    "世界の諸地域",
+    "世界の産業と貿易"
+  ],
+  "SC-SOC-GEO-000298": [
+    "日本の地域的特色",
+    "産業"
+  ],
+  "SC-SOC-CIV-000299": [
+    "民主政治",
+    "国会"
+  ],
+  "SC-SOC-CIV-000300": [
+    "民主政治",
+    "内閣"
+  ],
+  "SC-SOC-CIV-000301": [
+    "日本国憲法と人権",
+    "基本的人権"
+  ],
+  "SC-SOC-CIV-000302": [
+    "経済と生活",
+    "金融と経済"
+  ],
+  "SC-SOC-CIV-000303": [
+    "経済と生活",
+    "金融と経済"
+  ],
+  "SC-SOC-CIV-000304": [
+    "国際社会",
+    "国際協力"
+  ],
+  "SC-SOC-CIV-000305": [
+    "国際社会",
+    "国際協力"
+  ],
+  "SC-SOC-CIV-000306": [
+    "民主政治",
+    "地方自治"
+  ],
+  "SC-SOC-CIV-000307": [
+    "経済と生活",
+    "社会保障と労働"
+  ],
+  "SC-SOC-CIV-000308": [
+    "民主政治",
+    "裁判所"
+  ],
+  "SC-SOC-HIS-000309": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000310": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000314": [
+    "原始・古代",
+    "弥生時代"
+  ],
+  "SC-SOC-HIS-000315": [
+    "原始・古代",
+    "古墳時代"
+  ],
+  "SC-SOC-HIS-000319": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000320": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000321": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-000322": [
+    "近世",
+    "江戸時代"
+  ],
+  "SC-SOC-HIS-GAP10-000002": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-GAP10-000003": [
+    "原始・古代",
+    "飛鳥〜奈良時代"
+  ],
+  "SC-SOC-HIS-GAP10-000006": [
+    "原始・古代",
+    "平安時代"
+  ],
+  "SC-SOC-HIS-GAP10-000008": [
+    "中世",
+    "鎌倉時代"
+  ],
+  "SC-SOC-HIS-GAP10-000010": [
+    "中世",
+    "室町時代"
+  ],
+  "SC-SOC-HIS-GAP10-000001": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-GAP10-000004": [
+    "原始・古代",
+    "奈良時代"
+  ],
+  "SC-SOC-HIS-GAP10-000005": [
+    "原始・古代",
+    "平安時代"
+  ]
+};
+const SOCIAL_CHAPTER_ORDER = {"地理":["世界と日本の姿","世界の気候と生活","世界の諸地域","日本の地域的特色","日本の諸地域","地域調査"],"歴史":["原始・古代","中世","近世","近代","二つの世界大戦","戦後・現代"],"公民":["現代社会","日本国憲法と人権","民主政治","経済と生活","国際社会","持続可能な社会"]};
+// Only explicitly verified published video URLs may be registered here. None verified yet.
+const PUBLISHED_EXPLANATIONS = Object.freeze({});
+function socialDisplay(q){
+  if(q.subject!=="社会")return {};
+  const item=Object.hasOwn(SOCIAL_DISPLAY,q.id)?SOCIAL_DISPLAY[q.id]:null;
+  return {display_chapter:item?.[0]||"その他（分類確認中）",display_section:item?.[1]||""};
+}
+function publishedExplanation(q){
+  if(q.subject!=="社会"||!Object.hasOwn(PUBLISHED_EXPLANATIONS,q.id))return {};
+  try{const u=new URL(PUBLISHED_EXPLANATIONS[q.id]);if(u.protocol==="https:"&&["www.youtube.com","youtube.com","youtu.be"].includes(u.hostname))return {video_url:u.href}}catch(_){}
+  return {};
+}
 // Approved-only learning interface: no embedded legacy question bank is served publicly.
 function approvedOnlyHtml(questions) {
-  const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
+  const json = JSON.stringify(questions.map(q=>({...q,...socialDisplay(q),...publishedExplanation(q)}))).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜一問一答</title><meta name="robots" content="noindex,follow"><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#29232a;background:#faf8f4;--wine:#632b40;--ink:#29232a;--muted:#69636a;--line:#e0d6d0;--paper:#fffdfb;--blue:#294454;--accent:#bd9d88}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#faf8f4;color:var(--ink);line-height:1.65}a{color:var(--wine);text-decoration:none}
@@ -136,7 +1201,7 @@ body{background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 35%),lin
 .card,.results-card,.video-card{background:linear-gradient(145deg,#fbf3e8,#f2e4d5);border-color:var(--line);border-radius:4px;box-shadow:0 7px 24px #68423313}
 #selector h2,.results-card h2{font-family:var(--serif);color:#472335}
 #selector button{background:linear-gradient(145deg,#f9ebdd,#e9d4da);border-color:#c6aea8;border-radius:4px;color:var(--wine);min-height:46px}
-#selector button:hover{background:#e8cbd4}
+#selector button:hover{background:#e8cbd4}#selector button[aria-pressed="true"]{background:var(--wine);color:#fff}#selector button:disabled{opacity:.5;cursor:default}.social-range{margin-top:12px}.social-range label{display:flex;align-items:center;gap:10px;padding:11px 8px;border-bottom:1px solid var(--line);cursor:pointer}.social-range input{width:19px;height:19px;accent-color:var(--wine)}
 .quiz-head{background:linear-gradient(105deg,#622b45,#88465f);color:#fff6eb}.quiz-head small{color:#f4e2d4}
 .quiz-nav button{border-color:#c6aea8;background:#f8e9de;color:var(--wine);min-height:44px}
 #progress{color:var(--muted);font-variant-numeric:tabular-nums}
@@ -158,9 +1223,9 @@ footer{color:#573849}
 </style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>高校受験</small><h1>一問一答で、知識を確かに。</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><a id="video-link" rel="noopener noreferrer" target="_blank">解説動画を見る ↗</a></section>
   </main><footer>© SHIRUNOERA</footer>
-  <script>const questions=${json};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
+  <script>const questions=${json};const socialOrder=${JSON.stringify(SOCIAL_CHAPTER_ORDER)};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
   const el=id=>document.getElementById(id);
   function saveLearningAnswer(q,correct){
     try{
@@ -188,15 +1253,38 @@ footer{color:#573849}
   function chooseSubject(subject){el("units").hidden=false;el("unit-title").textContent=subject+"｜単元を選ぶ";
     const container=el("unit-buttons");clear(container);
     const subset=questions.filter(q=>q.subject===subject);
+    if(subject==="社会"){
+      const fields=["地理","歴史","公民"].filter(f=>subset.some(q=>q.field_name===f));
+      container.appendChild(makeButton("社会すべて（"+subset.length+"問）",()=>begin(subset)));
+      for(const field of fields){const pool=subset.filter(q=>q.field_name===field);container.appendChild(makeButton(field+"（"+pool.length+"問）",()=>chooseSocialField(field,pool)))}
+      return;
+    }
     const units=[...new Set(subset.map(q=>q.topic_name||q.unit||"総合"))];
     container.appendChild(makeButton("すべての単元（"+subset.length+"問）",()=>begin(subset)));
     for(const unit of units){const list=subset.filter(q=>(q.topic_name||q.unit||"総合")===unit);container.appendChild(makeButton(unit+"（"+list.length+"問）",()=>begin(list)))}
+  }
+  function chooseSocialField(field,pool){
+    const container=el("unit-buttons");clear(container);el("unit-title").textContent="社会 / "+field+"｜単元・テスト範囲を選ぶ";
+    container.appendChild(makeButton("← 分野を選び直す",()=>chooseSubject("社会")));
+    const chapter=q=>q.display_chapter||"その他（分類確認中）";
+    const available=[...new Set(pool.map(chapter))];
+    const order=socialOrder[field]||[];
+    available.sort((a,b)=>(order.includes(a)?order.indexOf(a):999)-(order.includes(b)?order.indexOf(b):999)||a.localeCompare(b,"ja"));
+    const chosen=new Set();const range=document.createElement("div");range.className="social-range";
+    const status=document.createElement("p");status.setAttribute("aria-live","polite");
+    const start=makeButton("選択した範囲で開始",()=>begin(pool.filter(q=>chosen.has(chapter(q)))));
+    const boxes=[];
+    const refresh=()=>{const n=pool.filter(q=>chosen.has(chapter(q))).length;status.textContent="選択中："+n+"問";start.disabled=!n;};
+    container.appendChild(makeButton("すべて選択",()=>{for(const [name,box] of boxes){chosen.add(name);box.checked=true}refresh()}));
+    container.appendChild(makeButton("選択を解除",()=>{chosen.clear();for(const [,box] of boxes)box.checked=false;refresh()}));
+    for(const name of available){const label=document.createElement("label"),box=document.createElement("input");box.type="checkbox";box.onchange=()=>{if(box.checked)chosen.add(name);else chosen.delete(name);refresh()};boxes.push([name,box]);label.append(box,document.createTextNode(name+"（"+pool.filter(q=>chapter(q)===name).length+"問）"));range.appendChild(label)}
+    container.append(range,status,start);refresh();
   }
   function begin(items){if(!items.length)return;selected=items.slice();sessionBase=items.slice();sessionAnswers=[];current=0;score=0;el("results").hidden=true;el("selector").hidden=true;el("quiz").hidden=false;show()}
   function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const pct=total?Math.round(score/total*100):0;el("result-score").textContent=score+" / "+total+"問";el("result-detail").textContent="正答率 "+pct+"%　・　間違い "+wrong.length+"問";el("result-mistakes").textContent=wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;window.scrollTo(0,0)}
   el("review-wrong").onclick=()=>{const wrongIds=new Set(sessionAnswers.filter(x=>!x.correct).map(x=>x.id));begin(selected.filter(q=>wrongIds.has(q.id)))};
   el("retry-all").onclick=()=>begin(sessionBase);
-  function show(){const q=selected[current];el("unit-video").hidden=false;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+q.topic_name;el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
+  function show(){const q=selected[current];el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
     q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
@@ -239,7 +1327,8 @@ footer{color:#573849}
   if(requested&&groups.includes(requested)){
     chooseSubject(requested);
     const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
-    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(minor==="all"||q.topic_name===minor));
+    const chapters=params.getAll("chapter");
+    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(requested==="社会"&&chapters.length?(chapters.includes("all")||chapters.includes(q.display_chapter||"その他（分類確認中）")):(minor==="all"||q.topic_name===minor)));
     const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
     if(limit>0)begin(count==="all"?pool:selectQuizQuestions(pool,limit));
   }
@@ -280,7 +1369,7 @@ export default {
         const csv=await upstream.text();
         if(csv.length>1024*1024)throw Error("Public data too large");
         const approved=parsePublicCsv(csv);
-        const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name}));
+        const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name,...socialDisplay(q)}));
         return new Response(JSON.stringify({schema:1,questions}),{headers});
       } catch (_) {
         return new Response(JSON.stringify({error:"Published catalog unavailable"}),{status:503,headers});
