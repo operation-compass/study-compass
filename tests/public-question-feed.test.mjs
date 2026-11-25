@@ -115,3 +115,26 @@ test('real legacy Study HTML retains all existing questions when public CSV adds
     assert.equal(changed.slice(0,html.indexOf(marker)),html.slice(0,html.indexOf(marker)));
   } finally {globalThis.fetch=oldFetch;}
 });
+
+
+test('public catalog contains only approved question IDs and classification fields',async()=>{
+  const row=['catalog-1','1','社会','中1','歴史','古代','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const res=await probe(new Response(HEADER+'\n'+row+'\n'),'/api/question-catalog.json');
+  assert.equal(res.status,200);
+  assert.equal(res.headers.get('cache-control'),'no-store');
+  assert.deepEqual(await res.json(),{schema:1,questions:[{id:'catalog-1',subject:'社会',major:'歴史',minor:'古代'}]});
+  assert.equal(new URL(lastUpstreamUrl).searchParams.get('gid'),'343531822');
+});
+test('empty approved catalog is a valid empty result',async()=>{
+  const res=await probe(new Response(HEADER+'\n'),'/api/question-catalog.json');
+  assert.equal(res.status,200);
+  assert.deepEqual(await res.json(),{schema:1,questions:[]});
+});
+test('catalog fails closed on invalid questions, duplicate IDs and unavailable data',async()=>{
+  const row=['dup','1','社会','中1','歴史','古代','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  for(const upstream of [new Response('private,question\n'),new Response(HEADER+'\n'+row+'\n'+row+'\n'),new Response(HEADER+'\n'+row.replace(',A,',',Z,')+'\n'),new Response('unavailable',{status:403})]){
+    const res=await probe(upstream,'/api/question-catalog.json');
+    assert.equal(res.status,503);
+    assert.deepEqual(await res.json(),{error:'Published catalog unavailable'});
+  }
+});

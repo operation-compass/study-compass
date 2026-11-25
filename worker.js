@@ -239,6 +239,23 @@ export default {
       return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });
     }
 
+    // Public catalog for live subject/unit counts and exact learning-coverage denominators.
+    // Use the same strict parser as the approved-only quiz. Do not expose private sheets.
+    if (request.method === "GET" && url.pathname === "/api/question-catalog.json") {
+      const headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"};
+      try {
+        const upstream=await fetch(PUBLIC_URL,{signal:AbortSignal.timeout(5000)});
+        if(!upstream.ok)throw Error("Public data unavailable");
+        const csv=await upstream.text();
+        if(csv.length>1024*1024)throw Error("Public data too large");
+        const approved=parsePublicCsv(csv);
+        const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name}));
+        return new Response(JSON.stringify({schema:1,questions}),{headers});
+      } catch (_) {
+        return new Response(JSON.stringify({error:"Published catalog unavailable"}),{status:503,headers});
+      }
+    }
+
     // Only the separately reviewed WEB QUESTIONS publication sheet is readable here.
     if (request.method === "GET" && url.pathname === "/api/questions.csv") {
       const urlCsv = "https://docs.google.com/spreadsheets/d/1WFYJ-a5V1GBZzr99yglB4MUaW29z-qBze6cZ5m4cM8g/export?format=csv&gid=343531822";
