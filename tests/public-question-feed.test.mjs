@@ -122,7 +122,7 @@ test('public catalog contains only approved question IDs and classification fiel
   const res=await probe(new Response(HEADER+'\n'+row+'\n'),'/api/question-catalog.json');
   assert.equal(res.status,200);
   assert.equal(res.headers.get('cache-control'),'no-store');
-  assert.deepEqual(await res.json(),{schema:1,questions:[{id:'catalog-1',subject:'社会',major:'歴史',minor:'古代',display_chapter:'その他（分類確認中）',display_section:''}]});
+  assert.deepEqual(await res.json(),{schema:1,questions:[{id:'catalog-1',subject:'社会',major:'歴史',minor:'古代'}]});
   assert.equal(new URL(lastUpstreamUrl).searchParams.get('gid'),'343531822');
 });
 test('empty approved catalog is a valid empty result',async()=>{
@@ -155,4 +155,13 @@ test('display classification is separate from raw classification and preserves k
   assert(html.includes('params.getAll("chapter")'));
   const vm=await import('node:vm');
   for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
+});
+
+test('opt-in catalog adds display chapter without changing original API',async()=>{
+  const row=['SC-SOC-HIS-GAP10-000001','1','社会','中1','歴史','律令・税制','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const csv=HEADER+'\n'+row+'\n';
+  const basic=await probe(new Response(csv),'/api/question-catalog.json');
+  const expanded=await probe(new Response(csv),'/api/question-catalog.json?display=1');
+  assert.deepEqual((await basic.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制'}]);
+  assert.deepEqual((await expanded.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制',display_chapter:'原始・古代',display_section:'奈良時代'}]);
 });
