@@ -73,7 +73,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BASE="https://study-compass.occompass-info.workers.dev"
+          BASE="https://shirunoera.occompass-info.workers.dev"
 
           echo "Checking live approved-only question CSV..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/api/questions.csv?smoke=${GITHUB_SHA}" -o /tmp/public-questions.csv
@@ -88,11 +88,30 @@ jobs:
           print('Live published-question CSV verified; question count:',len(rows)-1)
           PY
 
-          echo "Checking homepage..."
+          echo "Checking the SHIRUNOERA portal..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
-          grep -q 'study-compass-build' /tmp/home.html
           grep -q 'SHIRUNOERA' /tmp/home.html
-          grep -q 'id="first-accuracy"' /tmp/home.html
+          grep -q 'href="/high-school"' /tmp/home.html
+          grep -q 'id="learn"' /tmp/home.html
+          grep -q 'id="select"' /tmp/home.html
+          echo "Checking high-school learning dashboard..."
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/high-school?smoke=${GITHUB_SHA}" -o /tmp/high-school.html
+          grep -q 'SHIRUNOERA' /tmp/high-school.html
+          grep -q 'id="first-accuracy"' /tmp/high-school.html
+          grep -q 'id="record-radar"' /tmp/high-school.html
+          for image in hero high-school university school-test certification select; do
+            curl -fsSL --retry 5 --retry-delay 2 "$BASE/assets/portal/$image.webp?smoke=${GITHUB_SHA}" -o "/tmp/$image.webp"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          for name in ("hero", "high-school", "university", "school-test", "certification", "select"):
+              live=Path("/tmp", name+".webp").read_bytes()
+              expected=Path("assets/portal", name+".webp").read_bytes()
+              assert live[:4]==b"RIFF" and live[8:12]==b"WEBP", "Invalid WebP: "+name
+              assert sha256(live).digest()==sha256(expected).digest(), "Live image mismatch: "+name
+          print("All six production photographs match the repository.")
+          PY
 
           echo "Checking unreviewed legacy route is blocked..."
           legacy_code="$(curl -sS -o /tmp/legacy.html -w '%{http_code}' "$BASE/legacy-study.html")"
@@ -123,7 +142,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BASE="https://study-compass.occompass-info.workers.dev"
+          BASE="https://shirunoera.occompass-info.workers.dev"
           BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$BROWSER"
           "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$BASE/study.html?mode=qa&render=${GITHUB_SHA}" > /tmp/rendered.html
@@ -140,6 +159,7 @@ jobs:
           retention-days: 14
           path: |
             /tmp/home.html
+            /tmp/high-school.html
             /tmp/study.html
             /tmp/study.headers
             /tmp/study-v2.css
