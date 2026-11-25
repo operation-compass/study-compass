@@ -228,7 +228,7 @@ function updateCatalogUI(){
 async function loadCatalog(){
   catalogState="loading";updateCatalogUI();
   try{
-    const res=await fetch("/api/question-catalog.json",{cache:"no-store",signal:AbortSignal.timeout(10000)});
+    const res=await fetch("/api/question-catalog.json?display=1",{cache:"no-store",signal:AbortSignal.timeout(10000)});
     if(!res.ok)throw Error("catalog unavailable");
     const next=buildCatalog(await res.json());taxonomy=next.units;catalogById=next.byQuestion;catalogState="ready";
   }catch(e){catalogState="error";taxonomy=Object.create(null);catalogById=new Map()}
