@@ -138,3 +138,30 @@ test('catalog fails closed on invalid questions, duplicate IDs and unavailable d
     assert.deepEqual(await res.json(),{error:'Published catalog unavailable'});
   }
 });
+
+test('display classification is separate from raw classification and preserves known public IDs',async()=>{
+  const api=await import('data:text/javascript;base64,'+Buffer.from(src+'\nexport { socialDisplay, publishedExplanation, approvedOnlyHtml, parsePublicCsv };').toString('base64'));
+  const row=['SC-SOC-HIS-GAP10-000001','1','社会','中1','歴史','律令・税制','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const q=api.parsePublicCsv(HEADER+'\n'+row+'\n')[0];
+  assert.equal(q.topic_name,'律令・税制');
+  assert.equal(q.answer,'正解');
+  assert.deepEqual(api.socialDisplay(q),{display_chapter:'原始・古代',display_section:'奈良時代'});
+  assert.deepEqual(api.publishedExplanation(q),{});
+  assert.deepEqual(api.socialDisplay({id:'unknown',subject:'社会'}),{display_chapter:'その他（分類確認中）',display_section:''});
+  assert.deepEqual(api.socialDisplay({id:'unknown',subject:'国語'}),{});
+  const html=api.approvedOnlyHtml([q]);
+  assert(!html.includes('解説動画は準備中'));
+  assert(html.includes('el("unit-video").hidden=!q.video_url'));
+  assert(html.includes('params.getAll("chapter")'));
+  const vm=await import('node:vm');
+  for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
+});
+
+test('opt-in catalog adds display chapter without changing original API',async()=>{
+  const row=['SC-SOC-HIS-GAP10-000001','1','社会','中1','歴史','律令・税制','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const csv=HEADER+'\n'+row+'\n';
+  const basic=await probe(new Response(csv),'/api/question-catalog.json');
+  const expanded=await probe(new Response(csv),'/api/question-catalog.json?display=1');
+  assert.deepEqual((await basic.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制'}]);
+  assert.deepEqual((await expanded.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制',display_chapter:'原始・古代',display_section:'奈良時代'}]);
+});

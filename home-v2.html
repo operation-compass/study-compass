@@ -35,6 +35,7 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 .record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
 .record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}.record-items a{display:block;color:var(--wine);text-decoration:none;font-weight:600;line-height:1.6;padding:3px 0}.record-items a:hover{text-decoration:underline}.record-items a:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
 .record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+#social-chapters label{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}#social-chapters input{width:19px;height:19px;accent-color:#743650}#social-chapters button{margin:4px 8px 5px 0;padding:8px 12px;font:inherit}#social-chapters[hidden],#unit[hidden]{display:none!important}
 .section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
 .section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
 .video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
@@ -163,16 +164,13 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 <section id="configure" class="subpage" aria-label="出題設定">
   <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
   <p class="note">分野・単元と問題数を選んでスタート。</p>
-  <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select></div></div><p class="note" id="available" aria-live="polite"></p>
+  <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select><div id="social-chapters" hidden></div></div></div><p class="note" id="available" aria-live="polite"></p>
     <label style="margin-top:22px">問題数</label>
     <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
     <button class="primary" id="start" disabled>この条件で始める →</button>
     <p class="hint">公開済み問題から出題します。回答結果はこの端末に記録されます。</p>
   </div>
-  <section class="section-video" aria-label="単元別解説動画">
-    <h2>単元別 解説動画</h2><p class="note">選択した分野・単元に対応する動画を、後日ここへ追加できる構成です。</p>
-    <div class="video-placeholder"><span class="video-icon" aria-hidden="true">▶</span><span id="video-label">動画は準備中です。公開後は該当単元の解説へ案内します。</span></div>
-  </section><div id="selection" class="preview" hidden aria-live="polite"></div>
+<div id="selection" class="preview" hidden aria-live="polite"></div>
 </section></div></main>
 <footer class="footer">© SHIRUNOERA<p class="traffic-notice">サイト改善のため、閲覧ページと流入元を媒体別に集計します。独自集計では個人識別子や解答内容を保存しません。ブラウザのDNT・GPC設定を尊重します。</p>
 <div hidden aria-hidden="true"><div id="today"></div><div id="written"></div><div id="generated"></div><div id="total"></div><i id="writtenBar"></i><i id="generatedBar"></i><i id="totalBar"></i><p id="storageStatus"></p></div>
@@ -183,6 +181,9 @@ const byId=id=>document.getElementById(id);
 const subjects=["国語","数学","英語","理科","社会"];
 let taxonomy=Object.create(null),catalogById=new Map(),catalogState="loading",subject="",amount="10";
 // BEGIN CATALOG MODEL
+const socialChapterOrder={"地理":["世界と日本の姿","世界の気候と生活","世界の諸地域","日本の地域的特色","日本の諸地域","地域調査"],"歴史":["原始・古代","中世","近世","近代","二つの世界大戦","戦後・現代"],"公民":["現代社会","日本国憲法と人権","民主政治","経済と生活","国際社会","持続可能な社会"]};
+function displayMinor(q){return q.subject==="社会"?(q.display_chapter||"その他（分類確認中）"):q.minor}
+function chapterEntries(minors,major){const order=socialChapterOrder[major]||[];return Object.entries(minors||{}).sort((a,b)=>(order.includes(a[0])?order.indexOf(a[0]):999)-(order.includes(b[0])?order.indexOf(b[0]):999)||a[0].localeCompare(b[0],"ja"))}
 function buildCatalog(payload){
   if(!payload||payload.schema!==1||!Array.isArray(payload.questions))throw Error("invalid catalog");
   const units=Object.create(null),byQuestion=new Map();
@@ -193,7 +194,7 @@ function buildCatalog(payload){
     if(!subjects.includes(q.subject))continue;
     if(q.major==="all"||q.minor==="all")throw Error("reserved classification");
     const major=units[q.subject][q.major]??=Object.create(null);
-    major[q.minor]=(major[q.minor]||0)+1;
+    const minor=displayMinor(q);major[minor]=(major[minor]||0)+1;
   }
   return {units,byQuestion};
 }
@@ -201,7 +202,7 @@ function totalFor(units,s,m="all",n="all"){
   let count=0;
   for(const [major,minors] of Object.entries(units[s]||{})){
     if(m!=="all"&&major!==m)continue;
-    for(const [minor,total] of Object.entries(minors))if(n==="all"||minor===n)count+=total;
+    for(const [minor,total] of Object.entries(minors))if(n==="all"||(Array.isArray(n)?n.includes(minor):minor===n))count+=total;
   }
   return count;
 }
@@ -211,8 +212,10 @@ function currentQuestion(id,r,index){
 }
 // END CATALOG MODEL
 function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
-function countFor(){return totalFor(taxonomy,subject,byId("major").value,byId("unit").value)}
-function fillUnits(){const minor=byId("unit"),major=byId("major").value;minor.replaceChildren();addOption(minor,"all","すべての単元");if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
+function selectedChapters(){return [...byId("social-chapters").querySelectorAll("input:checked")].map(x=>x.value)}
+function countFor(){const major=byId("major").value;return totalFor(taxonomy,subject,major,subject==="社会"&&major!=="all"?selectedChapters():byId("unit").value)}
+function fillUnits(){const minor=byId("unit"),major=byId("major").value,range=byId("social-chapters");minor.replaceChildren();range.replaceChildren();addOption(minor,"all","すべての単元");const social=subject==="社会"&&major!=="all";minor.hidden=social;range.hidden=!social;
+if(social){const entries=chapterEntries(taxonomy[subject]?.[major],major);const all=document.createElement("button");all.type="button";all.textContent="すべて選択";all.onclick=()=>{range.querySelectorAll("input").forEach(x=>x.checked=true);refreshCount()};const none=document.createElement("button");none.type="button";none.textContent="選択を解除";none.onclick=()=>{range.querySelectorAll("input").forEach(x=>x.checked=false);refreshCount()};range.append(all,none);for(const [name,count] of entries){const l=document.createElement("label"),c=document.createElement("input");c.type="checkbox";c.value=name;c.checked=true;c.onchange=refreshCount;l.append(c,document.createTextNode(name+"（"+count+"問）"));range.append(l)}}else if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
 function refreshCount(){const count=countFor();byId("available").textContent=catalogState==="ready"?"公開済みの問題："+count+"問":"公開問題数を確認できません。";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));byId("start").disabled=catalogState!=="ready"||count===0;byId("selection").hidden=true}
 function updateCatalogUI(){
   const status=byId("catalog-status"),retry=byId("catalog-retry"),fallback=byId("catalog-fallback");
@@ -225,7 +228,7 @@ function updateCatalogUI(){
 async function loadCatalog(){
   catalogState="loading";updateCatalogUI();
   try{
-    const res=await fetch("/api/question-catalog.json",{cache:"no-store",signal:AbortSignal.timeout(10000)});
+    const res=await fetch("/api/question-catalog.json?display=1",{cache:"no-store",signal:AbortSignal.timeout(10000)});
     if(!res.ok)throw Error("catalog unavailable");
     const next=buildCatalog(await res.json());taxonomy=next.units;catalogById=next.byQuestion;catalogState="ready";
   }catch(e){catalogState="error";taxonomy=Object.create(null);catalogById=new Map()}
@@ -239,7 +242,7 @@ document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("c
 byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
-byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:byId("major").value,unit:byId("unit").value,count:amount});location.assign("/study.html?"+qs.toString())});
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const major=byId("major").value;const qs=new URLSearchParams({subject,major,unit:subject==="社会"?"all":byId("unit").value,count:amount});if(subject==="社会"){for(const c of major==="all"?["all"]:selectedChapters())qs.append("chapter",c)}location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
 loadCatalog();
 </script>
@@ -287,7 +290,7 @@ function render(){
   const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&subjectOrder.includes(r.subject)&&typeof r.major==="string"&&typeof r.minor==="string");
   const done={};for(const s of subjectOrder)done[s]=new Set();
   const weak={};let correct=0,incorrect=0;
-  for(const [id,r] of entries){correct+=r.correct?1:0;incorrect+=r.correct?0:1;if(catalogState!=="ready"||!currentQuestion(id,r,catalogById))continue;done[r.subject].add(id);const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
+  for(const [id,r] of entries){correct+=r.correct?1:0;incorrect+=r.correct?0:1;if(catalogState!=="ready"||!currentQuestion(id,r,catalogById))continue;done[r.subject].add(id);const k=[r.subject,r.major,displayMinor(catalogById.get(id))].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
   byId("answered").textContent=entries.length?entries.length+"問":"—";
   byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
   byId("mistakes").textContent=entries.length?incorrect+"問":"—";
@@ -312,7 +315,7 @@ function render(){
   const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
   const node=byId("weak-units");node.replaceChildren();
   if(!list.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":"公開中の問題を5問以上回答した単元がまだありません。";node.append(li)}
-  for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:minor,count:"10"}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問） → 復習";a.setAttribute("aria-label",k+"の一問一答に再挑戦");li.append(a);node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:s==="社会"?"all":minor,count:"10",...(s==="社会"?{chapter:minor}:{})}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問） → 復習";a.setAttribute("aria-label",k+"の一問一答に再挑戦");li.append(a);node.append(li)}
 }
 document.addEventListener("shirunoera-catalog",render);
 render();
