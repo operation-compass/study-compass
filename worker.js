@@ -1369,7 +1369,8 @@ export default {
         const csv=await upstream.text();
         if(csv.length>1024*1024)throw Error("Public data too large");
         const approved=parsePublicCsv(csv);
-        const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name,...socialDisplay(q)}));
+        const display=url.searchParams.get("display")==="1";
+        const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name,...(display?socialDisplay(q):{})}));
         return new Response(JSON.stringify({schema:1,questions}),{headers});
       } catch (_) {
         return new Response(JSON.stringify({error:"Published catalog unavailable"}),{status:503,headers});
