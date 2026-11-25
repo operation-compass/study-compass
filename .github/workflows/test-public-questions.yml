@@ -22,6 +22,12 @@ jobs:
         run: node --check worker.js
       - name: Test public feed without deployment
         run: node --test tests/public-question-feed.test.mjs
+      - name: Test social catalog and learning compatibility
+        run: |
+          node tests/live-catalog-home.test.cjs
+          node scripts/check-home-safety.cjs
+          node scripts/check-shirunoera-quiz-rotation.cjs
+          node --test tests/traffic-analytics.test.mjs
       - name: Inspect existing question schema (field names only)
         run: |
           node - <<'NODE'
