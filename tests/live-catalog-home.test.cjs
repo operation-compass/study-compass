@@ -22,7 +22,7 @@ assert.throws(()=>vm.runInContext('buildCatalog({schema:1,questions:[payload.que
 assert.throws(()=>vm.runInContext('buildCatalog({schema:2,questions:[]})',ctx));
 assert.equal(vm.runInContext('totalFor(buildCatalog({schema:1,questions:[]}).units,"社会")',ctx),0);
 assert(html.includes('const KEY="shirunoera.learning.v1"'));
-assert(html.includes('fetch("/api/question-catalog.json"'));
+assert(html.includes('fetch("/api/question-catalog.json?display=1"'));
 assert(!html.includes("2026年11月23日時点"));
 for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
 console.log('PASS live catalog counts, new units, current ID matching, empty/error/duplicate cases and script syntax');
