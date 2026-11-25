@@ -90,6 +90,35 @@ jobs:
           print('Live published-question CSV verified; question count:',len(rows)-1)
           PY
 
+          echo "Checking current approved catalog and public search routes..."
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/api/question-catalog.json?smoke=${GITHUB_SHA}" -o /tmp/catalog.json
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/robots.txt" -o /tmp/robots.txt
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/sitemap.xml" -o /tmp/sitemap.xml
+          python3 - <<'PY'
+          import json, csv, xml.etree.ElementTree as ET
+          from pathlib import Path
+          catalog=json.loads(Path('/tmp/catalog.json').read_text())
+          assert catalog['schema']==1
+          questions=catalog['questions']
+          assert all(set(q)=={'id','subject','major','minor'} and all(isinstance(v,str) and v.strip() for v in q.values()) for q in questions)
+          assert len({q['id'] for q in questions})==len(questions)
+          with Path('/tmp/public-questions.csv').open(encoding='utf-8-sig',newline='') as f:
+              expected={r['question_id']:(r['subject'],r['unit_major'],r['unit_minor']) for r in csv.DictReader(f)}
+          actual={q['id']:(q['subject'],q['major'],q['minor']) for q in questions}
+          if actual!=expected:
+              # Public questions can be added while deploying; retry against a fresh CSV.
+              import urllib.request, io
+              req=urllib.request.Request('https://shirunoera.occompass-info.workers.dev/api/questions.csv',headers={'User-Agent':'SHIRUNOERA-smoke-test'})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  expected={r['question_id']:(r['subject'],r['unit_major'],r['unit_minor']) for r in csv.DictReader(io.StringIO(response.read().decode('utf-8-sig')))}
+              assert all(actual.get(k)==v for k,v in expected.items()) or all(expected.get(k)==v for k,v in actual.items()), 'Catalog differs from approved CSV'
+          assert Path('/tmp/robots.txt').read_text().find('Sitemap: https://shirunoera.occompass-info.workers.dev/sitemap.xml')>=0
+          root=ET.parse('/tmp/sitemap.xml').getroot()
+          urls={x.text for x in root.findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url/{http://www.sitemaps.org/schemas/sitemap/0.9}loc')}
+          assert urls=={'https://shirunoera.occompass-info.workers.dev/','https://shirunoera.occompass-info.workers.dev/high-school'}
+          print('Live approved catalog and sitemap verified; catalog questions:',len(questions))
+          PY
+
           echo "Checking the SHIRUNOERA portal..."
           curl -fsSL --retry 5 --retry-delay 2 "$BASE/?smoke=${GITHUB_SHA}" -o /tmp/home.html
           grep -q 'SHIRUNOERA' /tmp/home.html
@@ -151,6 +180,35 @@ jobs:
           grep -q '監査済み・公開承認済みの問題のみ表示' /tmp/rendered.html
           if grep -q '教材データに不整合があります' /tmp/rendered.html; then exit 1; fi
           echo "Reviewed-only learning page rendered."
+          echo "Checking live question counts in rendered high-school dashboard..."
+          for attempt in 1 2 3; do
+            "$BROWSER" --headless --no-sandbox --disable-gpu --virtual-time-budget=15000 --timeout=20000 --dump-dom "$BASE/high-school?render=${GITHUB_SHA}&attempt=$attempt" > /tmp/rendered-high-school.html
+            if grep -q 'data-state="ready"' /tmp/rendered-high-school.html; then break; fi
+            sleep 2
+          done
+          grep -q 'data-state="ready"' /tmp/rendered-high-school.html
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          import re
+          html=Path('/tmp/rendered-high-school.html').read_text()
+          class Dashboard(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.subjects=[]; self.capture=False; self.status=''
+              def handle_starttag(self,tag,attrs):
+                  a=dict(attrs)
+                  if tag=='button' and 'data-subject' in a:self.subjects.append((a['data-subject'],'disabled' in a))
+                  if a.get('id')=='catalog-status':self.capture=True
+              def handle_endtag(self,tag):
+                  if tag=='p' and self.capture:self.capture=False
+              def handle_data(self,data):
+                  if self.capture:self.status+=data
+          p=Dashboard();p.feed(html)
+          assert len(p.subjects)==5 and len({s for s,_ in p.subjects})==5
+          assert re.search(r'公開済みの5教科：[0-9]+問',p.status),p.status
+          assert '2026年11月23日時点' not in html
+          print('Rendered dashboard:',p.status)
+          PY
 
       - name: Preserve production diagnostics
         if: always()
@@ -166,5 +224,6 @@ jobs:
             /tmp/study.headers
             /tmp/study-v2.css
             /tmp/rendered.html
+            /tmp/rendered-high-school.html
             /tmp/rendered-flashcards.html
             /tmp/rendered-questions.html

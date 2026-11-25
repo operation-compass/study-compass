@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /api/
+Disallow: /data/staging/
+Disallow: /legacy-study.html
+Sitemap: https://shirunoera.occompass-info.workers.dev/sitemap.xml
