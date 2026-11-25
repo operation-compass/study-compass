@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="study-compass-build" content="2026-11-23-shirunoera-learning-v1"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜高校受験 一問一答</title>
 <style>
-:root{--bg:#faf8f4;--paper:#fff;--ink:#292d33;--muted:#6a6e75;--line:#e6e1da;--wine:#6d3046;--copper:#a47763}
+:root{--bg:#F8F4EF;--paper:#fff;--ink:#252327;--muted:#6a6e75;--line:#e6e1da;--wine:#622B45;--copper:#C98A78}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.65}
 button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--copper);outline-offset:3px}header{background:var(--paper);border-bottom:1px solid var(--line)}.wrap{max-width:680px;margin:auto;padding:0 20px}
 header .wrap{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font:700 22px Georgia,serif;letter-spacing:.10em;color:var(--wine)}.header-sub{font-size:11px;color:var(--muted);letter-spacing:.05em}
@@ -16,7 +16,7 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 /* Editorial fashion-banner concept. Hero only: learning UI remains practical. */
 .hero-banner{position:relative;isolation:isolate;overflow:hidden;min-height:244px;margin:0 0 24px;padding:25px 29px 20px;border-radius:5px;color:#faf4ef;background:linear-gradient(113deg,rgba(30,22,28,.96),rgba(77,36,50,.87) 60%,rgba(127,72,76,.7)),radial-gradient(ellipse at 79% 40%,#c2a28b,#3f2631 65%);display:flex;flex-direction:column;justify-content:space-between;gap:12px}
 .hero-banner::before{content:"";position:absolute;z-index:-1;right:-62px;top:-85px;width:360px;height:360px;border:1px solid rgba(239,213,193,.34);border-radius:50%;box-shadow:0 0 0 43px #efcfb010,0 0 0 97px #efcfb00b;transform:rotate(-20deg)}
-.hero-banner::after{content:"S";position:absolute;right:20px;top:7px;color:rgba(239,213,193,.16);font:italic 240px/1 Georgia,"Times New Roman",serif;transform:rotate(-12deg);pointer-events:none;z-index:-1}
+.hero-banner::after{content:"";position:absolute;right:20px;top:7px;color:rgba(239,213,193,.16);font:italic 240px/1 Georgia,"Times New Roman",serif;transform:rotate(-12deg);pointer-events:none;z-index:-1}
 .banner-head,.banner-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
 .banner-kicker,.banner-number,.banner-foot{font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#ead5c9}
 .banner-number{white-space:nowrap}.banner-copy{position:relative;z-index:1;max-width:100%}.hero-banner h1{font:normal clamp(37px,7.6vw,64px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-.055em;color:#fff9f1;margin:0;text-transform:uppercase;text-shadow:0 2px 15px #21181c30}
@@ -38,7 +38,8 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
-  <section class="hero-banner" aria-label="SHIRUNOERA learning editorial banner"><div class="banner-head"><span class="banner-kicker">SHIRUNOERA — THE LEARNING EDITION</span><span class="banner-number">ISSUE 001</span></div><div class="banner-copy"><h1>THE ART<br>OF <em>KNOWING.</em></h1></div><div class="banner-foot"><span>STUDY WITH CURIOSITY</span><span>EST. 2026</span></div></section>
+  <a href="/" class="back" style="display:inline-block;text-decoration:none">← 総合ホームへ戻る</a>
+  <section class="hero-banner" aria-label="高校受験"><div class="banner-copy"><h1 style="font-family:inherit;letter-spacing:.03em;font-size:clamp(30px,6vw,48px)">高校受験</h1><p style="margin:12px 0 0">毎日の学習を、確かな力に。</p></div></section>
   <div class="home-head"><h1 class="subject-heading">一問一答</h1><p>学びたい教科を選択</p></div>
   <div class="subjects" aria-label="まずは一問一答から始める">
     <button class="subject" data-subject="国語"><strong>国語</strong><span class="arrow" aria-hidden="true">↗</span></button>
