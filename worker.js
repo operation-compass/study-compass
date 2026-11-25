@@ -94,11 +94,42 @@ main{max-width:960px;margin:auto;padding:20px 20px 64px}.tag{font-size:11px;colo
 .video-card{margin-top:18px;border:1px solid var(--line);border-radius:9px;padding:19px 23px;background:#fffdfb}.video-card h3{font-size:17px;margin:0 0 5px;color:var(--wine)}.video-card p{font-size:12px;margin:0;color:var(--muted)}.video-placeholder{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:6px;background:#f1efed;padding:12px;color:#646b75;font-size:13px}.video-placeholder span:first-child{font-size:24px}
 footer{padding:22px;text-align:center;color:#81737a;font-size:12px}[hidden]{display:none!important}
 @media(max-width:620px){.header-inner{padding:11px 14px}.brand{font-size:18px;letter-spacing:.10em}.hero-strip{min-height:100px;padding:20px 12px}.hero-strip h1{font-size:29px}main{padding:12px 12px 48px}.card{padding:17px;margin:13px 0}.quiz-head{padding:11px 14px}.quiz-head strong{font-size:17px}.quiz-inner{padding:17px 15px 20px}#choices{grid-template-columns:1fr;gap:9px}#choices button{min-height:57px;padding:12px 13px;font-size:16px}#question{font-size:20px;margin-bottom:17px;padding-left:13px}.video-card{padding:16px}}
-</style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>SHIRUNOERA — THE LEARNING EDITION</small><h1>THE ART OF KNOWING.</h1></div>
+
+/* Editorial quiz palette — keep questions and answer feedback legible. */
+:root{--wine:#622b45;--ink:#352b2f;--muted:#66525a;--line:#cfb9ae;--paper:#fbf3e8;--accent:#b59162;--serif:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",Georgia,serif}
+body{background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 35%),linear-gradient(125deg,#ead3d4,#f2e5d5 50%,#e3d4c3)}
+.site-header{background:linear-gradient(105deg,#e3bcc6,#edd3ca 52%,#e9d4b4);border-top:4px solid var(--wine);border-bottom-color:var(--line)}
+.header-inner{min-height:64px}.brand{color:#472335;font-weight:500}.home-link{color:#622b45;font-weight:600}
+.hero-strip{background:linear-gradient(120deg,#e9cbd0,#eddcbf 75%,#d9e2d2);color:#472335;min-height:0;padding:23px 20px 25px;border-bottom:1px solid var(--line)}
+.hero-strip::before{display:none}.hero-strip small{color:#66525a}.hero-strip h1{font:600 clamp(24px,3.5vw,35px)/1.4 var(--serif);letter-spacing:.06em;margin:5px 0 0}
+.tag{font-size:11px;color:#66525a}
+.card,.results-card,.video-card{background:linear-gradient(145deg,#fbf3e8,#f2e4d5);border-color:var(--line);border-radius:4px;box-shadow:0 7px 24px #68423313}
+#selector h2,.results-card h2{font-family:var(--serif);color:#472335}
+#selector button{background:linear-gradient(145deg,#f9ebdd,#e9d4da);border-color:#c6aea8;border-radius:4px;color:var(--wine);min-height:46px}
+#selector button:hover{background:#e8cbd4}
+.quiz-head{background:linear-gradient(105deg,#622b45,#88465f);color:#fff6eb}.quiz-head small{color:#f4e2d4}
+.quiz-nav button{border-color:#c6aea8;background:#f8e9de;color:var(--wine);min-height:44px}
+#progress{color:var(--muted);font-variant-numeric:tabular-nums}
+.quiz-question-label{font:600 12px/1.5 system-ui,sans-serif;letter-spacing:.08em}
+#question{border-left-color:#a77a88;color:var(--ink);overflow-wrap:anywhere}
+#choices button{background:#fff7ed;border-color:#c6aea8;border-radius:5px;color:var(--ink);overflow-wrap:anywhere}
+#choices button:hover:not(:disabled){background:#f3e0e3;border-color:var(--wine)}
+#choices button.ok{background:#e1eddf;border-color:#52775f;color:#203c2b}
+#choices button.bad{background:#f6dce1;border-color:#a95566;color:#7a293b}
+#answer{background:linear-gradient(145deg,#f4e4dc,#f6ead9);border-color:#c6aea8;border-radius:5px;overflow-wrap:anywhere}
+#next,.results-actions .primary{background:linear-gradient(110deg,#622b45,#88465f);color:#fff6eb;border-radius:4px}
+.results-actions button{background:#faebdf;border-color:var(--wine);border-radius:4px}
+.result-score{font:500 clamp(36px,5vw,48px)/1.25 Georgia,serif;color:var(--wine);font-variant-numeric:tabular-nums}
+.results-eyebrow{font:600 12px/1.5 system-ui,sans-serif}
+.video-card h3{color:var(--wine)}.video-placeholder{background:#e3e6d9;color:#42584b}
+footer{color:#573849}
+@media(max-width:620px){.header-inner{min-height:55px;gap:10px}.home-link{font-size:12px}.hero-strip{padding:13px 12px 15px}.hero-strip h1{font-size:23px}.hero-strip small{font-size:10px}.quiz-nav{align-items:flex-start;gap:8px}.quiz-nav button{font-size:11px;padding:8px 9px}.quiz-inner{padding:15px 14px 20px}#question{font-size:20px}#choices button{min-height:57px}#progress{font-size:12px}}
+@media(prefers-reduced-motion:reduce){#choices button{transition:none}}
+</style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>高校受験</small><h1>一問一答で、知識を確かに。</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>QUICK STUDY</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">QUESTION / 問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">YOUR LEARNING RESULT</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>▣ 単元別 解説動画　<small>EXPLANATION VIDEOS</small></h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
-  </main><footer>SHIRUNOERA｜公開品質を優先しています</footer>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><div class="video-placeholder"><span>▷</span><span>解説動画は準備中です。公開後にこの単元の動画を表示します。</span></div></section>
+  </main><footer>© SHIRUNOERA</footer>
   <script>const questions=${json};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
   const el=id=>document.getElementById(id);
   function saveLearningAnswer(q,correct){
