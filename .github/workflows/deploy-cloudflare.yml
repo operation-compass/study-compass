@@ -26,6 +26,7 @@ jobs:
           node --check worker.js
           node --test tests/public-question-feed.test.mjs
           node --test tests/traffic-analytics.test.mjs
+          python3 -m unittest discover -s tests -p 'test_traffic_report.py'
           node tests/live-catalog-home.test.cjs
           node scripts/check-question-release.cjs
           node scripts/check-history.cjs
