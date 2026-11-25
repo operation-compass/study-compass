@@ -35,7 +35,7 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 .record-radar{width:100%;max-width:285px;aspect-ratio:1;display:block;margin:auto}
 .record-items{list-style:none;padding:0;margin:0}.record-items li{border-bottom:1px solid var(--line);padding:9px 0;font-size:13px}.record-items li:last-child{border:0}.record-items a{display:block;color:var(--wine);text-decoration:none;font-weight:600;line-height:1.6;padding:3px 0}.record-items a:hover{text-decoration:underline}.record-items a:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
 .record-legend{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
-#social-chapters label{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}#social-chapters input{width:19px;height:19px;accent-color:#743650}#social-chapters button{margin:4px 8px 5px 0;padding:8px 12px;font:inherit}#social-chapters[hidden],#unit[hidden]{display:none!important}
+#social-chapters label{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}#social-chapters input{width:19px;height:19px;accent-color:#743650}#social-chapters button{margin:4px 8px 5px 0;padding:8px 12px;font:inherit}#social-chapters[hidden],#unit[hidden]{display:none!important}#social-chapters .social-chapter details{margin:0 0 12px 26px}#social-chapters summary{cursor:pointer;padding:10px 0;color:#743650}#social-chapters details label{font-size:14px;font-weight:normal}
 .section-video{margin-top:21px;padding:18px;border:1px solid var(--line);background:var(--paper);border-radius:10px}
 .section-video h2{font-size:18px;margin:0 0 5px}.video-placeholder{display:flex;align-items:center;gap:13px;margin-top:12px;padding:14px;border-radius:7px;background:#f1ece8;color:var(--muted);font-size:13px;min-height:73px}
 .video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
@@ -210,12 +210,46 @@ function currentQuestion(id,r,index){
   const q=index.get(id);
   return !!q&&q.subject===r.subject&&q.major===r.major&&q.minor===r.minor;
 }
+
+// BEGIN SOCIAL SECTION MODEL
+function socialSectionKey(q){return JSON.stringify([q.display_chapter||"その他（分類確認中）",q.display_section||"分類確認中"])}
+function socialRangeMatch(q,sections,chapters,legacyMinor){
+  if(sections.length)return sections.includes(socialSectionKey(q));
+  if(chapters.length)return chapters.includes("all")||chapters.includes(q.display_chapter||"その他（分類確認中）");
+  return legacyMinor==="all"||(q.topic_name||q.minor)===legacyMinor;
+}
+function sectionGroups(pool,order){
+  const map=new Map();
+  for(const q of pool){const [chapter,section]=JSON.parse(socialSectionKey(q));if(!map.has(chapter))map.set(chapter,new Map());const m=map.get(chapter);m.set(section,(m.get(section)||0)+1)}
+  const rank=(a,list)=>list.includes(a)?list.indexOf(a):999;
+  const secOrder=["旧石器時代","縄文時代","弥生時代","古墳時代","飛鳥時代","飛鳥〜奈良時代","奈良時代","平安時代","原始・古代のまとめ","鎌倉時代","室町時代","戦国時代","安土桃山時代","江戸時代","幕末・開国","明治時代","大正時代","昭和戦前","昭和戦前・戦中","戦後の日本","高度経済成長","分類確認中"];
+  return [...map].sort((a,b)=>rank(a[0],order)-rank(b[0],order)||a[0].localeCompare(b[0],"ja")).map(([chapter,m])=>[chapter,[...m].sort((a,b)=>rank(a[0],secOrder)-rank(b[0],secOrder)||a[0].localeCompare(b[0],"ja"))]);
+}
+// END SOCIAL SECTION MODEL
+function renderSocialRange(container,pool,order,onChange,initial=true){
+  const groups=sectionGroups(pool,order),leaves=[],parents=[];
+  const btn=(text,fn)=>{const b=document.createElement("button");b.type="button";b.textContent=text;b.onclick=fn;return b};
+  const label=(text,input)=>{const l=document.createElement("label");l.append(input,document.createTextNode(text));return l};
+  const refresh=()=>{for(const [parent,children] of parents){const n=children.filter(x=>x.checked).length;parent.checked=n===children.length;parent.indeterminate=n>0&&n<children.length}onChange()};
+  const setAll=value=>{for(const x of leaves)x.checked=value;refresh()};
+  container.append(btn("すべて選択",()=>setAll(true)),btn("選択を解除",()=>setAll(false)));
+  for(const [chapter,sections] of groups){
+    const block=document.createElement("div");block.className="social-chapter";
+    const parent=document.createElement("input");parent.type="checkbox";
+    block.append(label(chapter+"（"+sections.reduce((n,x)=>n+x[1],0)+"問）",parent));
+    const details=document.createElement("details"),summary=document.createElement("summary");summary.textContent="小単元を選ぶ";details.append(summary);const children=[];
+    for(const [section,count] of sections){const c=document.createElement("input");c.type="checkbox";c.value=JSON.stringify([chapter,section]);c.className="social-section-choice";c.checked=initial;c.onchange=refresh;children.push(c);leaves.push(c);details.append(label(section+"（"+count+"問）",c))}
+    parents.push([parent,children]);parent.onchange=()=>{children.forEach(c=>c.checked=parent.checked);refresh()};block.append(details);container.append(block);
+  }
+  refresh();
+}
 // END CATALOG MODEL
 function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
-function selectedChapters(){return [...byId("social-chapters").querySelectorAll("input:checked")].map(x=>x.value)}
-function countFor(){const major=byId("major").value;return totalFor(taxonomy,subject,major,subject==="社会"&&major!=="all"?selectedChapters():byId("unit").value)}
+function selectedSections(){return [...byId("social-chapters").querySelectorAll(".social-section-choice:checked")].map(x=>x.value)}
+function socialPool(major){return [...catalogById.values()].filter(q=>q.subject==="社会"&&q.major===major)}
+function countFor(){const major=byId("major").value;if(subject==="社会"&&major!=="all"){const selected=new Set(selectedSections());return socialPool(major).filter(q=>selected.has(socialSectionKey(q))).length}return totalFor(taxonomy,subject,major,byId("unit").value)}
 function fillUnits(){const minor=byId("unit"),major=byId("major").value,range=byId("social-chapters");minor.replaceChildren();range.replaceChildren();addOption(minor,"all","すべての単元");const social=subject==="社会"&&major!=="all";minor.hidden=social;range.hidden=!social;
-if(social){const entries=chapterEntries(taxonomy[subject]?.[major],major);const all=document.createElement("button");all.type="button";all.textContent="すべて選択";all.onclick=()=>{range.querySelectorAll("input").forEach(x=>x.checked=true);refreshCount()};const none=document.createElement("button");none.type="button";none.textContent="選択を解除";none.onclick=()=>{range.querySelectorAll("input").forEach(x=>x.checked=false);refreshCount()};range.append(all,none);for(const [name,count] of entries){const l=document.createElement("label"),c=document.createElement("input");c.type="checkbox";c.value=name;c.checked=true;c.onchange=refreshCount;l.append(c,document.createTextNode(name+"（"+count+"問）"));range.append(l)}}else if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
+if(social){renderSocialRange(range,socialPool(major),socialChapterOrder[major]||[],refreshCount,true)}else if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
 function refreshCount(){const count=countFor();byId("available").textContent=catalogState==="ready"?"公開済みの問題："+count+"問":"公開問題数を確認できません。";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));byId("start").disabled=catalogState!=="ready"||count===0;byId("selection").hidden=true}
 function updateCatalogUI(){
   const status=byId("catalog-status"),retry=byId("catalog-retry"),fallback=byId("catalog-fallback");
@@ -242,7 +276,7 @@ document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("c
 byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
-byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const major=byId("major").value;const qs=new URLSearchParams({subject,major,unit:subject==="社会"?"all":byId("unit").value,count:amount});if(subject==="社会"){for(const c of major==="all"?["all"]:selectedChapters())qs.append("chapter",c)}location.assign("/study.html?"+qs.toString())});
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const major=byId("major").value;const qs=new URLSearchParams({subject,major,unit:subject==="社会"?"all":byId("unit").value,count:amount});if(subject==="社会"){if(major==="all")qs.append("chapter","all");else for(const c of selectedSections())qs.append("section",c)}location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
 loadCatalog();
 </script>

@@ -13,7 +13,14 @@ assert.equal(vm.runInContext('totalFor(catalog.units,"社会","歴史",[])',ctx)
 assert.equal(vm.runInContext('displayMinor(catalog.byQuestion.get("q1"))',ctx),"原始・古代");
 assert.equal(vm.runInContext('displayMinor({subject:"社会",minor:"旧分類"})',ctx),"その他（分類確認中）");
 assert(!html.includes("動画は準備中です"));
-assert(html.includes('qs.append("chapter",c)'));
+assert(html.includes('qs.append("section",c)'));
+assert.equal(vm.runInContext('socialSectionKey({display_chapter:"原始・古代",display_section:"縄文時代"})',ctx),'["原始・古代","縄文時代"]');
+ctx.sectionPool=[{display_chapter:"原始・古代",display_section:"弥生時代"},{display_chapter:"原始・古代",display_section:"縄文時代"},{display_chapter:"原始・古代",display_section:"縄文時代"},{display_chapter:"中世",display_section:"鎌倉時代"}];
+assert.equal(vm.runInContext('sectionPool.filter(q=>socialRangeMatch(q,[socialSectionKey(sectionPool[1]),socialSectionKey(sectionPool[3])],[],"all")).length',ctx),3);
+assert.equal(vm.runInContext('sectionPool.filter(q=>socialRangeMatch(q,[],["原始・古代"],"all")).length',ctx),3);
+assert.equal(vm.runInContext('sectionGroups(sectionPool,socialChapterOrder["歴史"])[0][1][0][0]',ctx),"縄文時代");
+assert.equal(vm.runInContext('socialRangeMatch({topic_name:"古代"},[],[],"古代")',ctx),true);
+assert.equal(vm.runInContext('socialRangeMatch(sectionPool[0],["invalid"],["all"],"all")',ctx),false);
 assert.equal(vm.runInContext('totalFor(catalog.units,"数学")',ctx),0);
 assert.equal(vm.runInContext('currentQuestion("q1",{subject:"社会",major:"歴史",minor:"古代"},catalog.byQuestion)',ctx),true);
 assert.equal(vm.runInContext('currentQuestion("withdrawn",{subject:"社会",major:"歴史",minor:"古代"},catalog.byQuestion)',ctx),false);
