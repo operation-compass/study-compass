@@ -177,3 +177,15 @@ test('quiz section filtering matches home selection while retaining legacy links
  assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,[],[],"古代")).length',c),2);
  assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,["invalid"],["all"],"all")).length',c),0);
 });
+
+test('new social IDs with explicit unit labels are classified without touching approved question content',async()=>{
+ const api=await import('data:text/javascript;base64,'+Buffer.from(src+'\nexport { socialDisplay, parsePublicCsv };').toString('base64'));
+ const q=(field_name,topic_name,id='new-social')=>({subject:'社会',id,field_name,topic_name});
+ assert.deepEqual(api.socialDisplay(q('歴史','縄文時代')),{display_chapter:'原始・古代',display_section:'縄文時代'});
+ assert.deepEqual(api.socialDisplay(q('歴史','江戸時代')),{display_chapter:'近世',display_section:'江戸時代'});
+ assert.deepEqual(api.socialDisplay(q('地理','九州地方')),{display_chapter:'日本の諸地域',display_section:'九州地方'});
+ assert.deepEqual(api.socialDisplay(q('公民','国会')),{display_chapter:'民主政治',display_section:'国会'});
+ for(const [f,m] of [['歴史','古代'],['歴史','近現代'],['歴史','縄文・弥生'],['地理','世界'],['公民','政治'],['日本史探究','江戸時代'],['地理','縄文時代']])assert.deepEqual(api.socialDisplay(q(f,m)),{display_chapter:'その他（分類確認中）',display_section:''});
+ assert.deepEqual(api.socialDisplay(q('歴史','江戸時代','SC-SOC-HIS-GAP10-000001')),{display_chapter:'原始・古代',display_section:'奈良時代'});
+ assert.deepEqual(api.socialDisplay({...q('歴史','縄文時代'),subject:'国語'}),{});
+});
