@@ -122,7 +122,7 @@ test('public catalog contains only approved question IDs and classification fiel
   const res=await probe(new Response(HEADER+'\n'+row+'\n'),'/api/question-catalog.json');
   assert.equal(res.status,200);
   assert.equal(res.headers.get('cache-control'),'no-store');
-  assert.deepEqual(await res.json(),{schema:1,questions:[{id:'catalog-1',subject:'社会',major:'歴史',minor:'古代'}]});
+  assert.deepEqual(await res.json(),{schema:1,questions:[{id:'catalog-1',subject:'社会',major:'歴史',minor:'古代',display_chapter:'その他（分類確認中）',display_section:''}]});
   assert.equal(new URL(lastUpstreamUrl).searchParams.get('gid'),'343531822');
 });
 test('empty approved catalog is a valid empty result',async()=>{
@@ -137,4 +137,22 @@ test('catalog fails closed on invalid questions, duplicate IDs and unavailable d
     assert.equal(res.status,503);
     assert.deepEqual(await res.json(),{error:'Published catalog unavailable'});
   }
+});
+
+test('display classification is separate from raw classification and preserves known public IDs',async()=>{
+  const api=await import('data:text/javascript;base64,'+Buffer.from(src+'\nexport { socialDisplay, publishedExplanation, approvedOnlyHtml, parsePublicCsv };').toString('base64'));
+  const row=['SC-SOC-HIS-GAP10-000001','1','社会','中1','歴史','律令・税制','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const q=api.parsePublicCsv(HEADER+'\n'+row+'\n')[0];
+  assert.equal(q.topic_name,'律令・税制');
+  assert.equal(q.answer,'正解');
+  assert.deepEqual(api.socialDisplay(q),{display_chapter:'原始・古代',display_section:'奈良時代'});
+  assert.deepEqual(api.publishedExplanation(q),{});
+  assert.deepEqual(api.socialDisplay({id:'unknown',subject:'社会'}),{display_chapter:'その他（分類確認中）',display_section:''});
+  assert.deepEqual(api.socialDisplay({id:'unknown',subject:'国語'}),{});
+  const html=api.approvedOnlyHtml([q]);
+  assert(!html.includes('解説動画は準備中'));
+  assert(html.includes('el("unit-video").hidden=!q.video_url'));
+  assert(html.includes('params.getAll("chapter")'));
+  const vm=await import('node:vm');
+  for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
 });
