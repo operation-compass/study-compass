@@ -1,7 +1,7 @@
 # SHIRUNOERA 匿名アクセス集計 V1
 
 ## 有効化の前提（2026-11-25）
-Cloudflareのエラー10089により初回公開は拒否された。学習サイトを止めないため、既定ではバインディングを無効化する。Cloudflare管理画面で Workers Analytics Engine を有効化し、料金・利用条件を確認した後、GitHubリポジトリの Actions Variables に `SHIRUNOERA_ANALYTICS_ENABLED=true` を設定して Deploy ワークフローを再実行する。データセットの生成・実際の集計値の取得を確認するまでは計測開始と扱わない。停止は変数を false にして再デプロイする。閲覧用トークンは別途最小権限で作成し、一般公開しない。
+Cloudflareのエラー10089により初回公開は拒否された。学習サイトを止めないため、2026-11-25に利用者がCloudflare管理画面で有効化操作を実施したと報告。以降は既定でバインディングを有効化する。アカウント未有効化エラー10089が再発した場合のみ、バインディングなしで再デプロイし、学習サービスを維持する。停止したい場合は GitHub Actions Variables に `SHIRUNOERA_ANALYTICS_ENABLED=false` を設定する。データセットの生成・実際の集計値の取得を確認するまでは計測開始と扱わない。停止は変数を false にして再デプロイする。閲覧用トークンは別途最小権限で作成し、一般公開しない。
 
 Cloudflare Workers Analytics Engine: `shirunoera_traffic_v1`
 
