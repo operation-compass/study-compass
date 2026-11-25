@@ -35,18 +35,81 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
 .video-icon{display:grid;place-items:center;border:1px solid #cebdb8;border-radius:50%;width:40px;height:40px;flex:none;color:var(--wine)}
 #analytics-note{font-size:11px;color:var(--muted);margin-top:17px}
 @media(max-width:520px){.record-grid{grid-template-columns:1fr}.record-panel{padding:15px}}
+
+/* SHIRUNOERA inner pages — editorial colors, accessible learning controls. */
+:root{--bg:#eadbd2;--paper:#f9f0e5;--ink:#352b2f;--muted:#66525a;--line:#cfb9ae;--wine:#622b45;--copper:#b59162;--serif:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",Georgia,serif}
+body{background:radial-gradient(ellipse at 95% 8%,#dce5d6 0,transparent 36%),linear-gradient(125deg,#ead3d4,#f2e5d5 50%,#e3d4c3);min-height:100vh}
+.wrap{max-width:1040px;padding-inline:28px}
+header{background:linear-gradient(105deg,#e3bcc6,#edd3ca 52%,#e9d4b4);border-top:4px solid var(--wine);border-bottom:1px solid var(--line)}
+header .wrap{min-height:72px;gap:12px}
+.logo{font:500 clamp(21px,3vw,30px)/1.2 Georgia,serif;letter-spacing:.12em;color:#472335}
+.header-sub{color:#543847;font-size:12px;text-align:right}
+main{padding:22px 0 55px}
+.back{color:var(--wine);font-size:13px;font-weight:650;padding:0 0 15px}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--wine);outline-offset:3px}
+.hero-banner{min-height:216px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);padding:0;gap:0;background:linear-gradient(145deg,#e9cbd0,#f1e1cd);border:1px solid var(--line);border-radius:3px;box-shadow:0 8px 25px #68423315;color:#472335;margin-bottom:26px}
+.hero-banner::before,.hero-banner::after{display:none}
+.banner-copy{padding:32px 36px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.banner-copy::before{content:"";display:block;width:43px;height:3px;background:linear-gradient(90deg,var(--wine),var(--copper));margin-bottom:16px}
+.hero-banner h1{font:600 clamp(30px,4.5vw,46px)/1.4 var(--serif);color:#472335;letter-spacing:.04em;text-transform:none;text-shadow:none}
+.hero-banner p{font-size:14px;color:var(--muted)}
+.hero-banner .study-art{display:block;width:100%;height:100%;min-height:216px;object-fit:cover;object-position:center 48%;filter:brightness(1.12) contrast(.96)}
+.home-head{padding:0 0 13px}
+.home-head .subject-heading,.history h2,#subject-title{font-family:var(--serif);color:#472335;letter-spacing:.045em}
+.home-head .subject-heading{font-size:24px;margin:0 0 5px}
+.subjects{gap:12px}
+.subject{--accent:#a77a88;--tint:#ead5d8;position:relative;min-height:108px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;padding:15px 13px 12px;gap:5px;border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:3px;background:linear-gradient(145deg,#f7ebde,var(--tint));box-shadow:0 4px 14px #68423312;color:#472335;transition:transform .18s,box-shadow .18s}
+.subject:nth-child(2){--accent:#a28b71;--tint:#e6d5bd}
+.subject:nth-child(3){--accent:#9a7c93;--tint:#e5d4e0}
+.subject:nth-child(4){--accent:#779589;--tint:#d7e4d4}
+.subject:nth-child(5){--accent:#b59162;--tint:#e9d7b1}
+.subject strong{font:700 clamp(19px,2.2vw,25px)/1.4 var(--serif)}
+.subject .subject-detail{font-size:11px;color:#5e4d55;line-height:1.4}
+.subject .arrow{position:absolute;right:10px;bottom:9px;color:var(--wine);font-size:15px}
+@media(hover:hover){.subject:hover{transform:translateY(-2px);box-shadow:0 8px 20px #622b4520;border-color:var(--accent)}}
+.history{margin-top:32px;border-top:1px solid var(--line);padding-top:25px}
+.history h2{font-size:24px}
+.history-overview{gap:10px}
+.history-stat{background:linear-gradient(145deg,#faeee3,#ebd7d8);border-color:var(--line);border-radius:3px;padding:15px 8px}
+.history-stat:nth-child(2){background:linear-gradient(145deg,#f3eddd,#dce7d7)}
+.history-stat:nth-child(3){background:linear-gradient(145deg,#f6e9d4,#ecd8b7)}
+.history-stat strong{font-size:clamp(20px,3vw,29px);color:var(--wine);font-variant-numeric:tabular-nums}
+.history-stat small{color:#58454d}
+.history-empty,.progress-compare,.record-panel,.panel,.section-video{background:linear-gradient(145deg,#f9f0e5,#f2e4d5);border:1px solid var(--line);border-radius:4px;box-shadow:0 5px 16px #6842330e}
+.progress-compare h3,.record-panel h3,.section-video h2{color:var(--wine)}
+.progress-compare .history-stat{background:#f3e5da}
+.record-grid{gap:14px}
+.record-panel{padding:20px}
+.record-panel:first-child{background:linear-gradient(145deg,#f6e8dd,#ecdfd8)}
+.record-panel:last-child{background:linear-gradient(145deg,#f6eedf,#e0e7d9)}
+.record-items li{border-color:#cbb9ac}
+#configure{max-width:800px;margin:auto}
+#subject-title{font-size:clamp(25px,4.5vw,36px);margin:0 0 4px}
+.panel{padding:25px}
+select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);border-radius:5px;min-height:48px}
+.num button[aria-pressed=true]{background:#e9cbd3;border:2px solid var(--wine);color:var(--wine)}
+.num button:disabled{opacity:.48;cursor:not-allowed}
+.primary{background:linear-gradient(110deg,#622b45,#88465f);color:#fff6eb;border-radius:4px;min-height:50px}
+.primary:hover{filter:brightness(1.07)}
+.video-placeholder{background:#e5ddd0;border-radius:4px;color:#51464a}
+.footer{background:linear-gradient(110deg,#d8b4be,#e6cdb1);color:#573849;border-top-color:var(--line);font-family:Georgia,serif;letter-spacing:.09em}
+[hidden]{display:none!important}
+@media(max-width:760px){.wrap{padding-inline:16px}.hero-banner{min-height:170px}.banner-copy{padding:20px}.hero-banner .study-art{min-height:170px}.subjects{gap:8px}.subject{min-height:95px;padding:12px 9px}.subject strong{font-size:19px}.subject-detail{padding-bottom:12px}.record-panel{padding:16px}}
+@media(max-width:520px){header .wrap{min-height:62px}.logo{font-size:20px}.header-sub{font-size:10px}main{padding-top:16px}.hero-banner{grid-template-columns:1fr;min-height:0}.hero-banner .study-art{height:auto;min-height:0;aspect-ratio:16/7;grid-row:1}.banner-copy{padding:17px 19px 20px}.banner-copy::before{margin-bottom:9px}.hero-banner h1{font-size:31px}.hero-banner p{font-size:12px;margin-top:7px}.subjects{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.subject{grid-column:span 2;min-height:88px}.subject:nth-child(n+4){grid-column:span 3}.subject strong{font-size:20px}.subject .subject-detail{font-size:11px;padding-bottom:9px}.subject .arrow{right:8px;bottom:6px}.history{margin-top:27px;padding-top:21px}.history-overview{gap:6px}.history-stat{padding:12px 4px}.history-stat small{font-size:10px}.panel{padding:17px}.record-grid{grid-template-columns:1fr}}
+@media(max-width:350px){.wrap{padding-inline:11px}.logo{font-size:17px}.subject{padding-inline:6px}.subject .subject-detail{font-size:10px}.history-stat small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.subject{transition:none}.subject:hover{transform:none}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
   <a href="/" class="back" style="display:inline-block;text-decoration:none">← 総合ホームへ戻る</a>
-  <section class="hero-banner" aria-label="高校受験"><div class="banner-copy"><h1 style="font-family:inherit;letter-spacing:.03em;font-size:clamp(30px,6vw,48px)">高校受験</h1><p style="margin:12px 0 0">毎日の学習を、確かな力に。</p></div></section>
-  <div class="home-head"><h1 class="subject-heading">一問一答</h1><p>学びたい教科を選択</p></div>
+  <section class="hero-banner" aria-label="高校受験"><div class="banner-copy"><h1>高校受験</h1><p style="margin:12px 0 0">毎日の学習を、確かな力に。</p></div><img class="study-art" src="/assets/portal/high-school.webp" alt="" width="720" height="540" decoding="async"></section>
+  <div class="home-head"><h2 class="subject-heading">一問一答</h2><p>学びたい教科を選択</p></div>
   <div class="subjects" aria-label="まずは一問一答から始める">
-    <button class="subject" data-subject="国語"><strong>国語</strong><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="数学"><strong>数学</strong><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="英語"><strong>英語</strong><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="理科"><strong>理科</strong><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="社会"><strong>社会</strong><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="国語"><strong>国語</strong><span class="subject-detail">漢字・語彙・読解</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="数学"><strong>数学</strong><span class="subject-detail">計算・関数・図形</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="英語"><strong>英語</strong><span class="subject-detail">英文法</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="理科"><strong>理科</strong><span class="subject-detail">物理・化学・生物・地学</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="社会"><strong>社会</strong><span class="subject-detail">歴史・地理・公民</span><span class="arrow" aria-hidden="true">↗</span></button>
   </div>
   
   <section class="history" aria-labelledby="history-title">
@@ -101,7 +164,7 @@ main{padding:28px 0 70px}.eyebrow{letter-spacing:.14em;color:var(--wine);font-si
     <div class="video-placeholder"><span class="video-icon" aria-hidden="true">▶</span><span id="video-label">動画は準備中です。公開後は該当単元の解説へ案内します。</span></div>
   </section><div id="selection" class="preview" hidden aria-live="polite"></div>
 </section></div></main>
-<footer class="footer">SHIRUNOERA — LEARNING EDITION
+<footer class="footer">© SHIRUNOERA
 <div hidden aria-hidden="true"><div id="today"></div><div id="written"></div><div id="generated"></div><div id="total"></div><i id="writtenBar"></i><i id="generatedBar"></i><i id="totalBar"></i><p id="storageStatus"></p></div>
 </footer>
 <script>
