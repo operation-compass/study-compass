@@ -65,6 +65,36 @@ async function addPublishedQuestions(html, maxQuestions = Infinity) {
 }
 
 
+
+// Aggregate only allowlisted categories; no raw URLs, user IDs, IPs, or learning history.
+const trafficSources = new Set(["instagram","tiktok","youtube","x","google","bing","yahoo","facebook","threads","chatgpt"]);
+function trafficSource(request,url) {
+  const ref=request.headers.get("referer")||"";
+  let host="";
+  try{const parsed=new URL(ref);if(parsed.origin===url.origin)return "internal";host=parsed.hostname.toLowerCase()}catch(_){}
+  const source=(url.searchParams.get("utm_source")||"").toLowerCase();
+  if(trafficSources.has(source))return source;
+  const domains={instagram:["instagram.com"],tiktok:["tiktok.com"],youtube:["youtube.com","youtu.be"],x:["x.com","twitter.com","t.co"],google:["google.com","google.co.jp"],bing:["bing.com"],yahoo:["yahoo.co.jp","yahoo.com"],facebook:["facebook.com","fb.com"],threads:["threads.net","threads.com"],chatgpt:["chatgpt.com","chat.openai.com"]};
+  for(const [name,list] of Object.entries(domains))if(list.some(d=>host===d||host.endsWith("."+d)))return name;
+  return host?"other":"direct_or_unknown";
+}
+function recordTraffic(request,env,url,page){
+  try{
+    if(!env.TRAFFIC_ANALYTICS||request.method!=="GET"||request.headers.get("sec-gpc")==="1"||request.headers.get("dnt")==="1")return;
+    if(["smoke","render","analytics_test"].some(k=>url.searchParams.has(k)))return;
+    if(/prefetch|prerender/i.test((request.headers.get("purpose")||"")+" "+(request.headers.get("sec-purpose")||"")))return;
+    if(/bot|crawler|spider|headless|curl|wget|facebookexternalhit|preview|slurp/i.test(request.headers.get("user-agent")||""))return;
+    const mode=request.headers.get("sec-fetch-mode");
+    if(mode&&mode!=="navigate")return;
+    const dest=request.headers.get("sec-fetch-dest");
+    if(dest&&dest!=="document")return;
+    const subject=url.searchParams.get("subject")||"";
+    const safeSubject=page==="quiz"&&["国語","数学","英語","理科","社会"].includes(subject)?subject:"none";
+    const source=trafficSource(request,url);
+    env.TRAFFIC_ANALYTICS.writeDataPoint({indexes:[page],blobs:[page,source,safeSubject],doubles:[1]});
+  }catch(_){/* analytics must never interrupt learning */}
+}
+
 // Approved-only learning interface: no embedded legacy question bank is served publicly.
 function approvedOnlyHtml(questions) {
   const json = JSON.stringify(questions).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
@@ -230,6 +260,7 @@ export default {
         const csv=await upstream.text();
         if(csv.length>1024*1024)throw Error("Public data too large");
         const approved=parsePublicCsv(csv);
+        recordTraffic(request,env,url,"quiz");
         return new Response(approvedOnlyHtml(approved),{headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
       } catch (_) {
         return new Response("監査済み教材を読み込めません。公開を一時停止しています。",{status:503,headers:{"Content-Type":"text/plain; charset=utf-8","Cache-Control":"no-store"}});
@@ -274,6 +305,7 @@ export default {
     if (request.method === "GET" && ["/", "/index.html", "/high-school", "/high-school/"].includes(url.pathname)) {
       const homeUrl = new URL(url.pathname.startsWith("/high-school") ? "/home-v2.html" : "/portal.html", url.origin);
       const response = await env.ASSETS.fetch(new Request(homeUrl.toString(), request));
+      if(response.ok)recordTraffic(request,env,url,url.pathname.startsWith("/high-school")?"high_school":"portal");
       const headers = new Headers(response.headers);
       headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
       headers.set("Pragma", "no-cache");
