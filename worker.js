@@ -1201,7 +1201,7 @@ body{background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 35%),lin
 .card,.results-card,.video-card{background:linear-gradient(145deg,#fbf3e8,#f2e4d5);border-color:var(--line);border-radius:4px;box-shadow:0 7px 24px #68423313}
 #selector h2,.results-card h2{font-family:var(--serif);color:#472335}
 #selector button{background:linear-gradient(145deg,#f9ebdd,#e9d4da);border-color:#c6aea8;border-radius:4px;color:var(--wine);min-height:46px}
-#selector button:hover{background:#e8cbd4}#selector button[aria-pressed="true"]{background:var(--wine);color:#fff}#selector button:disabled{opacity:.5;cursor:default}.social-range{margin-top:12px}.social-range label{display:flex;align-items:center;gap:10px;padding:11px 8px;border-bottom:1px solid var(--line);cursor:pointer}.social-range input{width:19px;height:19px;accent-color:var(--wine)}
+#selector button:hover{background:#e8cbd4}#selector button[aria-pressed="true"]{background:var(--wine);color:#fff}#selector button:disabled{opacity:.5;cursor:default}.social-range{margin-top:12px}.social-range label{display:flex;align-items:center;gap:10px;padding:11px 8px;border-bottom:1px solid var(--line);cursor:pointer}.social-range input{width:19px;height:19px;accent-color:var(--wine)}.social-chapter details{margin:0 0 12px 26px}.social-chapter summary{cursor:pointer;padding:9px 0;color:var(--wine)}.social-chapter details label{font-size:14px;font-weight:normal}
 .quiz-head{background:linear-gradient(105deg,#622b45,#88465f);color:#fff6eb}.quiz-head small{color:#f4e2d4}
 .quiz-nav button{border-color:#c6aea8;background:#f8e9de;color:var(--wine);min-height:44px}
 #progress{color:var(--muted);font-variant-numeric:tabular-nums}
@@ -1263,22 +1263,49 @@ footer{color:#573849}
     container.appendChild(makeButton("すべての単元（"+subset.length+"問）",()=>begin(subset)));
     for(const unit of units){const list=subset.filter(q=>(q.topic_name||q.unit||"総合")===unit);container.appendChild(makeButton(unit+"（"+list.length+"問）",()=>begin(list)))}
   }
+
+// BEGIN SOCIAL SECTION MODEL
+function socialSectionKey(q){return JSON.stringify([q.display_chapter||"その他（分類確認中）",q.display_section||"分類確認中"])}
+function socialRangeMatch(q,sections,chapters,legacyMinor){
+  if(sections.length)return sections.includes(socialSectionKey(q));
+  if(chapters.length)return chapters.includes("all")||chapters.includes(q.display_chapter||"その他（分類確認中）");
+  return legacyMinor==="all"||(q.topic_name||q.minor)===legacyMinor;
+}
+function sectionGroups(pool,order){
+  const map=new Map();
+  for(const q of pool){const [chapter,section]=JSON.parse(socialSectionKey(q));if(!map.has(chapter))map.set(chapter,new Map());const m=map.get(chapter);m.set(section,(m.get(section)||0)+1)}
+  const rank=(a,list)=>list.includes(a)?list.indexOf(a):999;
+  const secOrder=["旧石器時代","縄文時代","弥生時代","古墳時代","飛鳥時代","飛鳥〜奈良時代","奈良時代","平安時代","原始・古代のまとめ","鎌倉時代","室町時代","戦国時代","安土桃山時代","江戸時代","幕末・開国","明治時代","大正時代","昭和戦前","昭和戦前・戦中","戦後の日本","高度経済成長","分類確認中"];
+  return [...map].sort((a,b)=>rank(a[0],order)-rank(b[0],order)||a[0].localeCompare(b[0],"ja")).map(([chapter,m])=>[chapter,[...m].sort((a,b)=>rank(a[0],secOrder)-rank(b[0],secOrder)||a[0].localeCompare(b[0],"ja"))]);
+}
+// END SOCIAL SECTION MODEL
+function renderSocialRange(container,pool,order,onChange,initial=true){
+  const groups=sectionGroups(pool,order),leaves=[],parents=[];
+  const btn=(text,fn)=>{const b=document.createElement("button");b.type="button";b.textContent=text;b.onclick=fn;return b};
+  const label=(text,input)=>{const l=document.createElement("label");l.append(input,document.createTextNode(text));return l};
+  const refresh=()=>{for(const [parent,children] of parents){const n=children.filter(x=>x.checked).length;parent.checked=n===children.length;parent.indeterminate=n>0&&n<children.length}onChange()};
+  const setAll=value=>{for(const x of leaves)x.checked=value;refresh()};
+  container.append(btn("すべて選択",()=>setAll(true)),btn("選択を解除",()=>setAll(false)));
+  for(const [chapter,sections] of groups){
+    const block=document.createElement("div");block.className="social-chapter";
+    const parent=document.createElement("input");parent.type="checkbox";
+    block.append(label(chapter+"（"+sections.reduce((n,x)=>n+x[1],0)+"問）",parent));
+    const details=document.createElement("details"),summary=document.createElement("summary");summary.textContent="小単元を選ぶ";details.append(summary);const children=[];
+    for(const [section,count] of sections){const c=document.createElement("input");c.type="checkbox";c.value=JSON.stringify([chapter,section]);c.className="social-section-choice";c.checked=initial;c.onchange=refresh;children.push(c);leaves.push(c);details.append(label(section+"（"+count+"問）",c))}
+    parents.push([parent,children]);parent.onchange=()=>{children.forEach(c=>c.checked=parent.checked);refresh()};block.append(details);container.append(block);
+  }
+  refresh();
+}
   function chooseSocialField(field,pool){
     const container=el("unit-buttons");clear(container);el("unit-title").textContent="社会 / "+field+"｜単元・テスト範囲を選ぶ";
     container.appendChild(makeButton("← 分野を選び直す",()=>chooseSubject("社会")));
-    const chapter=q=>q.display_chapter||"その他（分類確認中）";
-    const available=[...new Set(pool.map(chapter))];
-    const order=socialOrder[field]||[];
-    available.sort((a,b)=>(order.includes(a)?order.indexOf(a):999)-(order.includes(b)?order.indexOf(b):999)||a.localeCompare(b,"ja"));
-    const chosen=new Set();const range=document.createElement("div");range.className="social-range";
+    const range=document.createElement("div");range.className="social-range";
     const status=document.createElement("p");status.setAttribute("aria-live","polite");
-    const start=makeButton("選択した範囲で開始",()=>begin(pool.filter(q=>chosen.has(chapter(q)))));
-    const boxes=[];
-    const refresh=()=>{const n=pool.filter(q=>chosen.has(chapter(q))).length;status.textContent="選択中："+n+"問";start.disabled=!n;};
-    container.appendChild(makeButton("すべて選択",()=>{for(const [name,box] of boxes){chosen.add(name);box.checked=true}refresh()}));
-    container.appendChild(makeButton("選択を解除",()=>{chosen.clear();for(const [,box] of boxes)box.checked=false;refresh()}));
-    for(const name of available){const label=document.createElement("label"),box=document.createElement("input");box.type="checkbox";box.onchange=()=>{if(box.checked)chosen.add(name);else chosen.delete(name);refresh()};boxes.push([name,box]);label.append(box,document.createTextNode(name+"（"+pool.filter(q=>chapter(q)===name).length+"問）"));range.appendChild(label)}
-    container.append(range,status,start);refresh();
+    const selectedSections=()=>[...range.querySelectorAll(".social-section-choice:checked")].map(c=>c.value);
+    const selectedPool=()=>{const keys=new Set(selectedSections());return pool.filter(q=>keys.has(socialSectionKey(q)))};
+    const start=makeButton("選択した範囲で開始",()=>begin(selectedPool()));
+    const refresh=()=>{const n=selectedPool().length;status.textContent="選択中："+n+"問";start.disabled=!n};
+    container.append(range,status,start);renderSocialRange(range,pool,socialOrder[field]||[],refresh,false);
   }
   function begin(items){if(!items.length)return;selected=items.slice();sessionBase=items.slice();sessionAnswers=[];current=0;score=0;el("results").hidden=true;el("selector").hidden=true;el("quiz").hidden=false;show()}
   function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const pct=total?Math.round(score/total*100):0;el("result-score").textContent=score+" / "+total+"問";el("result-detail").textContent="正答率 "+pct+"%　・　間違い "+wrong.length+"問";el("result-mistakes").textContent=wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;window.scrollTo(0,0)}
@@ -1327,8 +1354,8 @@ footer{color:#573849}
   if(requested&&groups.includes(requested)){
     chooseSubject(requested);
     const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
-    const chapters=params.getAll("chapter");
-    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(requested==="社会"&&chapters.length?(chapters.includes("all")||chapters.includes(q.display_chapter||"その他（分類確認中）")):(minor==="all"||q.topic_name===minor)));
+    const chapters=params.getAll("chapter"),sections=params.getAll("section");
+    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(requested==="社会"?socialRangeMatch(q,sections,chapters,minor):(minor==="all"||q.topic_name===minor)));
     const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
     if(limit>0)begin(count==="all"?pool:selectQuizQuestions(pool,limit));
   }
