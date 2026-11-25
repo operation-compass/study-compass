@@ -7,11 +7,5 @@
     "binding": "ASSETS",
     "html_handling": "none",
     "run_worker_first": true
-  },
-  "analytics_engine_datasets": [
-    {
-      "binding": "TRAFFIC_ANALYTICS",
-      "dataset": "shirunoera_traffic_v1"
-    }
-  ]
+  }
 }

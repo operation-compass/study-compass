@@ -65,6 +65,26 @@ jobs:
             exit 1
           fi
 
+      - name: Configure optional traffic analytics
+        shell: bash
+        env:
+          ANALYTICS_ENABLED: ${{ vars.SHIRUNOERA_ANALYTICS_ENABLED }}
+        run: |
+          set -euo pipefail
+          if [ "$ANALYTICS_ENABLED" = "true" ]; then
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("wrangler.jsonc")
+          c=json.loads(p.read_text())
+          c["analytics_engine_datasets"]=[{"binding":"TRAFFIC_ANALYTICS","dataset":"shirunoera_traffic_v1"}]
+          p.write_text(json.dumps(c,indent=2)+"\n")
+          PY
+            echo "Traffic analytics binding enabled."
+          else
+            echo "Traffic analytics disabled; core learning service deploys independently."
+          fi
+
       - name: Deploy with Wrangler
         shell: bash
         env:
