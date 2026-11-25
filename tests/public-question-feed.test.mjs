@@ -165,3 +165,15 @@ test('opt-in catalog adds display chapter without changing original API',async()
   assert.deepEqual((await basic.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制'}]);
   assert.deepEqual((await expanded.json()).questions,[{id:'SC-SOC-HIS-GAP10-000001',subject:'社会',major:'歴史',minor:'律令・税制',display_chapter:'原始・古代',display_section:'奈良時代'}]);
 });
+
+test('quiz section filtering matches home selection while retaining legacy links',async()=>{
+ const vm=await import('node:vm');
+ const model=src.split('// BEGIN SOCIAL SECTION MODEL')[1].split('// END SOCIAL SECTION MODEL')[0];
+ const c=vm.createContext({});
+ vm.runInContext(model,c);
+ c.pool=[{display_chapter:'原始・古代',display_section:'縄文時代',topic_name:'古代'},{display_chapter:'原始・古代',display_section:'弥生時代',topic_name:'古代'},{display_chapter:'中世',display_section:'鎌倉時代',topic_name:'中世'}];
+ assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,[socialSectionKey(pool[0]),socialSectionKey(pool[2])],[],"all")).length',c),2);
+ assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,[],["原始・古代"],"all")).length',c),2);
+ assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,[],[],"古代")).length',c),2);
+ assert.equal(vm.runInContext('pool.filter(q=>socialRangeMatch(q,["invalid"],["all"],"all")).length',c),0);
+});
