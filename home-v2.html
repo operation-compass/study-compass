@@ -98,18 +98,21 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 @media(max-width:520px){header .wrap{min-height:62px}.logo{font-size:20px}.header-sub{font-size:10px}main{padding-top:16px}.hero-banner{grid-template-columns:1fr;min-height:0}.hero-banner .study-art{height:auto;min-height:0;aspect-ratio:16/7;grid-row:1}.banner-copy{padding:17px 19px 20px}.banner-copy::before{margin-bottom:9px}.hero-banner h1{font-size:31px}.hero-banner p{font-size:12px;margin-top:7px}.subjects{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.subject{grid-column:span 2;min-height:88px}.subject:nth-child(n+4){grid-column:span 3}.subject strong{font-size:20px}.subject .subject-detail{font-size:11px;padding-bottom:9px}.subject .arrow{right:8px;bottom:6px}.history{margin-top:27px;padding-top:21px}.history-overview{gap:6px}.history-stat{padding:12px 4px}.history-stat small{font-size:10px}.panel{padding:17px}.record-grid{grid-template-columns:1fr}}
 @media(max-width:350px){.wrap{padding-inline:11px}.logo{font-size:17px}.subject{padding-inline:6px}.subject .subject-detail{font-size:10px}.history-stat small{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.subject{transition:none}.subject:hover{transform:none}}
+
+.catalog-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 13px}.catalog-line p{font-size:12px;color:var(--muted);margin:0}.catalog-line button,.catalog-line a{font-size:12px;color:var(--wine);background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 10px}.subject .subject-count{font-size:12px;font-weight:650;color:var(--wine);padding-right:12px}.subject:disabled,.primary:disabled{opacity:.65;cursor:not-allowed;transform:none;box-shadow:none}.subject:disabled:hover{transform:none}.subject .subject-detail{padding-bottom:0}@media(max-width:520px){.subject{min-height:102px}.subject .subject-count{font-size:11px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
   <a href="/" class="back" style="display:inline-block;text-decoration:none">← 総合ホームへ戻る</a>
   <section class="hero-banner" aria-label="高校受験"><div class="banner-copy"><h1>高校受験</h1><p style="margin:12px 0 0">毎日の学習を、確かな力に。</p></div><img class="study-art" src="/assets/portal/high-school.webp" alt="" width="720" height="540" decoding="async"></section>
   <div class="home-head"><h2 class="subject-heading">一問一答</h2><p>学びたい教科を選択</p></div>
+  <div class="catalog-line"><p id="catalog-status" role="status" data-state="loading">最新の公開問題を確認しています…</p><button id="catalog-retry" type="button" hidden>再取得</button><a id="catalog-fallback" href="/study.html?mode=qa" hidden>一問一答を直接開く →</a></div>
   <div class="subjects" aria-label="まずは一問一答から始める">
-    <button class="subject" data-subject="国語"><strong>国語</strong><span class="subject-detail">漢字・語彙・読解</span><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="数学"><strong>数学</strong><span class="subject-detail">計算・関数・図形</span><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="英語"><strong>英語</strong><span class="subject-detail">英文法</span><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="理科"><strong>理科</strong><span class="subject-detail">物理・化学・生物・地学</span><span class="arrow" aria-hidden="true">↗</span></button>
-    <button class="subject" data-subject="社会"><strong>社会</strong><span class="subject-detail">歴史・地理・公民</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="国語" disabled><strong>国語</strong><span class="subject-detail">漢字・語彙・読解</span><span class="subject-count">—</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="数学" disabled><strong>数学</strong><span class="subject-detail">計算・関数・図形</span><span class="subject-count">—</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="英語" disabled><strong>英語</strong><span class="subject-detail">英文法</span><span class="subject-count">—</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="理科" disabled><strong>理科</strong><span class="subject-detail">物理・化学・生物・地学</span><span class="subject-count">—</span><span class="arrow" aria-hidden="true">↗</span></button>
+    <button class="subject" data-subject="社会" disabled><strong>社会</strong><span class="subject-detail">歴史・地理・公民</span><span class="subject-count">—</span><span class="arrow" aria-hidden="true">↗</span></button>
   </div>
   
   <section class="history" aria-labelledby="history-title">
@@ -137,7 +140,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
         <h3 id="radar-title">5教科の学習バランス</h3>
         <p>各教科の<strong>解答済み率</strong>。未学習は正答率0％とは区別します。</p>
         <svg class="record-radar" id="record-radar" viewBox="0 0 300 300" role="img" aria-label="5教科の解答済み率。記録がない教科は未学習として表示します"></svg>
-        <div class="record-legend">表示基準：解答した問題IDの種類 ÷ 各教科の公開問題数。正答率ではありません。</div>
+        <div class="record-legend">表示基準：現在公開されている問題のうち解答済みのID数 ÷ 公開問題数。正答率ではありません。公開終了した問題の履歴は保持します。</div>
       </section>
       <section class="record-panel" aria-labelledby="weak-title">
         <h3 id="weak-title">次に取り組みたい分野</h3>
@@ -156,7 +159,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
   <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select></div></div><p class="note" id="available" aria-live="polite"></p>
     <label style="margin-top:22px">問題数</label>
     <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
-    <button class="primary" id="start">この条件で始める →</button>
+    <button class="primary" id="start" disabled>この条件で始める →</button>
     <p class="hint">公開済み問題から出題します。回答結果はこの端末に記録されます。</p>
   </div>
   <section class="section-video" aria-label="単元別解説動画">
@@ -169,23 +172,69 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 </footer>
 <script>
 "use strict";
-// Real taxonomy and per-unit counts verified from the approved WEB QUESTIONS CSV.
-// Design preview only: counts are a snapshot, not a live feed; no answer data is read or written.
-const taxonomy={"社会":{"地理":{"世界":13,"日本":18},"歴史":{"古代":54,"中世":36,"近世":45,"近現代":47},"公民":{"政治":12,"国際":10,"権利":7,"経済":12}},"国語":{"漢字":{"漢字の読み":3},"表現":{"表現技法":7,"文章構成":2,"意見文":1},"語彙":{"語句・熟語":8,"四字熟語":50,"ことわざ":20,"慣用句":20,"故事成語":15,"類義語・対義語":8,"熟語の構成":2},"文法":{"文法基礎":9,"接続詞・接続関係":1},"古典":{"古文・漢文":8,"古文":2,"漢文":1},"読解":{"読解基礎":9}},"数学":{"数と式":{"正負の数":1,"文字式":2,"正負の数・文字式":7},"方程式":{"一次方程式":9},"関数":{"一次関数":9,"二次関数":4},"図形":{"三平方の定理":1,"平面図形":8,"平行線":1},"データ":{"平均":1,"データの活用":9},"確率":{"確率":8}},"理科":{"化学":{"物質":1,"酸・アルカリ":1,"化学変化":8,"化学変化とイオン":1},"物理":{"力":1,"電流":2,"電圧":1,"運動とエネルギー":6,"電流とその利用":2},"地学":{"天体":2,"岩石":1,"地震":7,"気象":2},"生命":{"植物・生物":7,"植物":1,"人体":1,"消化":1}},"英語":{"文法":{"be動詞":9,"一般動詞":10,"過去形":11,"関係代名詞":4}}};
 const byId=id=>document.getElementById(id);
-let subject="",amount="10";
+const subjects=["国語","数学","英語","理科","社会"];
+let taxonomy=Object.create(null),catalogById=new Map(),catalogState="loading",subject="",amount="10";
+// BEGIN CATALOG MODEL
+function buildCatalog(payload){
+  if(!payload||payload.schema!==1||!Array.isArray(payload.questions))throw Error("invalid catalog");
+  const units=Object.create(null),byQuestion=new Map();
+  for(const s of subjects)units[s]=Object.create(null);
+  for(const q of payload.questions){
+    if(!q||!["id","subject","major","minor"].every(k=>typeof q[k]==="string"&&q[k].trim())||byQuestion.has(q.id))throw Error("invalid question");
+    byQuestion.set(q.id,q);
+    if(!subjects.includes(q.subject))continue;
+    if(q.major==="all"||q.minor==="all")throw Error("reserved classification");
+    const major=units[q.subject][q.major]??=Object.create(null);
+    major[q.minor]=(major[q.minor]||0)+1;
+  }
+  return {units,byQuestion};
+}
+function totalFor(units,s,m="all",n="all"){
+  let count=0;
+  for(const [major,minors] of Object.entries(units[s]||{})){
+    if(m!=="all"&&major!==m)continue;
+    for(const [minor,total] of Object.entries(minors))if(n==="all"||minor===n)count+=total;
+  }
+  return count;
+}
+function currentQuestion(id,r,index){
+  const q=index.get(id);
+  return !!q&&q.subject===r.subject&&q.major===r.major&&q.minor===r.minor;
+}
+// END CATALOG MODEL
 function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
-function countFor(){const majors=taxonomy[subject]||{},m=byId("major").value,n=byId("unit").value;let total=0;for(const [k,minors] of Object.entries(majors)){if(m!=="all"&&k!==m)continue;for(const [name,count] of Object.entries(minors)){if(n!=="all"&&name!==n)continue;total+=count}}return total}
-function fillUnits(){const minor=byId("unit"),major=byId("major").value;minor.replaceChildren();addOption(minor,"all","すべての単元");if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject][major]))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
-function refreshCount(){const count=countFor();byId("available").textContent="公開用CSVの登録数（参考）："+count+"問（2026年11月23日時点。最新の出題数は実際の学習画面で確認してください）";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=n!=="all"&&Number(n)>count;btn.title=btn.disabled?"選択範囲の問題数より多いため選択できません":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(btn.dataset.n===amount)));byId("selection").hidden=true}
+function countFor(){return totalFor(taxonomy,subject,byId("major").value,byId("unit").value)}
+function fillUnits(){const minor=byId("unit"),major=byId("major").value;minor.replaceChildren();addOption(minor,"all","すべての単元");if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
+function refreshCount(){const count=countFor();byId("available").textContent=catalogState==="ready"?"公開済みの問題："+count+"問":"公開問題数を確認できません。";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));byId("start").disabled=catalogState!=="ready"||count===0;byId("selection").hidden=true}
+function updateCatalogUI(){
+  const status=byId("catalog-status"),retry=byId("catalog-retry"),fallback=byId("catalog-fallback");
+  status.dataset.state=catalogState;
+  const total=subjects.reduce((n,s)=>n+totalFor(taxonomy,s),0);
+  status.textContent=catalogState==="ready"?"公開済みの5教科："+total+"問":catalogState==="loading"?"最新の公開問題を確認しています…":"公開問題数を取得できませんでした。学習記録は保持されています。";
+  retry.hidden=catalogState!=="error";fallback.hidden=catalogState!=="error";
+  document.querySelectorAll("[data-subject]").forEach(btn=>{const n=totalFor(taxonomy,btn.dataset.subject);btn.disabled=catalogState!=="ready"||n===0;btn.querySelector(".subject-count").textContent=catalogState==="ready"?(n?n+"問":"準備中"):"—"});
+}
+async function loadCatalog(){
+  catalogState="loading";updateCatalogUI();
+  try{
+    const res=await fetch("/api/question-catalog.json",{cache:"no-store",signal:AbortSignal.timeout(10000)});
+    if(!res.ok)throw Error("catalog unavailable");
+    const next=buildCatalog(await res.json());taxonomy=next.units;catalogById=next.byQuestion;catalogState="ready";
+  }catch(e){catalogState="error";taxonomy=Object.create(null);catalogById=new Map()}
+  updateCatalogUI();document.dispatchEvent(new Event("shirunoera-catalog"));
+}
 document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
- subject=btn.dataset.subject;byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
+ if(btn.disabled||catalogState!=="ready")return;
+ subject=btn.dataset.subject;amount="10";byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
  const m=byId("major");m.replaceChildren();addOption(m,"all","すべての分野");for(const [name,minors] of Object.entries(taxonomy[subject])){const count=Object.values(minors).reduce((a,b)=>a+b,0);addOption(m,name,name+"（"+count+"問）")}fillUnits();window.scrollTo(0,0)
 }));
 byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
-byId("start").addEventListener("click",()=>{const qs=new URLSearchParams({subject,major:byId("major").value,unit:byId("unit").value,count:amount});location.assign("/study.html?"+qs.toString())});
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:byId("major").value,unit:byId("unit").value,count:amount});location.assign("/study.html?"+qs.toString())});
+byId("catalog-retry").addEventListener("click",loadCatalog);
+loadCatalog();
 </script>
 <script>
 "use strict";
@@ -195,10 +244,10 @@ byId("start").addEventListener("click",()=>{const qs=new URLSearchParams({subjec
 (function(){
 const KEY="shirunoera.learning.v1";
 const subjectOrder=["国語","数学","英語","理科","社会"];
-const tally={};for(const s of subjectOrder)tally[s]=Object.values(taxonomy[s]).reduce((a,units)=>a+Object.values(units).reduce((x,y)=>x+y,0),0);
+const tally=()=>Object.fromEntries(subjectOrder.map(s=>[s,totalFor(taxonomy,s)]));
 function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||"{}");return v&&v.schema===1&&v.answers&&typeof v.answers==="object"&&!Array.isArray(v.answers)?v.answers:{}}catch(e){return {}}}
 function recordAnswer({questionId,subject,major,minor,correct}){
-  if(typeof questionId!=="string"||!questionId||!Object.prototype.hasOwnProperty.call(tally,subject)||!taxonomy[subject][major]||!Object.prototype.hasOwnProperty.call(taxonomy[subject][major],minor)||typeof correct!=="boolean")return false;
+  if(typeof questionId!=="string"||!questionId||!subjectOrder.includes(subject)||catalogState!=="ready"||!currentQuestion(questionId,{subject,major,minor},catalogById)||typeof correct!=="boolean")return false;
   let data;
   try{const raw=localStorage.getItem(KEY);data=raw===null?{schema:1,answers:{}}:JSON.parse(raw)}catch(e){return false}
   if(!data||data.schema!==1||!data.answers||typeof data.answers!=="object"||Array.isArray(data.answers))return false;
@@ -216,20 +265,22 @@ const svgNS="http://www.w3.org/2000/svg";
 function elem(tag,attrs){const e=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));return e}
 function renderRadar(done){
   const svg=document.getElementById("record-radar");svg.replaceChildren();
+  const totals=tally();
+  if(catalogState!=="ready"||!Object.values(totals).some(Boolean)){const t=elem("text",{x:150,y:150,"text-anchor":"middle",fill:"#66525a","font-size":"13"});t.textContent=catalogState==="ready"?"公開問題はまだありません":"公開問題数を確認できません";svg.append(t);return;}
   const vertex=(i,p)=>{const a=-Math.PI/2+2*Math.PI*i/5;return [150+105*p*Math.cos(a),150+105*p*Math.sin(a)]};
   const pts=p=>subjectOrder.map((s,i)=>vertex(i,p).map(n=>n.toFixed(1)).join(",")).join(" ");
   for(const p of [.25,.5,.75,1])svg.append(elem("polygon",{points:pts(p),fill:"none",stroke:"#e6e1da","stroke-width":"1"}));
   for(let i=0;i<5;i++){const [x,y]=vertex(i,1);svg.append(elem("line",{x1:150,y1:150,x2:x,y2:y,stroke:"#e6e1da"}))}
-  const ratios=subjectOrder.map(s=>Math.min(1,(done[s]?.size||0)/tally[s]));
+  const ratios=subjectOrder.map(s=>totals[s]?(done[s]?.size||0)/totals[s]:0);
   if(ratios.some(r=>r>0))svg.append(elem("polygon",{points:subjectOrder.map((s,i)=>vertex(i,ratios[i]).join(",")).join(" "),fill:"#6d304644",stroke:"#6d3046","stroke-width":2}));
   subjectOrder.forEach((s,i)=>{const [x,y]=vertex(i,1.22);const t=elem("text",{x,y,"text-anchor":"middle","dominant-baseline":"central",fill:"#292d33","font-size":"13"});t.textContent=s;svg.append(t)});
-  const desc=elem("title",{});desc.textContent=subjectOrder.map(s=>s+"："+(done[s]?.size||0)+"/"+tally[s]+"問").join("、");svg.append(desc);
+  const desc=elem("title",{});desc.textContent=subjectOrder.map(s=>s+"："+(totals[s]?(done[s]?.size||0)+"/"+totals[s]+"問":"公開問題なし")).join("、");svg.append(desc);
 }
 function render(){
-  const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&Object.prototype.hasOwnProperty.call(tally,r.subject)&&taxonomy[r.subject]?.[r.major]?.[r.minor]);
+  const entries=Object.entries(read()).filter(([id,r])=>r&&typeof r==="object"&&typeof r.correct==="boolean"&&subjectOrder.includes(r.subject)&&typeof r.major==="string"&&typeof r.minor==="string");
   const done={};for(const s of subjectOrder)done[s]=new Set();
   const weak={};let correct=0,incorrect=0;
-  for(const [id,r] of entries){done[r.subject].add(id);correct+=r.correct?1:0;incorrect+=r.correct?0:1;const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
+  for(const [id,r] of entries){correct+=r.correct?1:0;incorrect+=r.correct?0:1;if(catalogState!=="ready"||!currentQuestion(id,r,catalogById))continue;done[r.subject].add(id);const k=[r.subject,r.major,r.minor].join(" / ");weak[k]??={total:0,correct:0};weak[k].total++;weak[k].correct+=r.correct?1:0}
   byId("answered").textContent=entries.length?entries.length+"問":"—";
   byId("accuracy").textContent=entries.length?Math.round(correct/entries.length*100)+"%":"—";
   byId("mistakes").textContent=entries.length?incorrect+"問":"—";
@@ -247,15 +298,16 @@ function render(){
     ?"初回記録がある"+known+"問を比較しています。昔の履歴の初回正誤は推測していません。"
     :"初回記録を持つ新しい解答から比較を開始します。過去の履歴は保持しています。";
   renderRadar(done);
-  const untouched=subjectOrder.filter(s=>done[s].size===0);
+  const untouched=subjectOrder.filter(s=>totalFor(taxonomy,s)>0&&done[s].size===0);
   const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
-  if(!untouched.length){const li=document.createElement("li");li.textContent="全教科で学習記録があります。";untouchedNode.append(li)}
+  if(!untouched.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":subjectOrder.some(s=>totalFor(taxonomy,s)>0)?"公開中の教科はすべて学習済みです。":"公開問題はまだありません。";untouchedNode.append(li)}
   for(const s of untouched){const li=document.createElement("li");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major:"all",unit:"all",count:"10"}).toString();a.textContent=s+"（未学習） → 10問に挑戦";a.setAttribute("aria-label",s+"の一問一答10問を開始");li.append(a);untouchedNode.append(li)}
   const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
   const node=byId("weak-units");node.replaceChildren();
-  if(!list.length){const li=document.createElement("li");li.textContent="5問以上回答した単元がまだありません。";node.append(li)}
+  if(!list.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":"公開中の問題を5問以上回答した単元がまだありません。";node.append(li)}
   for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:minor,count:"10"}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問） → 復習";a.setAttribute("aria-label",k+"の一問一答に再挑戦");li.append(a);node.append(li)}
 }
+document.addEventListener("shirunoera-catalog",render);
 render();
 })();
 </script><script>(function(){const $=id=>document.getElementById(id);let w=0,g=0,storageOkay=true;try{const probe="studyCompassStorageProbe";localStorage.setItem(probe,"1");localStorage.removeItem(probe)}catch(e){storageOkay=false}try{const raw=localStorage.getItem("studyCompassWrittenBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||Array.isArray(s)||!s.scores||typeof s.scores!=="object"||Array.isArray(s.scores)||(s.checked!==undefined&&(typeof s.checked!=="object"||Array.isArray(s.checked))))throw Error("invalid written");w=new Set([...Object.keys(s.scores||{}),...Object.keys(s.checked||{}).filter(id=>s.checked[id]===true)]).size}}catch(e){storageOkay=false}try{const raw=localStorage.getItem("studyCompassGeneratedBetaV1");if(raw!==null){const s=JSON.parse(raw);if(!s||typeof s!=="object"||!s.answered||typeof s.answered!=="object")throw Error("invalid generated");g=Object.keys(s.answered).length}}catch(e){storageOkay=false}if(!storageOkay)$("storageStatus").textContent="従来の履歴は読み込めませんでした。元データは保持されています。";$("written").textContent=String(w);$("generated").textContent=String(g);$("total").textContent=String(w+g)})();</script></body></html>
