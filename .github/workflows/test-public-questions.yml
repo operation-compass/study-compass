@@ -4,6 +4,8 @@ on:
     paths:
       - 'worker.js'
       - 'tests/public-question-feed.test.mjs'
+      - 'tests/multi-unit-browser.test.cjs'
+      - 'home-v2.html'
       - '.github/workflows/test-public-questions.yml'
   workflow_dispatch:
 
@@ -28,6 +30,11 @@ jobs:
           node scripts/check-home-safety.cjs
           node scripts/check-shirunoera-quiz-rotation.cjs
           node --test tests/traffic-analytics.test.mjs
+      - name: Browser check at phone and desktop widths
+        shell: bash
+        run: |
+          npm install --prefix "$RUNNER_TEMP/shirunoera-ui-test" --no-save --no-package-lock playwright-core@1.56.1
+          PLAYWRIGHT_CORE="$RUNNER_TEMP/shirunoera-ui-test/node_modules/playwright-core" node tests/multi-unit-browser.test.cjs
       - name: Inspect existing question schema (field names only)
         run: |
           node - <<'NODE'

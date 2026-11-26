@@ -1498,7 +1498,7 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"結果を見る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
   el("next").onclick=()=>{if(current===selected.length-1){showResults()}else{current++;show()}};
-  el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
+  el("back").onclick=()=>{if(params.get("from")==="configure"&&groups.includes(requested)){location.assign("/high-school?"+new URLSearchParams({subject:requested}));return}el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
   // Mix new questions with recent mistakes; avoid always serving the first ten rows.
@@ -1528,13 +1528,20 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
     while(chosen.length<limit&&previouslyCorrect.length)chosen.push(previouslyCorrect.pop());
     return shuffle(chosen);
   }
+
+  // Explicit range filters are additive, and never fall back to all on malformed input.
+  function selectedRangeMatch(q,ranges){
+    const path=q.subject==="社会"?[q.field_name,q.display_chapter||"その他（分類確認中）",q.display_section||"分類確認中"]:[q.field_name,q.topic_name];
+    return ranges.some(prefix=>Array.isArray(prefix)&&prefix.length>0&&prefix.length<=path.length&&prefix.every((v,i)=>typeof v==="string"&&v===path[i]));
+  }
   const params=new URLSearchParams(location.search);
   const requested=params.get("subject");
   if(requested&&groups.includes(requested)){
     chooseSubject(requested);
     const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
     const chapters=params.getAll("chapter"),sections=params.getAll("section");
-    const pool=questions.filter(q=>q.subject===requested&&(major==="all"||q.field_name===major)&&(requested==="社会"?socialRangeMatch(q,sections,chapters,minor):(minor==="all"||q.topic_name===minor)));
+    const ranges=params.getAll("range").map(value=>{try{return JSON.parse(value)}catch(e){return null}});
+    const pool=questions.filter(q=>q.subject===requested&&(params.has("range")?selectedRangeMatch(q,ranges):((major==="all"||q.field_name===major)&&(requested==="社会"?socialRangeMatch(q,sections,chapters,minor):(minor==="all"||q.topic_name===minor)))));
     const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
     if(limit>0)begin(count==="all"?pool:selectQuizQuestions(pool,limit));
   }
