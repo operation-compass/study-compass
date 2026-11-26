@@ -24,6 +24,7 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.goto('https://test.invalid/high-school');
   await page.locator('[data-subject="社会"]').click();
   assert.match(await page.locator('#available').innerText(),/選択中：5問/);
+  assert.match(await page.locator('#range-tree .range-node').first().locator('.unit-progress').first().innerText(),/学習 0\/3問.*未学習/s);
   const fit=()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
   // WCAG-style luminance comparison of actual computed foreground and nearest opaque surface.
   const contrast=async(selector,min=4.5)=>{
@@ -69,6 +70,11 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('#configure.active').waitFor();
   assert.match(await page.locator('#available').innerText(),/選択中：2問/);
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shirunoera.learning.v1')).answers.h1.correct),true);
+  const historyProgress=page.locator('#range-tree > .range-node').filter({has:page.getByRole('checkbox',{name:'歴史',exact:true})}).locator('.unit-progress').first();
+  assert.match(await historyProgress.innerText(),/学習 1\/3問.*正答率 100%/s);
+  await contrast('.unit-progress');
+  await contrast('.unit-accuracy');
+  assert(await fit());
   await page.locator('#back').click();
   await page.locator('[data-subject="英語"]').click();
   await page.locator('#range-none').click();
@@ -140,6 +146,16 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
     assert(await fit());
     await page.locator('#back').click();
   }
+  await page.evaluate(()=>{
+    const data=JSON.parse(localStorage.getItem('shirunoera.learning.v1'));
+    data.answers.h2={subject:'社会',major:'歴史',minor:'弥生時代',correct:false};
+    data.answers.stale={subject:'社会',major:'歴史',minor:'弥生時代',correct:true};
+    localStorage.setItem('shirunoera.learning.v1',JSON.stringify(data));
+  });
+  await page.goto('https://test.invalid/high-school');
+  await page.locator('[data-subject="社会"]').click();
+  assert.match(await page.locator('#range-tree .range-node').first().locator('.unit-progress').first().innerText(),/学習 2\/3問.*正答率 50%/s);
+  assert(await fit());
   assert.deepEqual(errors,[],'uncaught browser errors at '+width);
   await context.close();
   console.log('PASS browser selection, real quiz, history, return, review modes, bookmark, text contrast >= 4.5, all five subjects at '+width+'px');

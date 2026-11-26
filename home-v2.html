@@ -134,6 +134,15 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 #configure .range-row:focus-within{outline:2px solid #164b70;outline-offset:-2px}
 @media(max-width:350px){#configure .mode-grid button{font-size:13px}#configure .range-row label{font-size:15px}#configure .range-count{font-size:13px}}
 @media(forced-colors:active){#configure button[aria-pressed=true]{outline:2px solid Highlight;outline-offset:-3px}}
+
+#configure #unit-progress-note{font-size:12px;margin:5px 0 10px}
+#configure .unit-progress{display:flex;align-items:center;gap:7px;padding:0 10px 9px 40px;color:#52434c;font-size:12px;line-height:1.5;flex-wrap:wrap}
+#configure .unit-progress progress{appearance:none;width:48px;height:5px;border:0;border-radius:4px;overflow:hidden;background:#dfd3ce;flex:none}
+#configure .unit-progress progress::-webkit-progress-bar{background:#dfd3ce;border-radius:4px}
+#configure .unit-progress progress::-webkit-progress-value{background:#622b45;border-radius:4px}
+#configure .unit-progress progress::-moz-progress-bar{background:#622b45;border-radius:4px}
+#configure .unit-progress .unit-accuracy{color:#30232b;font-weight:650}
+@media(max-width:350px){#configure .unit-progress{padding-left:33px;gap:5px}#configure .unit-progress progress{width:35px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
@@ -196,7 +205,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
       <button type="button" data-mode="normal" aria-pressed="true">通常</button><button type="button" data-mode="wrong" aria-pressed="false">間違い</button><button type="button" data-mode="unseen" aria-pressed="false">未回答</button><button type="button" data-mode="marked" aria-pressed="false">チェック</button>
     </div><p id="mode-note" class="note"></p>
     <div class="range-toolbar"><strong>分野・単元を選ぶ</strong><div><button type="button" id="range-all">全選択</button><button type="button" id="range-none">全解除</button></div></div>
-    <p class="note" id="available" aria-live="polite"></p>
+    <p class="note" id="available" aria-live="polite"></p><p id="unit-progress-note" class="note">学習済み・正答率はこの端末の最新回答から集計します。</p>
     <div id="range-tree" aria-label="出題範囲"></div>
     <p class="hint">分野を開いて単元を複数選択できます。回答結果はこの端末に記録されます。</p>
     <div class="startbar"><div class="startbar-inner">
@@ -329,6 +338,18 @@ const modeLabels={normal:"通常",wrong:"間違い",unseen:"未回答",marked:"�
 const modeNotes={normal:"未回答や間違えた問題を優先して出題します。",wrong:"最後の回答が不正解だった問題だけ。",unseen:"まだ回答したことのない問題だけ。",marked:"問題画面でチェックした問題だけ。"};
 function questionPath(q){return q.subject==="社会"?[q.major,q.display_chapter||"その他（分類確認中）",q.display_section||"分類確認中"]:[q.major,q.minor]}
 function eligibleQuestions(){const data=modeData(mode);return [...catalogById.values()].filter(q=>q.subject===subject&&modeMatch(q,mode,data))}
+function unitProgress(questions,history){
+  const out=new Map();
+  for(const q of questions){
+    const p=questionPath(q),r=history&&Object.hasOwn(history,q.id)?history[q.id]:null;
+    const answered=!!r&&typeof r.correct==="boolean"&&r.subject===q.subject&&r.major===q.major&&r.minor===q.minor;
+    for(let i=1;i<=p.length;i++){
+      const k=selectionKey(p.slice(0,i)),v=out.get(k)||{total:0,answered:0,correct:0};
+      v.total++;if(answered){v.answered++;if(r.correct)v.correct++}out.set(k,v);
+    }
+  }
+  return out;
+}
 
 const rangeStorageKey=()=> "shirunoera.range.v1."+subject;
 function saveRange(){
@@ -351,9 +372,10 @@ function renderRange(){
     const name=document.createElement("span");name.className="range-name";name.textContent=node.path[node.path.length-1];
     label.append(input,name);row.append(label);
     const count=document.createElement("span");count.className="range-count";count.textContent=node.count+"問";row.append(count);
-    const keys=leafNodes([node]).map(l=>selectionKey(l.path));rangeControls.push({input,keys,count,node});
+    const keys=leafNodes([node]).map(l=>selectionKey(l.path));
+    const progress=document.createElement("div");progress.className="unit-progress";rangeControls.push({input,keys,count,node,progress});
     input.addEventListener("change",()=>{for(const key of keys)input.checked?chosen.add(key):chosen.delete(key);refreshCount();saveRange()});
-    block.append(row);
+    block.append(row,progress);
     if(node.children.length){
       const children=document.createElement("div");children.className="range-children";children.hidden=true;
       const toggle=document.createElement("button");toggle.type="button";toggle.className="range-toggle";toggle.textContent="＋";toggle.setAttribute("aria-expanded","false");toggle.setAttribute("aria-label",name.textContent+"の単元を展開");
@@ -368,7 +390,17 @@ function countFor(){return eligibleQuestions().filter(q=>chosen.has(selectionKey
 function refreshCount(){
   const eligible=eligibleQuestions(),count=eligible.filter(q=>chosen.has(selectionKey(questionPath(q)))).length;
   const totals=new Map();for(const q of eligible){const p=questionPath(q);for(let i=1;i<=p.length;i++){const k=selectionKey(p.slice(0,i));totals.set(k,(totals.get(k)||0)+1)}}
-  for(const {input,keys,count:nodeCount,node} of rangeControls){const n=keys.filter(k=>chosen.has(k)).length;input.checked=n===keys.length;input.indeterminate=n>0&&n<keys.length;nodeCount.textContent=(totals.get(selectionKey(node.path))||0)+"問"}
+  const history=modeData("wrong"),progressData=unitProgress([...catalogById.values()].filter(q=>q.subject===subject),history);
+  for(const {input,keys,count:nodeCount,node,progress} of rangeControls){
+    const n=keys.filter(k=>chosen.has(k)).length;input.checked=n===keys.length;input.indeterminate=n>0&&n<keys.length;const key=selectionKey(node.path);nodeCount.textContent=(totals.get(key)||0)+"問";
+    const p=progressData.get(key);progress.replaceChildren();
+    if(history===null){progress.textContent="学習記録を取得できません";continue}
+    if(!p)continue;
+    const bar=document.createElement("progress");bar.max=p.total;bar.value=p.answered;bar.setAttribute("aria-label","学習済み "+p.answered+" / "+p.total+"問");
+    const done=document.createElement("span");done.textContent="学習 "+p.answered+"/"+p.total+"問";
+    const accuracy=document.createElement("span");accuracy.className="unit-accuracy";accuracy.textContent=p.answered?"正答率 "+Math.round(p.correct/p.answered*100)+"%":"未学習";
+    progress.append(bar,done,accuracy);
+  }
   for(const b of document.querySelectorAll("[data-mode]"))b.setAttribute("aria-pressed",String(b.dataset.mode===mode));
   byId("mode-note").textContent=modeData(mode)===null?"この端末の記録を読み取れません。通常モードで学習できます。":modeNotes[mode];
   byId("available").textContent=catalogState==="ready"?"選択中："+count+"問 ／ 公開済み："+totalFor(taxonomy,subject)+"問":"公開問題数を確認できません。";
@@ -477,11 +509,11 @@ function render(){
   const untouched=subjectOrder.filter(s=>totalFor(taxonomy,s)>0&&done[s].size===0);
   const untouchedNode=byId("untouched-subjects");untouchedNode.replaceChildren();
   if(!untouched.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":subjectOrder.some(s=>totalFor(taxonomy,s)>0)?"公開中の教科はすべて学習済みです。":"公開問題はまだありません。";untouchedNode.append(li)}
-  for(const s of untouched){const li=document.createElement("li");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major:"all",unit:"all",count:"10"}).toString();a.textContent=s+"（未学習） → 10問に挑戦";a.setAttribute("aria-label",s+"の一問一答10問を開始");li.append(a);untouchedNode.append(li)}
-  const list=Object.entries(weak).filter(([,s])=>s.total>=5).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
+  for(const s of untouched){const li=document.createElement("li");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major:"all",unit:"all",count:"10",mode:"unseen"}).toString();a.textContent=s+"（未学習） → 10問に挑戦";a.setAttribute("aria-label",s+"の一問一答10問を開始");li.append(a);untouchedNode.append(li)}
+  const list=Object.entries(weak).filter(([,s])=>s.total>=5&&s.correct<s.total).sort((a,b)=>a[1].correct/a[1].total-b[1].correct/b[1].total||b[1].total-a[1].total).slice(0,5);
   const node=byId("weak-units");node.replaceChildren();
-  if(!list.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":"公開中の問題を5問以上回答した単元がまだありません。";node.append(li)}
-  for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:s==="社会"?"all":minor,count:"10",...(s==="社会"?{chapter:minor}:{})}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（"+v.total+"問） → 復習";a.setAttribute("aria-label",k+"の一問一答に再挑戦");li.append(a);node.append(li)}
+  if(!list.length){const li=document.createElement("li");li.textContent=catalogState!=="ready"?"公開問題数の確認後に表示します。":"5問以上回答し、間違いが残っている単元はありません。";node.append(li)}
+  for(const [k,v] of list){const li=document.createElement("li");const [s,major,minor]=k.split(" / ");const a=document.createElement("a");a.href="/study.html?"+new URLSearchParams({subject:s,major,unit:s==="社会"?"all":minor,count:"10",mode:"wrong",...(s==="社会"?{chapter:minor}:{})}).toString();a.textContent=k+"：正答率 "+Math.round(v.correct/v.total*100)+"%（間違い"+(v.total-v.correct)+"問） → 復習";a.setAttribute("aria-label",k+"の間違えた問題を復習");li.append(a);node.append(li)}
 }
 document.addEventListener("shirunoera-catalog",render);
 render();
