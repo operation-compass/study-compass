@@ -14,11 +14,12 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
  for(const width of [320,390,768,1280]){
   const context=await browser.newContext({viewport:{width,height:800}});
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  let currentCatalog=catalog,currentQuiz=quiz;
   await page.route('**/*',async route=>{
    const u=new URL(route.request().url());
    if(u.pathname==='/high-school')return route.fulfill({contentType:'text/html; charset=utf-8',body:home});
-   if(u.pathname==='/api/question-catalog.json')return route.fulfill({json:catalog});
-   if(u.pathname==='/study.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:quiz});
+   if(u.pathname==='/api/question-catalog.json')return route.fulfill({json:currentCatalog});
+   if(u.pathname==='/study.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:currentQuiz});
    return route.fulfill({status:404,body:''});
   });
   await page.goto('https://test.invalid/high-school');
@@ -156,7 +157,59 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('[data-subject="社会"]').click();
   assert.match(await page.locator('#range-tree .range-node').first().locator('.unit-progress').first().innerText(),/学習 2\/3問.*正答率 50%/s);
   assert(await fit());
+  // Dedicated fixtures for recommendation thresholds and exact wrong-only links.
+  const recommended=[
+    ...Array.from({length:6},(_,i)=>q('rec-h'+i,'社会','歴史','縄文時代')),
+    q('rec-outside','社会','歴史','江戸時代'),
+    ...Array.from({length:5},(_,i)=>q('rec-e'+i,'英語','文法','過去形')),
+    ...Array.from({length:5},(_,i)=>q('rec-perfect'+i,'英語','文法','未来形')),
+    q('rec-unseen','理科','物理','力')
+  ];
+  currentCatalog={schema:1,questions:recommended.map(x=>({id:x.id,subject:x.subject,major:x.field_name,minor:x.topic_name,...api.socialDisplay(x)}))};
+  currentQuiz=api.approvedOnlyHtml(recommended);
+  await page.evaluate(items=>{
+    const answers={};
+    for(const q of items){
+      if(q.id==='rec-h5'||q.id==='rec-unseen')continue;
+      answers[q.id]={subject:q.subject,major:q.field_name,minor:q.topic_name,correct:!['rec-h0','rec-h1','rec-outside','rec-e0'].includes(q.id)};
+    }
+    localStorage.setItem('shirunoera.learning.v1',JSON.stringify({schema:1,answers}));
+  },recommended);
+  await page.goto('https://test.invalid/high-school');
+  const links=page.locator('#weak-units a');
+  await links.first().waitFor();
+  assert.equal(await links.count(),2,'only units with >=5 answers and mistakes should be recommended');
+  const historyLink=links.filter({hasText:'原始・古代'});
+  assert.match(await historyLink.innerText(),/正答率 60%.*間違い2問/);
+  await historyLink.click();
+  await page.waitForURL('**/study.html?*');
+  const historyParams=new URL(page.url()).searchParams;
+  assert.equal(historyParams.get('mode'),'wrong');
+  assert.equal(historyParams.get('chapter'),'原始・古代');
+  assert.match(await page.locator('#progress').innerText(),/1 \/ 2/);
+  const actual=new Set([await page.locator('#question').innerText()]);
+  await page.locator('#choices button').first().click();
+  await page.locator('#next').click();
+  actual.add(await page.locator('#question').innerText());
+  assert.deepEqual([...actual].sort(),['rec-h0','rec-h1']);
+  await page.locator('#choices button').first().click();
+  await page.goto('https://test.invalid/high-school');
+  await page.locator('#weak-units a').first().waitFor();
+  assert.equal(await page.locator('#weak-units a').count(),1,'mastered unit should disappear from recommendations');
+  const englishLink=page.locator('#weak-units a').filter({hasText:'過去形'});
+  await englishLink.click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(new URL(page.url()).searchParams.get('mode'),'wrong');
+  assert.match(await page.locator('#progress').innerText(),/1 \/ 1/);
+  assert.equal(await page.locator('#question').innerText(),'rec-e0');
+  await page.goto('https://test.invalid/high-school');
+  const scienceLink=page.locator('#untouched-subjects a').filter({hasText:'理科'});
+  await scienceLink.click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(new URL(page.url()).searchParams.get('mode'),'unseen');
+  assert.equal(await page.locator('#question').innerText(),'rec-unseen');
   assert.deepEqual(errors,[],'uncaught browser errors at '+width);
+  console.log('PASS direct weak-unit and unseen-subject links at '+width+'px');
   await context.close();
   console.log('PASS browser selection, real quiz, history, return, review modes, bookmark, text contrast >= 4.5, all five subjects at '+width+'px');
  }
