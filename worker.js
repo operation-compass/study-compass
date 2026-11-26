@@ -35,12 +35,14 @@ function parsePublicCsv(csv) {
     const at = ["A","B","C","D"].indexOf(key);
     const answer = at >= 0 ? options[at] : q.correct_answer;
     if (options.some(x=>!x || !x.trim()) || new Set(options.map(x=>x.trim())).size !== 4 || options.filter(x=>x.trim()===answer.trim()).length !== 1 || !q.source_url.trim() || !q.explanation.trim() || q.question_type !== "4択") throw Error("Bad public answer or missing audit fields");
-    const socialUnit = q.subject === "社会" && q.unit_major === "歴史"
-      ? (q.grade === "中1" ? "SC-SOC-G1-ANC" : q.grade === "中2" ? "SC-SOC-G2-MED" : q.grade === "中3" ? "SC-SOC-G3-MOD" : null)
-      : null;
-    if (q.subject === "社会" && q.unit_major === "歴史" && !socialUnit) throw Error("Unmapped published history grade");
+    // Grade ranges are valid in the publication schema. Do not infer a period from a range.
+    const history = q.subject === "社会" && q.unit_major === "歴史";
+    const rangeGrade = q.grade === "中1〜中3";
+    const period = rangeGrade ? (["古代","中世","近現代"].includes(q.unit_minor) ? q.unit_minor : null) : (q.grade === "中1" ? "古代" : q.grade === "中2" ? "中世" : q.grade === "中3" ? "近現代" : null);
+    const socialUnit = history ? (period === "古代" ? "SC-SOC-G1-ANC" : period === "中世" ? "SC-SOC-G2-MED" : period === "近現代" ? "SC-SOC-G3-MOD" : null) : null;
+    if (history && !socialUnit && !rangeGrade) throw Error("Unmapped published history grade");
     return { id:q.question_id, subject:q.subject, grade:q.grade,
-      unit:q.unit_major === "歴史" ? "歴史・" + (q.grade === "中1" ? "古代" : q.grade === "中2" ? "中世" : "近現代") : q.unit_major,
+      unit:q.unit_major === "歴史" ? (period ? "歴史・" + period : "歴史") : q.unit_major,
       unit_id: socialUnit || undefined,
       field_name:q.unit_major, topic_name:q.unit_minor, q:q.question_text,
       answer, options, ex:q.explanation };

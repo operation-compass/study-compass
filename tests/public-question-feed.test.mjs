@@ -189,3 +189,16 @@ test('new social IDs with explicit unit labels are classified without touching a
  assert.deepEqual(api.socialDisplay(q('歴史','江戸時代','SC-SOC-HIS-GAP10-000001')),{display_chapter:'原始・古代',display_section:'奈良時代'});
  assert.deepEqual(api.socialDisplay({...q('歴史','縄文時代'),subject:'国語'}),{});
 });
+
+
+test('approved middle school grade ranges do not disable all subjects',async()=>{
+  const make=(id,subject,grade,major,minor)=>[id,'1',subject,grade,major,minor,'4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const rows=[make('range-ancient','社会','中1〜中3','歴史','古代'),make('range-unknown','社会','中1〜中3','歴史','分類確認中'),make('math','数学','中1','方程式','一次方程式')];
+  const csv=HEADER+'\n'+rows.join('\n')+'\n';
+  const catalog=await probe(new Response(csv),'/api/question-catalog.json?display=1');
+  assert.equal(catalog.status,200);assert.equal((await catalog.json()).questions.length,3);
+  const quiz=await probe(new Response(csv),'/study.html?subject=社会');assert.equal(quiz.status,200);assert.match(await quiz.text(),/range-ancient/);
+  const api=await import('data:text/javascript;base64,'+Buffer.from(src+'\nexport { parsePublicCsv };').toString('base64'));
+  const parsed=api.parsePublicCsv(csv);assert.equal(parsed[0].grade,'中1〜中3');assert.equal(parsed[0].unit_id,'SC-SOC-G1-ANC');assert.equal(parsed[1].unit_id,undefined);assert.equal(parsed[1].unit,'歴史');
+  assert.equal((await probe(new Response(csv.replace('中1〜中3','INVALID')),'/api/question-catalog.json')).status,503);
+});
