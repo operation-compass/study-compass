@@ -1,0 +1,83 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_CORE||'playwright-core');
+const home=fs.readFileSync('home-v2.html','utf8');
+const worker=fs.readFileSync('worker.js','utf8');
+const q=(id,subject,major,minor)=>({id,subject,field_name:major,topic_name:minor,q:id,options:['正解','不正解','選択肢3','選択肢4'],answer:'正解',ex:'解説'});
+const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','弥生時代'),q('h3','社会','歴史','江戸時代'),q('g1','社会','地理','九州地方'),q('c1','社会','公民','国会'),q('e1','英語','文法','過去形'),q('e2','英語','文法','未来形'),q('e3','英語','語彙','動詞'),q('j1','国語','漢字','読み'),q('m1','数学','関数','一次関数'),q('s1','理科','物理','力')];
+(async()=>{
+ const api=await import('data:text/javascript;base64,'+Buffer.from(worker+'\nexport {approvedOnlyHtml,socialDisplay};').toString('base64'));
+ const catalog={schema:1,questions:data.map(x=>({id:x.id,subject:x.subject,major:x.field_name,minor:x.topic_name,...api.socialDisplay(x)}))};
+ const quiz=api.approvedOnlyHtml(data);
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
+ try{
+ for(const width of [320,390,768,1280]){
+  const context=await browser.newContext({viewport:{width,height:800}});
+  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.route('**/*',async route=>{
+   const u=new URL(route.request().url());
+   if(u.pathname==='/high-school')return route.fulfill({contentType:'text/html; charset=utf-8',body:home});
+   if(u.pathname==='/api/question-catalog.json')return route.fulfill({json:catalog});
+   if(u.pathname==='/study.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:quiz});
+   return route.fulfill({status:404,body:''});
+  });
+  await page.goto('https://test.invalid/high-school');
+  await page.locator('[data-subject="社会"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：5問/);
+  const fit=()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
+  assert(await fit(),'initial horizontal overflow at '+width);
+  await page.locator('#range-none').click();
+  assert(await page.locator('#start').isDisabled());
+  await page.getByRole('button',{name:'歴史の単元を展開',exact:true}).click();
+  await page.getByRole('button',{name:'原始・古代の単元を展開',exact:true}).click();
+  await page.getByRole('checkbox',{name:'縄文時代',exact:true}).check();
+  assert(await page.getByRole('checkbox',{name:'歴史',exact:true}).evaluate(x=>x.indeterminate));
+  await page.getByRole('checkbox',{name:'地理',exact:true}).check();
+  assert.match(await page.locator('#sticky-count').innerText(),/2問/);
+  assert(await page.locator('[data-n="5"]').isDisabled());
+  assert(await fit(),'expanded horizontal overflow at '+width);
+  if(width<=760){
+   const b=await page.locator('.startbar').boundingBox();
+   assert(b.y>=0&&Math.abs(b.y+b.height-800)<=1,'fixed bar not within viewport at '+width);
+  }
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  const params=new URL(page.url()).searchParams;
+  assert.deepEqual(params.getAll('range').map(JSON.parse),[['歴史','原始・古代','縄文時代'],['地理']]);
+  assert.match(await page.locator('#progress').innerText(),/1 \/ 2/);
+  assert.equal(await page.locator('#question').innerText(),'h1');
+  await page.locator('#choices button').first().click();
+  await page.locator('#next').click();
+  assert.equal(await page.locator('#question').innerText(),'g1');
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：2問/);
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('shirunoera.learning.v1')).answers.h1.correct),true);
+  await page.locator('#back').click();
+  await page.locator('[data-subject="英語"]').click();
+  await page.locator('#range-none').click();
+  await page.getByRole('button',{name:'文法の単元を展開',exact:true}).click();
+  await page.getByRole('checkbox',{name:'過去形',exact:true}).check();
+  await page.getByRole('checkbox',{name:'語彙',exact:true}).check();
+  assert.match(await page.locator('#available').innerText(),/選択中：2問/);
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.match(await page.locator('#progress').innerText(),/1 \/ 2/);
+  assert.equal(await page.locator('#question').innerText(),'e1');
+  await page.locator('#choices button').first().click();
+  await page.locator('#next').click();
+  assert.equal(await page.locator('#question').innerText(),'e3');
+  await page.goto('https://test.invalid/high-school');
+  for(const subject of ['国語','数学','理科']){
+    await page.locator('[data-subject="'+subject+'"]').click();
+    assert.match(await page.locator('#available').innerText(),/選択中：1問/);
+    assert(await fit());
+    await page.locator('#back').click();
+  }
+  assert.deepEqual(errors,[],'uncaught browser errors at '+width);
+  await context.close();
+  console.log('PASS browser selection, real quiz, history, return, all five subjects at '+width+'px');
+ }
+ }finally{await browser.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});
