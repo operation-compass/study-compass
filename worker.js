@@ -1400,6 +1400,22 @@ footer{color:#573849}
 @media(max-width:620px){.header-inner{min-height:55px;gap:10px}.home-link{font-size:12px}.hero-strip{padding:13px 12px 15px}.hero-strip h1{font-size:23px}.hero-strip small{font-size:10px}.quiz-nav{align-items:flex-start;gap:8px}.quiz-nav button{font-size:11px;padding:8px 9px}.quiz-inner{padding:15px 14px 20px}#question{font-size:20px}#choices button{min-height:57px}#progress{font-size:12px}}
 @media(prefers-reduced-motion:reduce){#choices button{transition:none}}
 .question-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px}.question-tools .quiz-question-label{margin-top:0}#mark-question{min-height:44px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:#fff8ed;color:var(--wine);font-size:13px}#mark-question[aria-pressed=true]{background:#ecd4dc;border-color:var(--wine);font-weight:700}#mark-status{font-size:12px;color:var(--wine);margin:0}#mode-empty{border:1px solid var(--line);padding:12px;border-radius:6px}
+
+/* Reading and answer controls remain legible in every state. */
+body{--muted:#52434c;--ink:#30232b;--wine:#622b45;color-scheme:light}
+#quiz,.results-card,.video-card,#selector{background:#fffdf9}
+#question{color:#30232b;border-left-color:#622b45}
+#choices button{background:#fffdf9;color:#30232b;border-color:#806973}
+#choices button:hover:not(:disabled){background:#f4e7ec;border-color:#622b45}
+#choices button.ok{background:#e2f0e5;color:#173e27;border-color:#356344}
+#choices button.bad{background:#f9e4e8;color:#78233b;border-color:#96374e}
+#mark-question,.quiz-nav button,#selector button{background:#fffdf9;color:#4b2639;border-color:#806973}
+#mark-question[aria-pressed=true]{background:#622b45;color:#fff;border-color:#622b45}
+#mark-question:disabled{background:#eee8e4;color:#61545a;opacity:1}
+#answer{background:#f8eee6;color:#30232b;border-color:#806973}
+#next,.results-actions .primary,.quiz-head{background:#622b45;color:#fff}
+.quiz-head small{color:#fff}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #164b70;outline-offset:2px}
 </style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>高校受験</small><h1>一問一答で、知識を確かに。</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><p id="mode-empty" class="muted" role="status" hidden></p><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
