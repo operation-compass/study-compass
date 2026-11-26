@@ -112,6 +112,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 .range-panel{padding:16px}.range-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.range-toolbar button{min-height:44px;padding:5px 10px;border:1px solid var(--line);background:#fff8ed;color:var(--wine);border-radius:5px;margin-left:4px}
 #range-tree{display:grid;gap:8px;margin:12px 0}.range-node{border:1px solid #c6afa6;border-radius:5px;background:#fff8ed;overflow:hidden}.range-row{display:flex;align-items:center;gap:4px;min-height:50px;padding:0 8px}.range-row label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:48px;margin:0;cursor:pointer;font-size:15px;line-height:1.4}.range-row input{width:20px;height:20px;flex:none;accent-color:var(--wine)}.range-name{overflow-wrap:anywhere}.range-count{font-size:13px;font-weight:600;color:var(--wine);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.range-toggle{width:44px;height:44px;border:0;background:transparent;color:var(--wine);font-size:22px;flex:none}.range-children{padding:0 0 0 12px;background:#f5e8de}.range-children .range-node{border:0;border-top:1px solid #d8c8bb;border-radius:0;background:transparent}.range-children .range-row label{font-weight:500}.range-row:focus-within{outline:2px solid var(--wine);outline-offset:-2px}.startbar{position:sticky;bottom:0;background:#f7eadd;border-top:1px solid var(--line);padding:12px 0;z-index:5}.startbar-inner{max-width:800px;margin:auto}.startbar .num{margin:4px 0 8px}.startbar .num button{min-height:44px}.startbar .primary{margin:0}.startbar label{margin:0;font-size:13px}.startbar-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
 @media(max-width:760px){#configure.active{padding-bottom:180px}.startbar{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px #47233520}.range-panel{padding:12px}.range-children{padding-left:9px}.range-row{padding:0 6px}.range-row label{gap:7px}.range-count{font-size:12px}}
+.mode-label{font-weight:700;font-size:14px}.mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0}.mode-grid button{min-height:44px;padding:5px 2px;font-size:13px;font-weight:600;background:#fff8ed;border:1px solid #c6afa6;color:var(--wine);border-radius:5px}.mode-grid button[aria-pressed=true]{background:#e9cbd3;border:2px solid var(--wine)}#mode-note{margin:5px 0 16px;min-height:20px}.range-count{font-size:12px}@media(max-width:350px){.mode-grid{gap:4px}.mode-grid button{font-size:12px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
@@ -169,6 +170,10 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
   <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
   <p class="note">分野・単元と問題数を選んでスタート。</p>
   <div class="panel range-panel">
+    <div class="mode-label">出題モード</div>
+    <div class="mode-grid" role="group" aria-label="出題モード">
+      <button type="button" data-mode="normal" aria-pressed="true">通常</button><button type="button" data-mode="wrong" aria-pressed="false">間違い</button><button type="button" data-mode="unseen" aria-pressed="false">未回答</button><button type="button" data-mode="marked" aria-pressed="false">チェック</button>
+    </div><p id="mode-note" class="note"></p>
     <div class="range-toolbar"><strong>分野・単元を選ぶ</strong><div><button type="button" id="range-all">全選択</button><button type="button" id="range-none">全解除</button></div></div>
     <p class="note" id="available" aria-live="polite"></p>
     <div id="range-tree" aria-label="出題範囲"></div>
@@ -277,10 +282,36 @@ function compactSelection(nodes,selected){
 function selectionCount(nodes,selected){return leafNodes(nodes).reduce((sum,n)=>sum+(selected.has(selectionKey(n.path))?n.count:0),0)}
 // END CATALOG MODEL
 
-let tree=[],chosen=new Set(),rangeControls=[];
+
+function readModeData(key,field){
+  try{const raw=localStorage.getItem(key);if(raw===null)return Object.create(null);
+    const data=JSON.parse(raw);return data?.schema===1&&data[field]&&typeof data[field]==="object"&&!Array.isArray(data[field])?data[field]:null;
+  }catch(e){return null}
+}
+function modeData(mode){
+  if(mode==="marked")return readModeData("shirunoera.bookmarks.v1","items");
+  if(mode==="wrong"||mode==="unseen")return readModeData("shirunoera.learning.v1","answers");
+  return Object.create(null)
+}
+function modeMatch(q,mode,data){
+  if(mode==="normal")return true;
+  if(data===null)return false;
+  const past=Object.hasOwn(data,q.id)?data[q.id]:null;
+  if(mode==="wrong")return past?.correct===false;
+  if(mode==="unseen")return typeof past?.correct!=="boolean";
+  if(mode==="marked")return past===true;
+  return false
+}
+
+let tree=[],chosen=new Set(),rangeControls=[],mode="normal";
+const modeLabels={normal:"通常",wrong:"間違い",unseen:"未回答",marked:"チェック"};
+const modeNotes={normal:"未回答や間違えた問題を優先して出題します。",wrong:"最後の回答が不正解だった問題だけ。",unseen:"まだ回答したことのない問題だけ。",marked:"問題画面でチェックした問題だけ。"};
+function questionPath(q){return q.subject==="社会"?[q.major,q.display_chapter||"その他（分類確認中）",q.display_section||"分類確認中"]:[q.major,q.minor]}
+function eligibleQuestions(){const data=modeData(mode);return [...catalogById.values()].filter(q=>q.subject===subject&&modeMatch(q,mode,data))}
+
 const rangeStorageKey=()=> "shirunoera.range.v1."+subject;
 function saveRange(){
-  try{localStorage.setItem(rangeStorageKey(),JSON.stringify({ranges:compactSelection(tree,chosen),amount,all:chosen.size===leafNodes(tree).length}))}catch(e){}
+  try{localStorage.setItem(rangeStorageKey(),JSON.stringify({ranges:compactSelection(tree,chosen),amount,mode,all:chosen.size===leafNodes(tree).length}))}catch(e){}
 }
 function restoreRange(){
   const leaves=leafNodes(tree);
@@ -288,6 +319,7 @@ function restoreRange(){
   const valid=saved&&Array.isArray(saved.ranges);
   chosen=new Set(leaves.filter(l=>!valid||saved.all===true||saved.ranges.some(p=>pathPrefix(p,l.path))).map(l=>selectionKey(l.path)));
   amount=valid&&["5","10","20","all"].includes(saved.amount)?saved.amount:"10";
+  mode=valid&&Object.hasOwn(modeLabels,saved.mode)?saved.mode:"normal";
 }
 function renderRange(){
   const root=byId("range-tree");root.replaceChildren();rangeControls=[];
@@ -298,7 +330,7 @@ function renderRange(){
     const name=document.createElement("span");name.className="range-name";name.textContent=node.path[node.path.length-1];
     label.append(input,name);row.append(label);
     const count=document.createElement("span");count.className="range-count";count.textContent=node.count+"問";row.append(count);
-    const keys=leafNodes([node]).map(l=>selectionKey(l.path));rangeControls.push({input,keys});
+    const keys=leafNodes([node]).map(l=>selectionKey(l.path));rangeControls.push({input,keys,count,node});
     input.addEventListener("change",()=>{for(const key of keys)input.checked?chosen.add(key):chosen.delete(key);refreshCount();saveRange()});
     block.append(row);
     if(node.children.length){
@@ -311,9 +343,13 @@ function renderRange(){
   };
   for(const node of tree)root.append(render(node));refreshCount();
 }
-function countFor(){return selectionCount(tree,chosen)}
+function countFor(){return eligibleQuestions().filter(q=>chosen.has(selectionKey(questionPath(q)))).length}
 function refreshCount(){
-  const count=countFor();for(const {input,keys} of rangeControls){const n=keys.filter(k=>chosen.has(k)).length;input.checked=n===keys.length;input.indeterminate=n>0&&n<keys.length}
+  const eligible=eligibleQuestions(),count=eligible.filter(q=>chosen.has(selectionKey(questionPath(q)))).length;
+  const totals=new Map();for(const q of eligible){const p=questionPath(q);for(let i=1;i<=p.length;i++){const k=selectionKey(p.slice(0,i));totals.set(k,(totals.get(k)||0)+1)}}
+  for(const {input,keys,count:nodeCount,node} of rangeControls){const n=keys.filter(k=>chosen.has(k)).length;input.checked=n===keys.length;input.indeterminate=n>0&&n<keys.length;nodeCount.textContent=(totals.get(selectionKey(node.path))||0)+"問"}
+  for(const b of document.querySelectorAll("[data-mode]"))b.setAttribute("aria-pressed",String(b.dataset.mode===mode));
+  byId("mode-note").textContent=modeData(mode)===null?"この端末の記録を読み取れません。通常モードで学習できます。":modeNotes[mode];
   byId("available").textContent=catalogState==="ready"?"選択中："+count+"問 ／ 公開済み："+totalFor(taxonomy,subject)+"問":"公開問題数を確認できません。";
   for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}
   const current=document.querySelector('[data-n="'+amount+'"]');
@@ -321,7 +357,7 @@ function refreshCount(){
   document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));
   byId("sticky-count").textContent="選択中："+count+"問";
   byId("start").disabled=catalogState!=="ready"||count===0;
-  byId("start").textContent=count===0?"単元を選択してください":(amount==="all"?count:Number(amount))+"問の学習を始める →";
+  byId("start").textContent=count===0?(chosen.size?"対象の問題がありません":"単元を選択してください"):(amount==="all"?count:Number(amount))+"問の学習を始める →";
 }
 function updateCatalogUI(){
   const status=byId("catalog-status"),retry=byId("catalog-retry"),fallback=byId("catalog-fallback");
@@ -343,14 +379,15 @@ async function loadCatalog(){
 }
 document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
  if(btn.disabled||catalogState!=="ready")return;
- subject=btn.dataset.subject;amount="10";byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
+ subject=btn.dataset.subject;amount="10";mode="normal";byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
  tree=selectionTree([...catalogById.values()],subject);restoreRange();renderRange();window.scrollTo(0,0)
 }));
+document.querySelectorAll("[data-mode]").forEach(btn=>btn.addEventListener("click",()=>{mode=btn.dataset.mode;refreshCount();saveRange()}));
 byId("range-all").addEventListener("click",()=>{chosen=new Set(leafNodes(tree).map(l=>selectionKey(l.path)));refreshCount();saveRange()});
 byId("range-none").addEventListener("click",()=>{chosen.clear();refreshCount();saveRange()});
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");subject="";const url=new URL(location.href);if(url.searchParams.has("subject")){url.searchParams.delete("subject");history.replaceState(null,"",url)}window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;refreshCount();saveRange()}));
-byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount,from:"configure"});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount,mode,from:"configure"});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
 loadCatalog();
 </script>
