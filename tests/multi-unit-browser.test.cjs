@@ -69,6 +69,53 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('#next').click();
   assert.equal(await page.locator('#question').innerText(),'e3');
   await page.goto('https://test.invalid/high-school');
+  await page.locator('[data-subject="社会"]').click();
+  await page.locator('#range-all').click();
+  await page.locator('[data-mode="wrong"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  assert(await page.locator('#start').isDisabled());
+  await page.locator('[data-mode="unseen"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：4問/);
+  await page.locator('[data-n="all"]').click();
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(new URL(page.url()).searchParams.get('mode'),'unseen');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  await page.locator('#mark-question').click();
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'true');
+  await page.locator('#choices button').nth(1).click();
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：3問/);
+  await page.locator('[data-mode="wrong"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：1問/);
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  await page.locator('#choices button').first().click();
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  await page.locator('[data-mode="marked"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：1問/);
+  assert(await fit(),'mode controls overflow at '+width);
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'true');
+  await page.locator('#mark-question').click();
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'false');
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  assert(await page.locator('#start').isDisabled());
+  await page.goto('https://test.invalid/study.html?subject=社会&mode=marked&count=all');
+  assert(await page.locator('#mode-empty').isVisible());
+  assert(await page.locator('#quiz').isHidden());
+  await page.goto('https://test.invalid/high-school');
   for(const subject of ['国語','数学','理科']){
     await page.locator('[data-subject="'+subject+'"]').click();
     assert.match(await page.locator('#available').innerText(),/選択中：1問/);
@@ -77,7 +124,7 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   }
   assert.deepEqual(errors,[],'uncaught browser errors at '+width);
   await context.close();
-  console.log('PASS browser selection, real quiz, history, return, all five subjects at '+width+'px');
+  console.log('PASS browser selection, real quiz, history, return, review modes, bookmark, all five subjects at '+width+'px');
  }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
