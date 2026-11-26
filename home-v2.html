@@ -350,7 +350,7 @@ byId("range-all").addEventListener("click",()=>{chosen=new Set(leafNodes(tree).m
 byId("range-none").addEventListener("click",()=>{chosen.clear();refreshCount();saveRange()});
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");subject="";const url=new URL(location.href);if(url.searchParams.has("subject")){url.searchParams.delete("subject");history.replaceState(null,"",url)}window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;refreshCount();saveRange()}));
-byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount,from:"configure"});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
 loadCatalog();
 </script>
