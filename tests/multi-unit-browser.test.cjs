@@ -25,9 +25,24 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('[data-subject="社会"]').click();
   assert.match(await page.locator('#available').innerText(),/選択中：5問/);
   const fit=()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
+  // WCAG-style luminance comparison of actual computed foreground and nearest opaque surface.
+  const contrast=async(selector,min=4.5)=>{
+    const ratio=await page.locator(selector).first().evaluate(el=>{
+      const parse=s=>s.match(/[\d.]+/g).map(Number);
+      const lum=rgb=>rgb.slice(0,3).map(v=>v/255).map(v=>v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4).reduce((n,v,i)=>n+v*[0.2126,0.7152,0.0722][i],0);
+      const fg=lum(parse(getComputedStyle(el).color));let node=el,bg;
+      while(node){const rgb=parse(getComputedStyle(node).backgroundColor);if(rgb.length===3||rgb[3]===1){bg=lum(rgb);break}node=node.parentElement}
+      if(bg===undefined)throw Error('No opaque surface for contrast');
+      return (Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05);
+    });
+    assert(ratio>=min,selector+' contrast '+ratio+' at '+width);
+  };
+  for(const selector of ['[data-mode="normal"]','[data-mode="wrong"]','#mode-note','#available','.range-row label','.range-count','#start','[data-n="20"]'])await contrast(selector);
+
   assert(await fit(),'initial horizontal overflow at '+width);
   await page.locator('#range-none').click();
   assert(await page.locator('#start').isDisabled());
+  await contrast('#start');
   await page.getByRole('button',{name:'歴史の単元を展開',exact:true}).click();
   await page.getByRole('button',{name:'原始・古代の単元を展開',exact:true}).click();
   await page.getByRole('checkbox',{name:'縄文時代',exact:true}).check();
@@ -69,6 +84,56 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('#next').click();
   assert.equal(await page.locator('#question').innerText(),'e3');
   await page.goto('https://test.invalid/high-school');
+  await page.locator('[data-subject="社会"]').click();
+  await page.locator('#range-all').click();
+  await page.locator('[data-mode="wrong"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  assert(await page.locator('#start').isDisabled());
+  await page.locator('[data-mode="unseen"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：4問/);
+  await page.locator('[data-n="all"]').click();
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(new URL(page.url()).searchParams.get('mode'),'unseen');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  for(const selector of ['#question','#choices button','#mark-question','.quiz-head strong','#progress'])await contrast(selector);
+  await page.locator('#mark-question').click();
+  await contrast('#mark-question');
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'true');
+  await page.locator('#choices button').nth(1).click();
+  for(const selector of ['#choices button.ok','#choices button.bad','#answer','#next'])await contrast(selector);
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：3問/);
+  await page.locator('[data-mode="wrong"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：1問/);
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  await page.locator('#choices button').first().click();
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  await page.locator('[data-mode="marked"]').click();
+  assert.match(await page.locator('#available').innerText(),/選択中：1問/);
+  assert(await fit(),'mode controls overflow at '+width);
+  await page.locator('#start').click();
+  await page.waitForURL('**/study.html?*');
+  assert.equal(await page.locator('#question').innerText(),'h2');
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'true');
+  await page.locator('#mark-question').click();
+  assert.equal(await page.locator('#mark-question').getAttribute('aria-pressed'),'false');
+  await page.locator('#back').click();
+  await page.waitForURL('**/high-school?*');
+  await page.locator('#configure.active').waitFor();
+  assert.match(await page.locator('#available').innerText(),/選択中：0問/);
+  assert(await page.locator('#start').isDisabled());
+  await page.goto('https://test.invalid/study.html?subject=社会&mode=marked&count=all');
+  assert(await page.locator('#mode-empty').isVisible());
+  assert(await page.locator('#quiz').isHidden());
+  await page.goto('https://test.invalid/high-school');
   for(const subject of ['国語','数学','理科']){
     await page.locator('[data-subject="'+subject+'"]').click();
     assert.match(await page.locator('#available').innerText(),/選択中：1問/);
@@ -77,7 +142,7 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   }
   assert.deepEqual(errors,[],'uncaught browser errors at '+width);
   await context.close();
-  console.log('PASS browser selection, real quiz, history, return, all five subjects at '+width+'px');
+  console.log('PASS browser selection, real quiz, history, return, review modes, bookmark, text contrast >= 4.5, all five subjects at '+width+'px');
  }
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
