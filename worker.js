@@ -1498,7 +1498,7 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"結果を見る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
   el("next").onclick=()=>{if(current===selected.length-1){showResults()}else{current++;show()}};
-  el("back").onclick=()=>{el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
+  el("back").onclick=()=>{if(params.get("from")==="configure"&&groups.includes(requested)){location.assign("/high-school?"+new URLSearchParams({subject:requested}));return}el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
   // Mix new questions with recent mistakes; avoid always serving the first ten rows.
