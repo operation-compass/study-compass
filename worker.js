@@ -1399,13 +1399,49 @@ body{background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 35%),lin
 footer{color:#573849}
 @media(max-width:620px){.header-inner{min-height:55px;gap:10px}.home-link{font-size:12px}.hero-strip{padding:13px 12px 15px}.hero-strip h1{font-size:23px}.hero-strip small{font-size:10px}.quiz-nav{align-items:flex-start;gap:8px}.quiz-nav button{font-size:11px;padding:8px 9px}.quiz-inner{padding:15px 14px 20px}#question{font-size:20px}#choices button{min-height:57px}#progress{font-size:12px}}
 @media(prefers-reduced-motion:reduce){#choices button{transition:none}}
+.question-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px}.question-tools .quiz-question-label{margin-top:0}#mark-question{min-height:44px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:#fff8ed;color:var(--wine);font-size:13px}#mark-question[aria-pressed=true]{background:#ecd4dc;border-color:var(--wine);font-weight:700}#mark-status{font-size:12px;color:var(--wine);margin:0}#mode-empty{border:1px solid var(--line);padding:12px;border-radius:6px}
 </style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>高校受験</small><h1>一問一答で、知識を確かに。</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
-  <section id="selector" class="card"><h2>教科を選ぶ</h2><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="quiz-question-label">問題</div><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><a id="video-link" rel="noopener noreferrer" target="_blank">解説動画を見る ↗</a></section>
+  <section id="selector" class="card"><h2>教科を選ぶ</h2><p id="mode-empty" class="muted" role="status" hidden></p><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="question-tools"><div class="quiz-question-label">問題</div><button id="mark-question" type="button" aria-pressed="false">☆ チェック</button></div><p id="mark-status" role="status"></p><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><a id="video-link" rel="noopener noreferrer" target="_blank">解説動画を見る ↗</a></section>
   </main><footer>© SHIRUNOERA</footer>
   <script>const questions=${json};const socialOrder=${JSON.stringify(SOCIAL_CHAPTER_ORDER)};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
   const el=id=>document.getElementById(id);
+
+function readModeData(key,field){
+  try{const raw=localStorage.getItem(key);if(raw===null)return Object.create(null);
+    const data=JSON.parse(raw);return data?.schema===1&&data[field]&&typeof data[field]==="object"&&!Array.isArray(data[field])?data[field]:null;
+  }catch(e){return null}
+}
+function modeData(mode){
+  if(mode==="marked")return readModeData("shirunoera.bookmarks.v1","items");
+  if(mode==="wrong"||mode==="unseen")return readModeData("shirunoera.learning.v1","answers");
+  return Object.create(null)
+}
+function modeMatch(q,mode,data){
+  if(mode==="normal")return true;
+  if(data===null)return false;
+  const past=Object.hasOwn(data,q.id)?data[q.id]:null;
+  if(mode==="wrong")return past?.correct===false;
+  if(mode==="unseen")return typeof past?.correct!=="boolean";
+  if(mode==="marked")return past===true;
+  return false
+}
+
+  function renderBookmark(q){
+    const btn=el("mark-question"),items=modeData("marked");
+    const marked=items!==null&&Object.hasOwn(items,q.id)&&items[q.id]===true;
+    btn.disabled=items===null;btn.setAttribute("aria-pressed",String(marked));
+    btn.textContent=marked?"✓ チェック済み":"☆ チェック";
+    btn.title=items===null?"この端末のチェック記録を読み取れません":"復習したい問題を保存・解除";
+  }
+  el("mark-question").onclick=()=>{
+    const q=selected[current],items=modeData("marked");if(!q||items===null)return;
+    const next=Object.assign(Object.create(null),items);
+    if(next[q.id]===true)delete next[q.id];else next[q.id]=true;
+    try{localStorage.setItem("shirunoera.bookmarks.v1",JSON.stringify({schema:1,items:next}));renderBookmark(q);el("mark-status").textContent=""}
+    catch(e){el("mark-status").textContent="チェックを保存できませんでした。"}
+  };
   function saveLearningAnswer(q,correct){
     try{
       const key="shirunoera.learning.v1";
@@ -1490,7 +1526,7 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
   function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const pct=total?Math.round(score/total*100):0;el("result-score").textContent=score+" / "+total+"問";el("result-detail").textContent="正答率 "+pct+"%　・　間違い "+wrong.length+"問";el("result-mistakes").textContent=wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;window.scrollTo(0,0)}
   el("review-wrong").onclick=()=>{const wrongIds=new Set(sessionAnswers.filter(x=>!x.correct).map(x=>x.id));begin(selected.filter(q=>wrongIds.has(q.id)))};
   el("retry-all").onclick=()=>begin(sessionBase);
-  function show(){const q=selected[current];el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
+  function show(){const q=selected[current];renderBookmark(q);el("mark-status").textContent="";el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
     q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
@@ -1541,9 +1577,11 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
     const major=params.get("major")||"all",minor=params.get("unit")||"all",count=params.get("count")||"10";
     const chapters=params.getAll("chapter"),sections=params.getAll("section");
     const ranges=params.getAll("range").map(value=>{try{return JSON.parse(value)}catch(e){return null}});
-    const pool=questions.filter(q=>q.subject===requested&&(params.has("range")?selectedRangeMatch(q,ranges):((major==="all"||q.field_name===major)&&(requested==="社会"?socialRangeMatch(q,sections,chapters,minor):(minor==="all"||q.topic_name===minor)))));
+    const mode=params.get("mode")||"normal",data=modeData(mode);
+    const pool=questions.filter(q=>modeMatch(q,mode,data)&&q.subject===requested&&(params.has("range")?selectedRangeMatch(q,ranges):((major==="all"||q.field_name===major)&&(requested==="社会"?socialRangeMatch(q,sections,chapters,minor):(minor==="all"||q.topic_name===minor)))));
     const limit=count==="all"?pool.length:Math.min(pool.length,["5","10","20"].includes(count)?Number(count):10);
     if(limit>0)begin(count==="all"?pool:selectQuizQuestions(pool,limit));
+    else if(params.has("mode")||params.has("range")){el("units").hidden=true;el("subjects").hidden=true;const msg=el("mode-empty");msg.hidden=false;msg.textContent="条件に合う問題がありません。";const a=document.createElement("a");a.href="/high-school?"+new URLSearchParams({subject:requested});a.textContent=" 出題条件を選び直す";msg.append(a)}
   }
   </script></body></html>`;
 }
