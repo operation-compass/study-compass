@@ -108,6 +108,10 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 .catalog-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 13px}.catalog-line p{font-size:12px;color:var(--muted);margin:0}.catalog-line button,.catalog-line a{font-size:12px;color:var(--wine);background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 10px}.subject .subject-count{font-size:12px;font-weight:650;color:var(--wine);padding-right:12px}.subject:disabled,.primary:disabled{opacity:.65;cursor:not-allowed;transform:none;box-shadow:none}.subject:disabled:hover{transform:none}.subject .subject-detail{padding-bottom:0}@media(max-width:520px){.subject{min-height:102px}.subject .subject-count{font-size:11px}}
 
 .traffic-notice{font:11px/1.7 system-ui,sans-serif;letter-spacing:0;max-width:680px;margin:8px auto 0;color:#59444e}
+
+.range-panel{padding:16px}.range-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.range-toolbar button{min-height:44px;padding:5px 10px;border:1px solid var(--line);background:#fff8ed;color:var(--wine);border-radius:5px;margin-left:4px}
+#range-tree{display:grid;gap:8px;margin:12px 0}.range-node{border:1px solid #c6afa6;border-radius:5px;background:#fff8ed;overflow:hidden}.range-row{display:flex;align-items:center;gap:4px;min-height:50px;padding:0 8px}.range-row label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:48px;margin:0;cursor:pointer;font-size:15px;line-height:1.4}.range-row input{width:20px;height:20px;flex:none;accent-color:var(--wine)}.range-name{overflow-wrap:anywhere}.range-count{font-size:13px;font-weight:600;color:var(--wine);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.range-toggle{width:44px;height:44px;border:0;background:transparent;color:var(--wine);font-size:22px;flex:none}.range-children{padding:0 0 0 12px;background:#f5e8de}.range-children .range-node{border:0;border-top:1px solid #d8c8bb;border-radius:0;background:transparent}.range-children .range-row label{font-weight:500}.range-row:focus-within{outline:2px solid var(--wine);outline-offset:-2px}.startbar{position:sticky;bottom:0;background:#f7eadd;border-top:1px solid var(--line);padding:12px 0;z-index:5}.startbar-inner{max-width:800px;margin:auto}.startbar .num{margin:4px 0 8px}.startbar .num button{min-height:44px}.startbar .primary{margin:0}.startbar label{margin:0;font-size:13px}
+@media(max-width:760px){#configure.active{padding-bottom:180px}.startbar{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px #47233520}.range-panel{padding:12px}.range-children{padding-left:9px}.range-row{padding:0 6px}.range-row label{gap:7px}.range-count{font-size:12px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
@@ -164,11 +168,16 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 <section id="configure" class="subpage" aria-label="出題設定">
   <button id="back" class="back">← 教科一覧に戻る</button><h1 id="subject-title">社会の一問一答</h1>
   <p class="note">分野・単元と問題数を選んでスタート。</p>
-  <div class="panel"><div class="field-stack"><div><label for="major">分野</label><select id="major"></select></div><div><label for="unit">単元</label><select id="unit"></select><div id="social-chapters" hidden></div></div></div><p class="note" id="available" aria-live="polite"></p>
-    <label style="margin-top:22px">問題数</label>
-    <div class="num" id="num"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
-    <button class="primary" id="start" disabled>この条件で始める →</button>
-    <p class="hint">公開済み問題から出題します。回答結果はこの端末に記録されます。</p>
+  <div class="panel range-panel">
+    <div class="range-toolbar"><strong>分野・単元を選ぶ</strong><div><button type="button" id="range-all">全選択</button><button type="button" id="range-none">全解除</button></div></div>
+    <p class="note" id="available" aria-live="polite"></p>
+    <div id="range-tree" aria-label="出題範囲"></div>
+    <p class="hint">分野を開いて単元を複数選択できます。回答結果はこの端末に記録されます。</p>
+    <div class="startbar"><div class="startbar-inner">
+      <label id="amount-label">出題数</label>
+      <div class="num" id="num" role="group" aria-labelledby="amount-label"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
+      <button class="primary" id="start" disabled>この条件で始める →</button>
+    </div></div>
   </div>
 <div id="selection" class="preview" hidden aria-live="polite"></div>
 </section></div></main>
@@ -243,14 +252,76 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
   }
   refresh();
 }
+
+function selectionTree(pool,s){
+  const groups=new Map();
+  for(const q of pool){
+    if(q.subject!==s)continue;
+    if(!groups.has(q.major))groups.set(q.major,[]);
+    groups.get(q.major).push(q);
+  }
+  return [...groups].map(([major,items])=>{
+    const make=(path,count,children=[])=>({path,count,children});
+    const children=s==="社会"?sectionGroups(items,socialChapterOrder[major]||[]).map(([chapter,sections])=>
+      make([major,chapter],sections.reduce((n,x)=>n+x[1],0),sections.map(([section,count])=>make([major,chapter,section],count)))):
+      [...items.reduce((m,q)=>m.set(q.minor,(m.get(q.minor)||0)+1),new Map())].map(([minor,count])=>make([major,minor],count));
+    return make([major],items.length,children);
+  });
+}
+function leafNodes(nodes){return nodes.flatMap(n=>n.children.length?leafNodes(n.children):[n])}
+function selectionKey(path){return JSON.stringify(path)}
+function pathPrefix(prefix,path){return Array.isArray(prefix)&&prefix.length>0&&prefix.length<=path.length&&prefix.every((v,i)=>v===path[i])}
+function compactSelection(nodes,selected){
+  return nodes.flatMap(n=>leafNodes([n]).every(l=>selected.has(selectionKey(l.path)))?[n.path]:n.children.length?compactSelection(n.children,selected):[]);
+}
+function selectionCount(nodes,selected){return leafNodes(nodes).reduce((sum,n)=>sum+(selected.has(selectionKey(n.path))?n.count:0),0)}
 // END CATALOG MODEL
-function addOption(sel,value,label){const o=document.createElement("option");o.value=value;o.textContent=label;sel.append(o)}
-function selectedSections(){return [...byId("social-chapters").querySelectorAll(".social-section-choice:checked")].map(x=>x.value)}
-function socialPool(major){return [...catalogById.values()].filter(q=>q.subject==="社会"&&q.major===major)}
-function countFor(){const major=byId("major").value;if(subject==="社会"&&major!=="all"){const selected=new Set(selectedSections());return socialPool(major).filter(q=>selected.has(socialSectionKey(q))).length}return totalFor(taxonomy,subject,major,byId("unit").value)}
-function fillUnits(){const minor=byId("unit"),major=byId("major").value,range=byId("social-chapters");minor.replaceChildren();range.replaceChildren();addOption(minor,"all","すべての単元");const social=subject==="社会"&&major!=="all";minor.hidden=social;range.hidden=!social;
-if(social){renderSocialRange(range,socialPool(major),socialChapterOrder[major]||[],refreshCount,true)}else if(major!=="all"){for(const [name,count] of Object.entries(taxonomy[subject]?.[major]||{}))addOption(minor,name,name+"（"+count+"問）")}refreshCount()}
-function refreshCount(){const count=countFor();byId("available").textContent=catalogState==="ready"?"公開済みの問題："+count+"問":"公開問題数を確認できません。";for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}const current=document.querySelector('[data-n="'+amount+'"]');if(!current||current.disabled){amount=count>=10?"10":count>=5?"5":"all"}document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));byId("start").disabled=catalogState!=="ready"||count===0;byId("selection").hidden=true}
+
+let tree=[],chosen=new Set(),rangeControls=[];
+const rangeStorageKey=()=> "shirunoera.range.v1."+subject;
+function saveRange(){
+  try{localStorage.setItem(rangeStorageKey(),JSON.stringify({ranges:compactSelection(tree,chosen),amount,all:chosen.size===leafNodes(tree).length}))}catch(e){}
+}
+function restoreRange(){
+  const leaves=leafNodes(tree);
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(rangeStorageKey())||"null")}catch(e){}
+  const valid=saved&&Array.isArray(saved.ranges);
+  chosen=new Set(leaves.filter(l=>!valid||saved.all===true||saved.ranges.some(p=>pathPrefix(p,l.path))).map(l=>selectionKey(l.path)));
+  amount=valid&&["5","10","20","all"].includes(saved.amount)?saved.amount:"10";
+}
+function renderRange(){
+  const root=byId("range-tree");root.replaceChildren();rangeControls=[];
+  const render=node=>{
+    const block=document.createElement("div");block.className="range-node";
+    const row=document.createElement("div");row.className="range-row";
+    const label=document.createElement("label"),input=document.createElement("input");input.type="checkbox";
+    const name=document.createElement("span");name.className="range-name";name.textContent=node.path[node.path.length-1];
+    label.append(input,name);row.append(label);
+    const count=document.createElement("span");count.className="range-count";count.textContent=node.count+"問";row.append(count);
+    const keys=leafNodes([node]).map(l=>selectionKey(l.path));rangeControls.push({input,keys});
+    input.addEventListener("change",()=>{for(const key of keys)input.checked?chosen.add(key):chosen.delete(key);refreshCount();saveRange()});
+    block.append(row);
+    if(node.children.length){
+      const children=document.createElement("div");children.className="range-children";children.hidden=true;
+      const toggle=document.createElement("button");toggle.type="button";toggle.className="range-toggle";toggle.textContent="＋";toggle.setAttribute("aria-expanded","false");toggle.setAttribute("aria-label",name.textContent+"の単元を展開");
+      toggle.addEventListener("click",()=>{children.hidden=!children.hidden;toggle.textContent=children.hidden?"＋":"−";toggle.setAttribute("aria-expanded",String(!children.hidden));toggle.setAttribute("aria-label",name.textContent+(children.hidden?"の単元を展開":"の単元を折りたたむ"))});
+      row.append(toggle);for(const child of node.children)children.append(render(child));block.append(children);
+    }
+    return block;
+  };
+  for(const node of tree)root.append(render(node));refreshCount();
+}
+function countFor(){return selectionCount(tree,chosen)}
+function refreshCount(){
+  const count=countFor();for(const {input,keys} of rangeControls){const n=keys.filter(k=>chosen.has(k)).length;input.checked=n===keys.length;input.indeterminate=n>0&&n<keys.length}
+  byId("available").textContent=catalogState==="ready"?"選択中："+count+"問 ／ 公開済み："+totalFor(taxonomy,subject)+"問":"公開問題数を確認できません。";
+  for(const btn of document.querySelectorAll("[data-n]")){const n=btn.dataset.n;btn.disabled=catalogState!=="ready"||count===0||(n!=="all"&&Number(n)>count);btn.title=btn.disabled?"選択できる問題数を超えています":""}
+  const current=document.querySelector('[data-n="'+amount+'"]');
+  if(count>0&&(!current||current.disabled))amount=count>=10?"10":count>=5?"5":"all";
+  document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));
+  byId("start").disabled=catalogState!=="ready"||count===0;
+  byId("start").textContent=count===0?"単元を選択してください":(amount==="all"?count:Number(amount))+"問の学習を始める →";
+}
 function updateCatalogUI(){
   const status=byId("catalog-status"),retry=byId("catalog-retry"),fallback=byId("catalog-fallback");
   status.dataset.state=catalogState;
@@ -271,12 +342,13 @@ async function loadCatalog(){
 document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
  if(btn.disabled||catalogState!=="ready")return;
  subject=btn.dataset.subject;amount="10";byId("home").classList.add("hidden");byId("configure").classList.add("active");byId("subject-title").textContent=subject+"の一問一答";
- const m=byId("major");m.replaceChildren();addOption(m,"all","すべての分野");for(const [name,minors] of Object.entries(taxonomy[subject])){const count=Object.values(minors).reduce((a,b)=>a+b,0);addOption(m,name,name+"（"+count+"問）")}fillUnits();window.scrollTo(0,0)
+ tree=selectionTree([...catalogById.values()],subject);restoreRange();renderRange();window.scrollTo(0,0)
 }));
-byId("major").addEventListener("change",fillUnits);byId("unit").addEventListener("change",refreshCount);
+byId("range-all").addEventListener("click",()=>{chosen=new Set(leafNodes(tree).map(l=>selectionKey(l.path)));refreshCount();saveRange()});
+byId("range-none").addEventListener("click",()=>{chosen.clear();refreshCount();saveRange()});
 byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
-document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)))}));
-byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const major=byId("major").value;const qs=new URLSearchParams({subject,major,unit:subject==="社会"?"all":byId("unit").value,count:amount});if(subject==="社会"){if(major==="all")qs.append("chapter","all");else for(const c of selectedSections())qs.append("section",c)}location.assign("/study.html?"+qs.toString())});
+document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;refreshCount();saveRange()}));
+byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
 loadCatalog();
 </script>
