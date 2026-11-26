@@ -113,6 +113,27 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 #range-tree{display:grid;gap:8px;margin:12px 0}.range-node{border:1px solid #c6afa6;border-radius:5px;background:#fff8ed;overflow:hidden}.range-row{display:flex;align-items:center;gap:4px;min-height:50px;padding:0 8px}.range-row label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:48px;margin:0;cursor:pointer;font-size:15px;line-height:1.4}.range-row input{width:20px;height:20px;flex:none;accent-color:var(--wine)}.range-name{overflow-wrap:anywhere}.range-count{font-size:13px;font-weight:600;color:var(--wine);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.range-toggle{width:44px;height:44px;border:0;background:transparent;color:var(--wine);font-size:22px;flex:none}.range-children{padding:0 0 0 12px;background:#f5e8de}.range-children .range-node{border:0;border-top:1px solid #d8c8bb;border-radius:0;background:transparent}.range-children .range-row label{font-weight:500}.range-row:focus-within{outline:2px solid var(--wine);outline-offset:-2px}.startbar{position:sticky;bottom:0;background:#f7eadd;border-top:1px solid var(--line);padding:12px 0;z-index:5}.startbar-inner{max-width:800px;margin:auto}.startbar .num{margin:4px 0 8px}.startbar .num button{min-height:44px}.startbar .primary{margin:0}.startbar label{margin:0;font-size:13px}.startbar-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
 @media(max-width:760px){#configure.active{padding-bottom:180px}.startbar{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px #47233520}.range-panel{padding:12px}.range-children{padding-left:9px}.range-row{padding:0 6px}.range-row label{gap:7px}.range-count{font-size:12px}}
 .mode-label{font-weight:700;font-size:14px}.mode-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0}.mode-grid button{min-height:44px;padding:5px 2px;font-size:13px;font-weight:600;background:#fff8ed;border:1px solid #c6afa6;color:var(--wine);border-radius:5px}.mode-grid button[aria-pressed=true]{background:#e9cbd3;border:2px solid var(--wine)}#mode-note{margin:5px 0 16px;min-height:20px}.range-count{font-size:12px}@media(max-width:350px){.mode-grid{gap:4px}.mode-grid button{font-size:12px}}
+
+/* Learning controls: solid high-contrast surfaces, brand accent only for active controls. */
+#configure{--study-text:#30232b;--study-muted:#52434c;--study-accent:#622b45;--study-border:#806973;color:var(--study-text);color-scheme:light}
+#configure .panel,#configure .range-node{background:#fffdf9;border-color:var(--study-border)}
+#configure .note,#configure .hint{color:var(--study-muted);font-size:14px}
+#configure .range-children{background:#f5eee9}
+#configure .range-children .range-node{background:#f5eee9;border-color:#c4b0a7}
+#configure .range-row label{color:var(--study-text);font-size:16px}
+#configure .range-count{color:#622b45;font-size:14px;font-weight:700}
+#configure .range-row input{accent-color:#622b45;width:22px;height:22px}
+#configure .range-toggle{color:#622b45;font-weight:700}
+#configure .mode-grid button,#configure .num button,#configure .range-toolbar button{background:#fffdf9;color:#4b2639;border:1px solid #806973;font-size:14px;font-weight:650}
+#configure .mode-grid button[aria-pressed=true],#configure .num button[aria-pressed=true]{background:#622b45;color:#fff;border:2px solid #622b45;font-weight:700}
+#configure .mode-grid button[aria-pressed=true]::before,#configure .num button[aria-pressed=true]::before{content:"✓ ";font-weight:700}
+#configure .startbar{background:#fffaf4;border-color:#806973}
+#configure .primary{background:#622b45;color:#fff;font-size:17px;min-height:50px}
+#configure .num button:disabled,#configure .primary:disabled{background:#eee8e4;color:#61545a;border:1px solid #a18d96;opacity:1;cursor:not-allowed}
+#configure button:focus-visible,#configure input:focus-visible{outline:3px solid #164b70;outline-offset:2px}
+#configure .range-row:focus-within{outline:2px solid #164b70;outline-offset:-2px}
+@media(max-width:350px){#configure .mode-grid button{font-size:13px}#configure .range-row label{font-size:15px}#configure .range-count{font-size:13px}}
+@media(forced-colors:active){#configure button[aria-pressed=true]{outline:2px solid Highlight;outline-offset:-3px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
 <main><div class="wrap"><section class="home" id="home">
