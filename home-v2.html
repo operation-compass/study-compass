@@ -110,7 +110,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
 .traffic-notice{font:11px/1.7 system-ui,sans-serif;letter-spacing:0;max-width:680px;margin:8px auto 0;color:#59444e}
 
 .range-panel{padding:16px}.range-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.range-toolbar button{min-height:44px;padding:5px 10px;border:1px solid var(--line);background:#fff8ed;color:var(--wine);border-radius:5px;margin-left:4px}
-#range-tree{display:grid;gap:8px;margin:12px 0}.range-node{border:1px solid #c6afa6;border-radius:5px;background:#fff8ed;overflow:hidden}.range-row{display:flex;align-items:center;gap:4px;min-height:50px;padding:0 8px}.range-row label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:48px;margin:0;cursor:pointer;font-size:15px;line-height:1.4}.range-row input{width:20px;height:20px;flex:none;accent-color:var(--wine)}.range-name{overflow-wrap:anywhere}.range-count{font-size:13px;font-weight:600;color:var(--wine);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.range-toggle{width:44px;height:44px;border:0;background:transparent;color:var(--wine);font-size:22px;flex:none}.range-children{padding:0 0 0 12px;background:#f5e8de}.range-children .range-node{border:0;border-top:1px solid #d8c8bb;border-radius:0;background:transparent}.range-children .range-row label{font-weight:500}.range-row:focus-within{outline:2px solid var(--wine);outline-offset:-2px}.startbar{position:sticky;bottom:0;background:#f7eadd;border-top:1px solid var(--line);padding:12px 0;z-index:5}.startbar-inner{max-width:800px;margin:auto}.startbar .num{margin:4px 0 8px}.startbar .num button{min-height:44px}.startbar .primary{margin:0}.startbar label{margin:0;font-size:13px}
+#range-tree{display:grid;gap:8px;margin:12px 0}.range-node{border:1px solid #c6afa6;border-radius:5px;background:#fff8ed;overflow:hidden}.range-row{display:flex;align-items:center;gap:4px;min-height:50px;padding:0 8px}.range-row label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;min-height:48px;margin:0;cursor:pointer;font-size:15px;line-height:1.4}.range-row input{width:20px;height:20px;flex:none;accent-color:var(--wine)}.range-name{overflow-wrap:anywhere}.range-count{font-size:13px;font-weight:600;color:var(--wine);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.range-toggle{width:44px;height:44px;border:0;background:transparent;color:var(--wine);font-size:22px;flex:none}.range-children{padding:0 0 0 12px;background:#f5e8de}.range-children .range-node{border:0;border-top:1px solid #d8c8bb;border-radius:0;background:transparent}.range-children .range-row label{font-weight:500}.range-row:focus-within{outline:2px solid var(--wine);outline-offset:-2px}.startbar{position:sticky;bottom:0;background:#f7eadd;border-top:1px solid var(--line);padding:12px 0;z-index:5}.startbar-inner{max-width:800px;margin:auto}.startbar .num{margin:4px 0 8px}.startbar .num button{min-height:44px}.startbar .primary{margin:0}.startbar label{margin:0;font-size:13px}.startbar-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
 @media(max-width:760px){#configure.active{padding-bottom:180px}.startbar{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 18px #47233520}.range-panel{padding:12px}.range-children{padding-left:9px}.range-row{padding:0 6px}.range-row label{gap:7px}.range-count{font-size:12px}}
 </style></head><body>
 <header><div class="wrap"><div class="logo">SHIRUNOERA</div><div class="header-sub">高校受験 一問一答</div></div></header>
@@ -174,7 +174,7 @@ select,.num button{background:#fff8ed;border-color:#c6afa6;color:var(--ink);bord
     <div id="range-tree" aria-label="出題範囲"></div>
     <p class="hint">分野を開いて単元を複数選択できます。回答結果はこの端末に記録されます。</p>
     <div class="startbar"><div class="startbar-inner">
-      <label id="amount-label">出題数</label>
+      <div class="startbar-heading"><label id="amount-label">出題数</label><span id="sticky-count" class="range-count"></span></div>
       <div class="num" id="num" role="group" aria-labelledby="amount-label"><button data-n="5">5問</button><button data-n="10" aria-pressed="true">10問</button><button data-n="20">20問</button><button data-n="all">全問</button></div>
       <button class="primary" id="start" disabled>この条件で始める →</button>
     </div></div>
@@ -319,6 +319,7 @@ function refreshCount(){
   const current=document.querySelector('[data-n="'+amount+'"]');
   if(count>0&&(!current||current.disabled))amount=count>=10?"10":count>=5?"5":"all";
   document.querySelectorAll("[data-n]").forEach(btn=>btn.setAttribute("aria-pressed",String(!btn.disabled&&btn.dataset.n===amount)));
+  byId("sticky-count").textContent="選択中："+count+"問";
   byId("start").disabled=catalogState!=="ready"||count===0;
   byId("start").textContent=count===0?"単元を選択してください":(amount==="all"?count:Number(amount))+"問の学習を始める →";
 }
@@ -338,6 +339,7 @@ async function loadCatalog(){
     const next=buildCatalog(await res.json());taxonomy=next.units;catalogById=next.byQuestion;catalogState="ready";
   }catch(e){catalogState="error";taxonomy=Object.create(null);catalogById=new Map()}
   updateCatalogUI();document.dispatchEvent(new Event("shirunoera-catalog"));
+  if(catalogState==="ready"){const requested=new URLSearchParams(location.search).get("subject");if(subjects.includes(requested)&&!subject){const btn=[...document.querySelectorAll("[data-subject]")].find(b=>b.dataset.subject===requested);if(btn&&!btn.disabled)btn.click()}}
 }
 document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("click",()=>{
  if(btn.disabled||catalogState!=="ready")return;
@@ -346,7 +348,7 @@ document.querySelectorAll("[data-subject]").forEach(btn=>btn.addEventListener("c
 }));
 byId("range-all").addEventListener("click",()=>{chosen=new Set(leafNodes(tree).map(l=>selectionKey(l.path)));refreshCount();saveRange()});
 byId("range-none").addEventListener("click",()=>{chosen.clear();refreshCount();saveRange()});
-byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");window.scrollTo(0,0)});
+byId("back").addEventListener("click",()=>{byId("configure").classList.remove("active");byId("home").classList.remove("hidden");subject="";const url=new URL(location.href);if(url.searchParams.has("subject")){url.searchParams.delete("subject");history.replaceState(null,"",url)}window.scrollTo(0,0)});
 document.querySelectorAll("[data-n]").forEach(btn=>btn.addEventListener("click",()=>{if(btn.disabled)return;amount=btn.dataset.n;refreshCount();saveRange()}));
 byId("start").addEventListener("click",()=>{if(catalogState!=="ready"||!countFor()||byId("start").disabled)return;const qs=new URLSearchParams({subject,major:"all",unit:"all",count:amount});if(chosen.size!==leafNodes(tree).length)for(const path of compactSelection(tree,chosen))qs.append("range",selectionKey(path));saveRange();location.assign("/study.html?"+qs.toString())});
 byId("catalog-retry").addEventListener("click",loadCatalog);
