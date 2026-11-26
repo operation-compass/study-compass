@@ -13,7 +13,7 @@ assert.equal(vm.runInContext('totalFor(catalog.units,"社会","歴史",[])',ctx)
 assert.equal(vm.runInContext('displayMinor(catalog.byQuestion.get("q1"))',ctx),"原始・古代");
 assert.equal(vm.runInContext('displayMinor({subject:"社会",minor:"旧分類"})',ctx),"その他（分類確認中）");
 assert(!html.includes("動画は準備中です"));
-assert(html.includes('qs.append("section",c)'));
+assert(html.includes('qs.append("range",selectionKey(path))'));
 assert.equal(vm.runInContext('socialSectionKey({display_chapter:"原始・古代",display_section:"縄文時代"})',ctx),'["原始・古代","縄文時代"]');
 ctx.sectionPool=[{display_chapter:"原始・古代",display_section:"弥生時代"},{display_chapter:"原始・古代",display_section:"縄文時代"},{display_chapter:"原始・古代",display_section:"縄文時代"},{display_chapter:"中世",display_section:"鎌倉時代"}];
 assert.equal(vm.runInContext('sectionPool.filter(q=>socialRangeMatch(q,[socialSectionKey(sectionPool[1]),socialSectionKey(sectionPool[3])],[],"all")).length',ctx),3);
@@ -31,5 +31,18 @@ assert.equal(vm.runInContext('totalFor(buildCatalog({schema:1,questions:[]}).uni
 assert(html.includes('const KEY="shirunoera.learning.v1"'));
 assert(html.includes('fetch("/api/question-catalog.json?display=1"'));
 assert(!html.includes("2026年11月23日時点"));
+
+ctx.multi=[...ctx.payload.questions,{...question('q5','社会','地理','世界'),display_chapter:'世界の諸地域',display_section:'アジア'},{...question('q6','社会','歴史','古代'),display_chapter:'原始・古代',display_section:'弥生時代'},question('q7','英語','文法','未来形'),question('q8','英語','語彙','動詞')];
+assert.equal(vm.runInContext('selectionCount(selectionTree(multi,"社会"),new Set(leafNodes(selectionTree(multi,"社会")).map(n=>selectionKey(n.path))))',ctx),5);
+assert.equal(vm.runInContext('selectionCount(selectionTree(multi,"社会"),new Set())',ctx),0);
+assert.equal(vm.runInContext('JSON.stringify(compactSelection(selectionTree(multi,"社会"),new Set(leafNodes(selectionTree(multi,"社会")).filter(n=>n.path[0]==="歴史").map(n=>selectionKey(n.path)))))',ctx),'[["歴史"]]');
+assert.equal(vm.runInContext('selectionCount(selectionTree(multi,"英語"),new Set([selectionKey(["文法","過去形"]),selectionKey(["語彙","動詞"])]))',ctx),2);
+const worker=fs.readFileSync('worker.js','utf8');
+const matcher=worker.slice(worker.indexOf('  function selectedRangeMatch('),worker.indexOf('  const params=new URLSearchParams(location.search);'));
+vm.runInContext(matcher,ctx);
+assert.equal(vm.runInContext('selectedRangeMatch({subject:"社会",field_name:"地理",display_chapter:"世界の諸地域",display_section:"アジア"},[["歴史"],["地理","世界の諸地域","アジア"]])',ctx),true);
+assert.equal(vm.runInContext('selectedRangeMatch({subject:"社会",field_name:"地理",display_chapter:"世界の諸地域",display_section:"アジア"},[["歴史"],null,[]])',ctx),false);
+assert.equal(vm.runInContext('selectedRangeMatch({subject:"英語",field_name:"文法",topic_name:"過去形"},[["文法","過去形"],["語彙","動詞"]])',ctx),true);
+assert.equal(vm.runInContext('selectedRangeMatch({subject:"英語",field_name:"語彙",topic_name:"過去形"},[["文法","過去形"]])',ctx),false);
 for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script[1]);
 console.log('PASS live catalog counts, new units, current ID matching, empty/error/duplicate cases and script syntax');
