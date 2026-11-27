@@ -183,6 +183,10 @@ jobs:
           print("All six production photographs match the repository.")
           PY
 
+          echo "Checking the single AI learning image against the committed WebP..."
+          curl -fsSL --retry 5 --retry-delay 2 "$BASE/assets/learning/chipped-stone-tool.webp?smoke=${GITHUB_SHA}" -o /tmp/learning-chipped-stone.webp
+          cmp /tmp/learning-chipped-stone.webp ./assets/learning/chipped-stone-tool.webp
+
           echo "Checking unreviewed legacy route is blocked..."
           legacy_code="$(curl -sS -o /tmp/legacy.html -w '%{http_code}' "$BASE/legacy-study.html")"
           test "$legacy_code" = "404"

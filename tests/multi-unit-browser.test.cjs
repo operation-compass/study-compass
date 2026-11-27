@@ -165,9 +165,13 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   assert.equal(await page.locator('#question-priority').innerText(),'重要度 ★★★');
   assert(await page.locator('#skip-question').isVisible());
   await page.locator('#skip-question').click();
+  assert.match(await page.locator('#answer').innerText(),/未回答・スキップ/);
+  assert.equal(await page.locator('#question').innerText(),'SC-SOC-HIS-000325');
+  await page.locator('#next').click();
   assert.equal(await page.locator('#question').innerText(),'SHR-HS-HIS-20261126-002');
   assert.equal(await page.locator('#question-priority').innerText(),'重要度 ★★');
   await page.locator('#skip-question').click();
+  await page.locator('#next').click();
   assert.match(await page.locator('#result-score').innerText(),/未回答/);
   assert.match(await page.locator('#result-detail').innerText(),/スキップ 2問/);
   assert.equal(await page.evaluate(()=>localStorage.getItem('shirunoera.learning.v1')),beforeSkip);
@@ -178,6 +182,7 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   assert(await page.locator('#skip-question').isHidden());
   await page.locator('#next').click();
   await page.locator('#skip-question').click();
+  await page.locator('#next').click();
   assert.match(await page.locator('#result-detail').innerText(),/正答率 100%.*スキップ 1問/s);
   assert(await fit(),'priority/skip horizontal overflow at '+width);
   // One real published ID gets a same-origin answer-only diagram; it must never leak before answering.
@@ -196,6 +201,42 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   await page.locator('#next').click();
   assert.equal(await page.locator('.answer-figure img').count(),0);
   await page.locator('#skip-question').click();
+  // Single AI image pilot: serve the actual committed WebP bytes through the existing static asset binding.
+  const aiId='SC-SOC-HIS-000170',aiPath='/assets/learning/chipped-stone-tool.webp';
+  const aiBytes=fs.readFileSync('.'+aiPath);
+  assert.equal(aiBytes.toString('ascii',0,4),'RIFF');
+  assert.equal(aiBytes.toString('ascii',8,12),'WEBP');
+  assert(aiBytes.length<=100*1024);
+  const aiQuiz=api.approvedOnlyHtml([q(aiId,'社会','歴史','旧石器時代'),q('no-ai-image','社会','歴史','旧石器時代')]);
+  let aiRequests=0;
+  await page.route(/\/study\.html(?:\?|$)/,route=>route.fulfill({contentType:'text/html; charset=utf-8',body:aiQuiz}));
+  await page.route('**'+aiPath,async route=>{
+    aiRequests++;
+    const res=await api.default.fetch(new Request(route.request().url()),{ASSETS:{fetch:async request=>{
+      assert.equal(new URL(request.url).pathname,aiPath);
+      return new Response(aiBytes,{headers:{'Content-Type':'image/webp'}});
+    }}});
+    return route.fulfill({status:res.status,headers:Object.fromEntries(res.headers),body:Buffer.from(await res.arrayBuffer())});
+  });
+  await page.goto('https://test.invalid/study.html?subject=社会&count=all');
+  assert.equal(await page.locator('#question').innerText(),aiId);
+  assert.equal(await page.locator('.answer-figure img').count(),0);
+  assert.equal(aiRequests,0);
+  const beforeAiSkip=await page.evaluate(()=>localStorage.getItem('shirunoera.learning.v1'));
+  await page.locator('#skip-question').click();
+  await page.waitForFunction(()=>{const img=document.querySelector('.answer-figure img');return img&&img.complete&&img.naturalWidth===800&&img.naturalHeight===600});
+  assert.equal(await page.locator('.answer-figure img').getAttribute('src'),aiPath);
+  assert.match(await page.locator('.answer-figure figcaption').innerText(),/AI生成参考イメージ/);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('shirunoera.learning.v1')),beforeAiSkip);
+  assert(await fit(),'AI image horizontal overflow at '+width);
+  await page.locator('#next').click();
+  assert.equal(await page.locator('.answer-figure img').count(),0);
+  await page.goto('https://test.invalid/study.html?subject=社会&count=all');
+  assert.equal(await page.locator('.answer-figure img').count(),0);
+  await page.locator('#choices button').first().click();
+  await page.waitForFunction(()=>{const img=document.querySelector('.answer-figure img');return img&&img.complete&&img.naturalWidth===800&&img.naturalHeight===600});
+  assert.match(await page.locator('.answer-figure figcaption').innerText(),/実物写真ではありません/);
+  assert(await fit(),'AI image answer overflow at '+width);
   // Reset cancellation and confirmation: only the current learning-record key is deleted.
   await page.goto('https://test.invalid/high-school');
   const stored=await page.evaluate(()=>{localStorage.setItem('shirunoera.bookmarks.v1',JSON.stringify({schema:1,items:{h1:true}}));localStorage.setItem('unrelated-test-key','keep');return {history:localStorage.getItem('shirunoera.learning.v1'),bookmarks:localStorage.getItem('shirunoera.bookmarks.v1')}});
