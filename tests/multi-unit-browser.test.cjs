@@ -162,11 +162,11 @@ const data=[q('h1','社会','歴史','縄文時代'),q('h2','社会','歴史','�
   const beforeSkip=await page.evaluate(()=>localStorage.getItem('shirunoera.learning.v1'));
   await page.goto('https://test.invalid/study.html?subject=社会&count=all');
   assert.equal(await page.locator('#question').innerText(),'SC-SOC-HIS-000325');
-  assert.match(await page.locator('#question-priority').innerText(),/★★★/);
+  assert.equal(await page.locator('#question-priority').innerText(),'重要度 ★★★');
   assert(await page.locator('#skip-question').isVisible());
   await page.locator('#skip-question').click();
   assert.equal(await page.locator('#question').innerText(),'SHR-HS-HIS-20261126-002');
-  assert.match(await page.locator('#question-priority').innerText(),/★★/);
+  assert.equal(await page.locator('#question-priority').innerText(),'重要度 ★★');
   await page.locator('#skip-question').click();
   assert.match(await page.locator('#result-score').innerText(),/未回答/);
   assert.match(await page.locator('#result-detail').innerText(),/スキップ 2問/);
