@@ -1355,7 +1355,7 @@ const SOCIAL_DISPLAY_CORRECTIONS = Object.freeze({
     "旧石器時代"
   ]
 });
-// Provisional curriculum priority, not measured past-exam frequency. Older 3–5 star scale is normalized to 1–3; the reviewed Paleolithic/Jomon three-level scale is retained. No unreviewed ID or private audit data is included.
+// Editorial learning priority, not measured past-exam frequency. Individual ratings remain subject to review. Older 3–5 star scale is normalized to 1–3; the reviewed Paleolithic/Jomon three-level scale is retained. No unreviewed ID or private audit data is included.
 const PUBLIC_PRIORITY = Object.freeze({
   "SC-SOC-GEO-000015": 2,
   "SC-SOC-GEO-000016": 2,
@@ -1873,7 +1873,7 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
   el("review-wrong").onclick=()=>{const wrongIds=new Set(sessionAnswers.filter(x=>!x.correct).map(x=>x.id));begin(selected.filter(q=>wrongIds.has(q.id)))};
   el("review-skipped").onclick=()=>{const ids=new Set(sessionSkipped);begin(selected.filter(q=>ids.has(q.id)))};
   el("retry-all").onclick=()=>begin(sessionBase);
-  function show(){const q=selected[current];renderBookmark(q);el("mark-status").textContent="";el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;el("question-priority").textContent=q.priority?"重要度 "+"★".repeat(q.priority)+"（暫定）":"重要度 未評価";
+  function show(){const q=selected[current];renderBookmark(q);el("mark-status").textContent="";el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;el("question-priority").textContent=q.priority?"重要度 "+"★".repeat(q.priority):"重要度 未評価";
     clear(el("choices"));el("answer").textContent="";el("next").hidden=true;el("skip-question").hidden=false;
     q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);el("skip-question").hidden=true;
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
