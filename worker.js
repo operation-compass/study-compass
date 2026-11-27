@@ -1328,10 +1328,340 @@ const SOCIAL_EXACT_UNIT = Object.freeze({
     "国際連合"
   ]
 });
+// Reviewed display corrections, limited to already published IDs.
+const SOCIAL_DISPLAY_CORRECTIONS = Object.freeze({
+  "SC-SOC-HIS-000325": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-HIS-000326": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SC-SOC-GEO-000299": [
+    "世界と日本の姿",
+    "日本の位置と領域"
+  ],
+  "SHR-HS-HIS-20261126-004": [
+    "原始・古代",
+    "縄文時代"
+  ],
+  "SHR-HS-HIS-20261126-001": [
+    "原始・古代",
+    "旧石器時代"
+  ],
+  "SHR-HS-HIS-20261126-002": [
+    "原始・古代",
+    "旧石器時代"
+  ]
+});
+// Provisional curriculum priority, not measured past-exam frequency. Older 3–5 star scale is normalized to 1–3; the reviewed Paleolithic/Jomon three-level scale is retained. No unreviewed ID or private audit data is included.
+const PUBLIC_PRIORITY = Object.freeze({
+  "SC-SOC-GEO-000015": 2,
+  "SC-SOC-GEO-000016": 2,
+  "SC-SOC-GEO-000017": 2,
+  "SC-SOC-GEO-000018": 2,
+  "SC-SOC-GEO-000019": 2,
+  "SC-SOC-GEO-000020": 2,
+  "SC-SOC-HIS-000022": 1,
+  "SC-SOC-HIS-000024": 1,
+  "SC-SOC-HIS-000027": 1,
+  "SC-SOC-HIS-000029": 1,
+  "SC-SOC-HIS-000031": 2,
+  "SC-SOC-HIS-000036": 3,
+  "SC-SOC-GEO-000039": 2,
+  "SC-SOC-GEO-000041": 2,
+  "SC-SOC-GEO-000042": 2,
+  "SC-SOC-CIV-000045": 2,
+  "SC-SOC-CIV-000048": 3,
+  "SC-SOC-CIV-000049": 3,
+  "SC-SOC-CIV-000050": 3,
+  "SC-SOC-CIV-000051": 2,
+  "SC-SOC-CIV-000052": 2,
+  "SC-SOC-CIV-000053": 3,
+  "SC-SOC-CIV-000054": 3,
+  "SC-SOC-CIV-000055": 3,
+  "SC-SOC-CIV-000057": 3,
+  "SC-SOC-CIV-000059": 3,
+  "SC-SOC-CIV-000061": 2,
+  "SC-SOC-CIV-000062": 3,
+  "SC-SOC-CIV-000063": 2,
+  "SC-SOC-GEO-000065": 3,
+  "SC-SOC-GEO-000066": 2,
+  "SC-SOC-HIS-000067": 1,
+  "SC-SOC-HIS-000068": 1,
+  "SC-SOC-HIS-000069": 3,
+  "SC-SOC-HIS-000070": 3,
+  "SC-SOC-HIS-000071": 3,
+  "SC-SOC-HIS-000072": 1,
+  "SC-SOC-HIS-000073": 1,
+  "SC-SOC-HIS-000074": 1,
+  "SC-SOC-HIS-000075": 1,
+  "SC-SOC-HIS-000076": 1,
+  "SC-SOC-HIS-000077": 2,
+  "SC-SOC-HIS-000078": 1,
+  "SC-SOC-HIS-000080": 1,
+  "SC-SOC-HIS-000081": 1,
+  "SC-SOC-HIS-000082": 1,
+  "SC-SOC-HIS-000083": 1,
+  "SC-SOC-HIS-000084": 1,
+  "SC-SOC-HIS-000085": 1,
+  "SC-SOC-HIS-000087": 1,
+  "SC-SOC-HIS-000088": 1,
+  "SC-SOC-HIS-000089": 1,
+  "SC-SOC-HIS-000090": 1,
+  "SC-SOC-HIS-000091": 1,
+  "SC-SOC-HIS-000092": 1,
+  "SC-SOC-HIS-000094": 1,
+  "SC-SOC-HIS-000095": 1,
+  "SC-SOC-HIS-000096": 1,
+  "SC-SOC-HIS-000097": 1,
+  "SC-SOC-HIS-000098": 1,
+  "SC-SOC-HIS-000099": 1,
+  "SC-SOC-HIS-000100": 1,
+  "SC-SOC-HIS-000101": 1,
+  "SC-SOC-HIS-000102": 2,
+  "SC-SOC-HIS-000103": 1,
+  "SC-SOC-HIS-000104": 2,
+  "SC-SOC-HIS-000105": 2,
+  "SC-SOC-HIS-000106": 2,
+  "SC-SOC-HIS-000107": 1,
+  "SC-SOC-HIS-000108": 1,
+  "SC-SOC-HIS-000109": 1,
+  "SC-SOC-HIS-000110": 1,
+  "SC-SOC-HIS-000111": 1,
+  "SC-SOC-HIS-000112": 1,
+  "SC-SOC-HIS-000113": 1,
+  "SC-SOC-HIS-000114": 2,
+  "SC-SOC-HIS-000115": 3,
+  "SC-SOC-HIS-000116": 3,
+  "SC-SOC-HIS-000117": 2,
+  "SC-SOC-HIS-000118": 2,
+  "SC-SOC-HIS-000119": 2,
+  "SC-SOC-HIS-000120": 2,
+  "SC-SOC-HIS-000121": 2,
+  "SC-SOC-HIS-000122": 3,
+  "SC-SOC-HIS-000123": 3,
+  "SC-SOC-HIS-000124": 3,
+  "SC-SOC-HIS-000125": 2,
+  "SC-SOC-HIS-000126": 2,
+  "SC-SOC-HIS-000127": 2,
+  "SC-SOC-HIS-000128": 3,
+  "SC-SOC-HIS-000129": 1,
+  "SC-SOC-HIS-000130": 1,
+  "SC-SOC-HIS-000131": 1,
+  "SC-SOC-HIS-000132": 1,
+  "SC-SOC-HIS-000133": 1,
+  "SC-SOC-HIS-000134": 1,
+  "SC-SOC-HIS-000135": 1,
+  "SC-SOC-HIS-000136": 1,
+  "SC-SOC-HIS-000137": 1,
+  "SC-SOC-HIS-000138": 1,
+  "SC-SOC-HIS-000139": 1,
+  "SC-SOC-HIS-000140": 1,
+  "SC-SOC-HIS-000141": 1,
+  "SC-SOC-HIS-000142": 1,
+  "SC-SOC-HIS-000143": 1,
+  "SC-SOC-HIS-000144": 1,
+  "SC-SOC-HIS-000145": 1,
+  "SC-SOC-HIS-000146": 1,
+  "SC-SOC-HIS-000147": 1,
+  "SC-SOC-HIS-000148": 1,
+  "SC-SOC-HIS-000149": 1,
+  "SC-SOC-HIS-000152": 1,
+  "SC-SOC-HIS-000153": 2,
+  "SC-SOC-HIS-000154": 1,
+  "SC-SOC-HIS-000155": 1,
+  "SC-SOC-HIS-000156": 1,
+  "SC-SOC-HIS-000157": 1,
+  "SC-SOC-HIS-000158": 1,
+  "SC-SOC-HIS-000159": 3,
+  "SC-SOC-HIS-000160": 2,
+  "SC-SOC-HIS-000161": 2,
+  "SC-SOC-HIS-000162": 2,
+  "SC-SOC-HIS-000163": 2,
+  "SC-SOC-HIS-000164": 2,
+  "SC-SOC-HIS-000165": 2,
+  "SC-SOC-HIS-000166": 2,
+  "SC-SOC-HIS-000167": 2,
+  "SC-SOC-HIS-000168": 3,
+  "SC-SOC-HIS-000169": 3,
+  "SC-SOC-HIS-000170": 3,
+  "SC-SOC-HIS-000171": 3,
+  "SC-SOC-HIS-000172": 3,
+  "SC-SOC-HIS-000173": 1,
+  "SC-SOC-HIS-000174": 1,
+  "SC-SOC-HIS-000175": 1,
+  "SC-SOC-HIS-000176": 1,
+  "SC-SOC-HIS-000177": 2,
+  "SC-SOC-HIS-000178": 1,
+  "SC-SOC-HIS-000179": 1,
+  "SC-SOC-HIS-000180": 1,
+  "SC-SOC-HIS-000181": 1,
+  "SC-SOC-HIS-000182": 1,
+  "SC-SOC-HIS-000183": 1,
+  "SC-SOC-HIS-000184": 1,
+  "SC-SOC-HIS-000185": 1,
+  "SC-SOC-HIS-000186": 1,
+  "SC-SOC-HIS-000188": 1,
+  "SC-SOC-HIS-000189": 1,
+  "SC-SOC-HIS-000190": 2,
+  "SC-SOC-HIS-000192": 1,
+  "SC-SOC-HIS-000194": 2,
+  "SC-SOC-HIS-000196": 2,
+  "SC-SOC-HIS-000197": 2,
+  "SC-SOC-HIS-000198": 3,
+  "SC-SOC-HIS-000199": 2,
+  "SC-SOC-HIS-000200": 2,
+  "SC-SOC-HIS-000201": 3,
+  "SC-SOC-HIS-000202": 2,
+  "SC-SOC-HIS-000203": 3,
+  "SC-SOC-GEO-000204": 3,
+  "SC-SOC-GEO-000205": 3,
+  "SC-SOC-GEO-000206": 2,
+  "SC-SOC-GEO-000207": 3,
+  "SC-SOC-GEO-000208": 3,
+  "SC-SOC-CIV-000209": 2,
+  "SC-SOC-CIV-000210": 2,
+  "SC-SOC-CIV-000211": 3,
+  "SC-SOC-CIV-000212": 3,
+  "SC-SOC-CIV-000213": 3,
+  "SC-SOC-HIS-000214": 3,
+  "SC-SOC-HIS-000215": 3,
+  "SC-SOC-HIS-000216": 1,
+  "SC-SOC-HIS-000217": 1,
+  "SC-SOC-HIS-000218": 1,
+  "SC-SOC-HIS-000220": 3,
+  "SC-SOC-HIS-000221": 1,
+  "SC-SOC-HIS-000223": 1,
+  "SC-SOC-HIS-000224": 1,
+  "SC-SOC-HIS-000225": 1,
+  "SC-SOC-HIS-000226": 1,
+  "SC-SOC-HIS-000227": 1,
+  "SC-SOC-HIS-000228": 1,
+  "SC-SOC-HIS-000230": 1,
+  "SC-SOC-HIS-000231": 2,
+  "SC-SOC-HIS-000232": 1,
+  "SC-SOC-HIS-000233": 1,
+  "SC-SOC-HIS-000234": 1,
+  "SC-SOC-HIS-000235": 2,
+  "SC-SOC-HIS-000236": 2,
+  "SC-SOC-HIS-000237": 3,
+  "SC-SOC-HIS-000238": 3,
+  "SC-SOC-HIS-000239": 2,
+  "SC-SOC-HIS-000240": 2,
+  "SC-SOC-HIS-000241": 2,
+  "SC-SOC-HIS-000242": 3,
+  "SC-SOC-GEO-000243": 3,
+  "SC-SOC-GEO-000244": 3,
+  "SC-SOC-GEO-000245": 3,
+  "SC-SOC-GEO-000246": 3,
+  "SC-SOC-GEO-000247": 3,
+  "SC-SOC-GEO-000248": 3,
+  "SC-SOC-GEO-000249": 2,
+  "SC-SOC-GEO-000250": 2,
+  "SC-SOC-GEO-000251": 2,
+  "SC-SOC-GEO-000252": 3,
+  "SC-SOC-CIV-000253": 3,
+  "SC-SOC-CIV-000254": 3,
+  "SC-SOC-CIV-000255": 3,
+  "SC-SOC-CIV-000256": 3,
+  "SC-SOC-CIV-000257": 2,
+  "SC-SOC-CIV-000258": 3,
+  "SC-SOC-CIV-000259": 3,
+  "SC-SOC-CIV-000260": 2,
+  "SC-SOC-CIV-000261": 3,
+  "SC-SOC-CIV-000262": 3,
+  "SC-SOC-HIS-000263": 1,
+  "SC-SOC-HIS-000264": 1,
+  "SC-SOC-GEO-000266": 3,
+  "SC-SOC-CIV-000267": 3,
+  "SC-SOC-CIV-000268": 2,
+  "SC-SOC-HIS-000272": 3,
+  "SC-SOC-HIS-000274": 1,
+  "SC-SOC-HIS-000275": 1,
+  "SC-SOC-HIS-000279": 1,
+  "SC-SOC-HIS-000283": 1,
+  "SC-SOC-HIS-000284": 1,
+  "SC-SOC-HIS-000288": 2,
+  "SC-SOC-HIS-000289": 3,
+  "SC-SOC-HIS-000290": 3,
+  "SC-SOC-HIS-000291": 2,
+  "SC-SOC-HIS-000292": 2,
+  "SC-SOC-HIS-000293": 3,
+  "SC-SOC-GEO-000294": 2,
+  "SC-SOC-GEO-000295": 3,
+  "SC-SOC-GEO-000296": 2,
+  "SC-SOC-GEO-000298": 3,
+  "SC-SOC-CIV-000299": 2,
+  "SC-SOC-CIV-000300": 3,
+  "SC-SOC-CIV-000301": 3,
+  "SC-SOC-CIV-000302": 2,
+  "SC-SOC-CIV-000303": 2,
+  "SC-SOC-CIV-000304": 2,
+  "SC-SOC-CIV-000305": 2,
+  "SC-SOC-CIV-000306": 2,
+  "SC-SOC-CIV-000307": 2,
+  "SC-SOC-CIV-000308": 3,
+  "SC-SOC-HIS-000309": 3,
+  "SC-SOC-HIS-000310": 3,
+  "SC-SOC-HIS-000314": 1,
+  "SC-SOC-HIS-000315": 1,
+  "SC-SOC-HIS-000319": 1,
+  "SC-SOC-HIS-000320": 2,
+  "SC-SOC-HIS-000321": 1,
+  "SC-SOC-HIS-000322": 2,
+  "SC-SOC-HIS-000325": 3,
+  "SC-SOC-HIS-000326": 3,
+  "SC-SOC-GEO-000299": 2,
+  "SC-SOC-HIS-GAP10-000001": 1,
+  "SC-SOC-HIS-GAP10-000002": 1,
+  "SC-SOC-HIS-GAP10-000003": 1,
+  "SC-SOC-HIS-GAP10-000004": 1,
+  "SC-SOC-HIS-GAP10-000005": 1,
+  "SC-SOC-HIS-GAP10-000006": 1,
+  "SC-SOC-HIS-GAP10-000008": 1,
+  "SC-SOC-HIS-GAP10-000010": 1,
+  "SC-SOC-OLDSTONE52-00001": 2,
+  "SC-SOC-OLDSTONE52-00002": 2,
+  "SC-SOC-OLDSTONE52-00004": 2,
+  "SC-SOC-OLDSTONE52-00005": 2,
+  "SC-SOC-OLDSTONE52-00006": 2,
+  "SC-SOC-OLDSTONE52-00007": 2,
+  "SC-SOC-OLDSTONE52-00008": 2,
+  "SC-SOC-OLDSTONE53-00001": 2,
+  "SC-SOC-OLDSTONE53-00002": 2,
+  "SC-SOC-OLDSTONE53-00003": 2,
+  "SC-SOC-OLDSTONE53-00005": 2,
+  "SC-SOC-OLDSTONE53-00006": 2,
+  "SC-SOC-OLDSTONE53-00009": 2,
+  "SC-SOC-JOMON54-00001": 2,
+  "SC-SOC-JOMON54-00003": 2,
+  "SC-SOC-JOMON54-00004": 2,
+  "SC-SOC-JOMON54-00005": 2,
+  "SC-SOC-JOMON54-00006": 2,
+  "SC-SOC-JOMON54-00007": 2,
+  "SC-SOC-JOMON54-00008": 2,
+  "SC-SOC-JOMON54-00009": 2,
+  "SC-SOC-JOMON54-00010": 2,
+  "SC-SOC-JOMON54-00011": 2,
+  "SHR-HS-HIS-20261126-004": 3,
+  "SHR-HS-HIS-20261126-001": 3,
+  "SHR-HS-HIS-20261126-PAL-002": 1,
+  "SHR-HS-HIS-20261126-PAL-003": 1,
+  "SHR-HS-HIS-20261126-PAL-004": 1,
+  "SHR-HS-HIS-20261126-PAL-005": 1,
+  "SHR-HS-HIS-20261126-003": 3,
+  "SHR-HS-HIS-20261126-PAL-006": 1,
+  "SHR-HS-HIS-20261126-PAL-007": 1,
+  "SHR-HS-HIS-20261126-PAL-001": 1,
+  "SHR-HS-HIS-20261126-002": 2
+});
+function questionPriority(q){return Object.hasOwn(PUBLIC_PRIORITY,q.id)?PUBLIC_PRIORITY[q.id]:null;}
 function socialDisplay(q){
   if(q.subject!=="社会")return {};
   const key=q.field_name+" / "+q.topic_name;
-  const item=Object.hasOwn(SOCIAL_DISPLAY,q.id)?SOCIAL_DISPLAY[q.id]:(Object.hasOwn(SOCIAL_EXACT_UNIT,key)?SOCIAL_EXACT_UNIT[key]:null);
+  const item=Object.hasOwn(SOCIAL_DISPLAY_CORRECTIONS,q.id)?SOCIAL_DISPLAY_CORRECTIONS[q.id]:(Object.hasOwn(SOCIAL_DISPLAY,q.id)?SOCIAL_DISPLAY[q.id]:(Object.hasOwn(SOCIAL_EXACT_UNIT,key)?SOCIAL_EXACT_UNIT[key]:null));
   return {display_chapter:item?.[0]||"その他（分類確認中）",display_section:item?.[1]||""};
 }
 function publishedExplanation(q){
@@ -1341,7 +1671,7 @@ function publishedExplanation(q){
 }
 // Approved-only learning interface: no embedded legacy question bank is served publicly.
 function approvedOnlyHtml(questions) {
-  const json = JSON.stringify(questions.map(q=>({...q,...socialDisplay(q),...publishedExplanation(q)}))).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
+  const json = JSON.stringify(questions.map(q=>({...q,...socialDisplay(q),...publishedExplanation(q),priority:questionPriority(q)}))).replace(/</g,"\\u003c").replace(/>/g,"\\u003e").replace(/&/g,"\\u0026");
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHIRUNOERA｜一問一答</title><meta name="robots" content="noindex,follow"><style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#29232a;background:#faf8f4;--wine:#632b40;--ink:#29232a;--muted:#69636a;--line:#e0d6d0;--paper:#fffdfb;--blue:#294454;--accent:#bd9d88}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#faf8f4;color:var(--ink);line-height:1.65}a{color:var(--wine);text-decoration:none}
@@ -1399,7 +1729,7 @@ body{background:radial-gradient(ellipse at 94% 6%,#dce5d6 0,transparent 35%),lin
 footer{color:#573849}
 @media(max-width:620px){.header-inner{min-height:55px;gap:10px}.home-link{font-size:12px}.hero-strip{padding:13px 12px 15px}.hero-strip h1{font-size:23px}.hero-strip small{font-size:10px}.quiz-nav{align-items:flex-start;gap:8px}.quiz-nav button{font-size:11px;padding:8px 9px}.quiz-inner{padding:15px 14px 20px}#question{font-size:20px}#choices button{min-height:57px}#progress{font-size:12px}}
 @media(prefers-reduced-motion:reduce){#choices button{transition:none}}
-.question-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px}.question-tools .quiz-question-label{margin-top:0}#mark-question{min-height:44px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:#fff8ed;color:var(--wine);font-size:13px}#mark-question[aria-pressed=true]{background:#ecd4dc;border-color:var(--wine);font-weight:700}#mark-status{font-size:12px;color:var(--wine);margin:0}#mode-empty{border:1px solid var(--line);padding:12px;border-radius:6px}
+#question-priority{display:inline-block;margin-left:6px;color:var(--wine);font-size:12px;letter-spacing:0}.priority-label{font-weight:650}#skip-question{display:block;width:100%;min-height:44px;margin:12px 0 0;padding:9px 12px;color:var(--wine);background:#fffdf9;border:1px solid #806973;border-radius:5px;font-size:14px}#skip-question[hidden],#review-skipped[hidden]{display:none}.question-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px}.question-tools .quiz-question-label{margin-top:0}#mark-question{min-height:44px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:#fff8ed;color:var(--wine);font-size:13px}#mark-question[aria-pressed=true]{background:#ecd4dc;border-color:var(--wine);font-weight:700}#mark-status{font-size:12px;color:var(--wine);margin:0}#mode-empty{border:1px solid var(--line);padding:12px;border-radius:6px}
 
 /* Reading and answer controls remain legible in every state. */
 body{--muted:#52434c;--ink:#30232b;--wine:#622b45;color-scheme:light}
@@ -1419,9 +1749,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #164b
 </style></head><body><header class="site-header"><div class="header-inner"><div class="brand">SHIRUNOERA</div><a href="/high-school" class="home-link">高校受験へ戻る ↗</a></div></header><div class="hero-strip"><small>高校受験</small><h1>一問一答で、知識を確かに。</h1></div>
   <main><div class="tag">監査済み・公開承認済みの問題のみ表示</div>
   <section id="selector" class="card"><h2>教科を選ぶ</h2><p id="mode-empty" class="muted" role="status" hidden></p><div id="subjects"></div><div id="units" hidden><h3 id="unit-title">単元を選ぶ</h3><div id="unit-buttons"></div></div><p id="empty" class="muted" hidden>現在、公開できる問題はありません。監査完了後に追加されます。</p></section>
-  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="question-tools"><div class="quiz-question-label">問題</div><button id="mark-question" type="button" aria-pressed="false">☆ チェック</button></div><p id="mark-status" role="status"></p><h2 id="question"></h2><div id="choices"></div><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><a id="video-link" rel="noopener noreferrer" target="_blank">解説動画を見る ↗</a></section>
+  <section id="quiz" class="card" hidden><div class="quiz-head"><strong>一問一答</strong><small>学習モード</small></div><div class="quiz-inner"><div class="quiz-nav"><button id="back" type="button">← 教科・単元を選び直す</button><p id="progress" class="muted"></p></div><div class="question-tools"><div class="quiz-question-label">問題 <span id="question-priority" class="priority-label"></span></div><button id="mark-question" type="button" aria-pressed="false">☆ チェック</button></div><p id="mark-status" role="status"></p><h2 id="question"></h2><div id="choices"></div><button id="skip-question" type="button">わからない・スキップ</button><div id="answer" role="status" aria-live="polite"></div><button id="next" hidden>次の問題へ</button></div></section><section id="results" class="results-card" hidden aria-live="polite"><div class="results-eyebrow">学習の振り返り</div><h2>今回の学習結果</h2><div id="result-score" class="result-score"></div><p id="result-detail"></p><p id="result-mistakes" class="summary-note"></p><div class="results-actions"><button type="button" id="review-wrong">間違えた問題を復習</button><button type="button" id="review-skipped" hidden>飛ばした問題を復習</button><button type="button" id="retry-all">同じ問題をもう一度</button><a class="primary" href="/high-school">学習記録へ戻る ↗</a></div></section><section id="unit-video" class="video-card" hidden><h3>単元別 解説動画</h3><p id="video-unit"></p><a id="video-link" rel="noopener noreferrer" target="_blank">解説動画を見る ↗</a></section>
   </main><footer>© SHIRUNOERA</footer>
-  <script>const questions=${json};const socialOrder=${JSON.stringify(SOCIAL_CHAPTER_ORDER)};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[];
+  <script>const questions=${json};const socialOrder=${JSON.stringify(SOCIAL_CHAPTER_ORDER)};let selected=[],current=0,score=0,sessionAnswers=[],sessionBase=[],sessionSkipped=[];
   const el=id=>document.getElementById(id);
 
 function readModeData(key,field){
@@ -1538,18 +1868,21 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
     const refresh=()=>{const n=selectedPool().length;status.textContent="選択中："+n+"問";start.disabled=!n};
     container.append(range,status,start);renderSocialRange(range,pool,socialOrder[field]||[],refresh,false);
   }
-  function begin(items){if(!items.length)return;selected=items.slice();sessionBase=items.slice();sessionAnswers=[];current=0;score=0;el("results").hidden=true;el("selector").hidden=true;el("quiz").hidden=false;show()}
-  function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const pct=total?Math.round(score/total*100):0;el("result-score").textContent=score+" / "+total+"問";el("result-detail").textContent="正答率 "+pct+"%　・　間違い "+wrong.length+"問";el("result-mistakes").textContent=wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;window.scrollTo(0,0)}
+  function begin(items){if(!items.length)return;selected=items.slice().sort((a,b)=>(b.priority||0)-(a.priority||0));sessionBase=selected.slice();sessionAnswers=[];sessionSkipped=[];current=0;score=0;el("results").hidden=true;el("selector").hidden=true;el("quiz").hidden=false;show()}
+  function showResults(){el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=false;const total=sessionAnswers.length;const wrong=sessionAnswers.filter(x=>!x.correct);const skipped=sessionSkipped.length;const pct=total?Math.round(score/total*100):null;el("result-score").textContent=total?score+" / "+total+"問":"未回答";el("result-detail").textContent="正答率 "+(pct===null?"—":pct+"%")+"　・　間違い "+wrong.length+"問　・　スキップ "+skipped+"問";el("result-mistakes").textContent=skipped?"飛ばした問題は未回答のままです。復習できます。":wrong.length?"間違えた問題から復習できます。":"全問正解！次は別の単元にも挑戦しましょう。";el("review-wrong").hidden=wrong.length===0;el("review-skipped").hidden=skipped===0;window.scrollTo(0,0)}
   el("review-wrong").onclick=()=>{const wrongIds=new Set(sessionAnswers.filter(x=>!x.correct).map(x=>x.id));begin(selected.filter(q=>wrongIds.has(q.id)))};
+  el("review-skipped").onclick=()=>{const ids=new Set(sessionSkipped);begin(selected.filter(q=>ids.has(q.id)))};
   el("retry-all").onclick=()=>begin(sessionBase);
-  function show(){const q=selected[current];renderBookmark(q);el("mark-status").textContent="";el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;
-    clear(el("choices"));el("answer").textContent="";el("next").hidden=true;
-    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);
+  function show(){const q=selected[current];renderBookmark(q);el("mark-status").textContent="";el("unit-video").hidden=!q.video_url;el("video-unit").textContent=q.subject+" / "+q.field_name+" / "+(q.display_section||q.topic_name);if(q.video_url)el("video-link").href=q.video_url;else el("video-link").removeAttribute("href");el("progress").textContent=(current+1)+" / "+selected.length+" 問　・　正解 "+score+" 問";el("question").textContent=q.q;el("question-priority").textContent=q.priority?"重要度 "+"★".repeat(q.priority)+"（暫定）":"重要度 未評価";
+    clear(el("choices"));el("answer").textContent="";el("next").hidden=true;el("skip-question").hidden=false;
+    q.options.forEach((option,i)=>{const b=makeButton(String.fromCharCode(65+i)+". "+option,()=>{const correct=option===q.answer;if(correct)score++;sessionAnswers.push({id:q.id,correct});saveLearningAnswer(q,correct);el("skip-question").hidden=true;
       for(const c of el("choices").children){c.disabled=true;if(c.dataset.value===q.answer)c.classList.add("ok")}
       if(!correct)b.classList.add("bad");const panel=el("answer");panel.replaceChildren();const headline=document.createElement("strong");headline.textContent=(correct?"✓ 正解":"✕ 不正解")+"　正解："+q.answer;panel.append(headline);if(q.ex){const detail=document.createElement("div");detail.textContent=q.ex;detail.style.marginTop="10px";panel.append(detail)}
       el("next").hidden=false;el("next").textContent=current===selected.length-1?"結果を見る":"次の問題へ"});
       b.dataset.value=option;el("choices").appendChild(b)})}
-  el("next").onclick=()=>{if(current===selected.length-1){showResults()}else{current++;show()}};
+  function advance(){if(current===selected.length-1){showResults()}else{current++;show()}}
+  el("skip-question").onclick=()=>{if(el("quiz").hidden||el("skip-question").hidden)return;const q=selected[current];if(!q)return;sessionSkipped.push(q.id);el("skip-question").hidden=true;advance()};
+  el("next").onclick=advance;
   el("back").onclick=()=>{if(params.get("from")==="configure"&&groups.includes(requested)){location.assign("/high-school?"+new URLSearchParams({subject:requested}));return}el("quiz").hidden=true;el("unit-video").hidden=true;el("results").hidden=true;el("selector").hidden=false};
   if(!groups.length){el("empty").hidden=false}
   for(const subject of groups){const count=questions.filter(q=>q.subject===subject).length;el("subjects").appendChild(makeButton(subject+"（"+count+"問）",()=>chooseSubject(subject)))}
@@ -1569,7 +1902,8 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
       else unseen.push(q);
     }
     const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a};
-    shuffle(incorrect);shuffle(unseen);shuffle(previouslyCorrect);
+    const rank=q=>Number.isInteger(q.priority)?q.priority:0;
+    for(const group of [incorrect,unseen,previouslyCorrect])shuffle(group).sort((a,b)=>rank(a)-rank(b));
     const chosen=[];
     // One earlier mistake for roughly every two unattempted items.
     while(chosen.length<limit&&(incorrect.length||unseen.length)){
@@ -1578,7 +1912,7 @@ function renderSocialRange(container,pool,order,onChange,initial=true){
       chosen.push((preferred.length?preferred:alternative).pop());
     }
     while(chosen.length<limit&&previouslyCorrect.length)chosen.push(previouslyCorrect.pop());
-    return shuffle(chosen);
+    return shuffle(chosen).sort((a,b)=>rank(b)-rank(a));
   }
 
   // Explicit range filters are additive, and never fall back to all on malformed input.
@@ -1628,7 +1962,7 @@ export default {
 
     // Public catalog for live subject/unit counts and exact learning-coverage denominators.
     // Use the same strict parser as the approved-only quiz. Do not expose private sheets.
-    if (request.method === "GET" && url.pathname === "/api/question-catalog.json") {
+    if (request.method === "GET" && ["/api/question-catalog.json","/api/question-catalog.csv"].includes(url.pathname)) {
       const headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"};
       try {
         const upstream=await fetch(PUBLIC_URL,{signal:AbortSignal.timeout(5000)});
@@ -1636,6 +1970,12 @@ export default {
         const csv=await upstream.text();
         if(csv.length>1024*1024)throw Error("Public data too large");
         const approved=parsePublicCsv(csv);
+        if(url.pathname==="/api/question-catalog.csv"){
+          const columns=["id","subject","major","minor","display_chapter","display_section","priority"];
+          const escapeCsv=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+          const lines=approved.map(q=>{const d=socialDisplay(q);return [q.id,q.subject,q.field_name,q.topic_name,d.display_chapter,d.display_section,questionPriority(q)].map(escapeCsv).join(",")});
+          return new Response(columns.join(",")+"\n"+lines.join("\n")+"\n",{headers:{...headers,"Content-Type":"text/csv; charset=utf-8"}});
+        }
         const display=url.searchParams.get("display")==="1";
         const questions=approved.map(q=>({id:q.id,subject:q.subject,major:q.field_name,minor:q.topic_name,...(display?socialDisplay(q):{})}));
         return new Response(JSON.stringify({schema:1,questions}),{headers});
