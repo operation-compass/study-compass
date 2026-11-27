@@ -217,3 +217,12 @@ test('catalog CSV exposes only approved rows and the same reviewed display class
   const bad=await probe(new Response('private_header,question\n'),'/api/question-catalog.csv');
   assert.equal(bad.status,503);
 });
+
+test('pilot image is a fixed same-origin SVG and added Jomon priority is available',async()=>{
+  const res=await worker.fetch(new Request('https://study.example/media/learning/ice-age-sea-level.svg'),env);
+  assert.equal(res.status,200);assert.match(res.headers.get('content-type'),/image\/svg\+xml/);
+  const svg=await res.text();assert.match(svg,/海面低下/);assert.match(svg,/模式図/);assert.doesNotMatch(svg,/<script|<foreignObject/i);
+  const make=id=>[id,'1','社会','中1','歴史','縄文時代','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const r=await probe(new Response(HEADER+'\n'+make('SHR-HS-HIS-20261128-JOM-001')+'\n'),'/api/question-catalog.csv');
+  assert.equal(r.status,200);assert.match((await r.text()).trim(),/"縄文時代","3"$/);
+});
