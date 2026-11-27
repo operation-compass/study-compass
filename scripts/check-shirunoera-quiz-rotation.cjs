@@ -35,3 +35,7 @@ assert(worker.includes('count==="all"?pool:selectQuizQuestions(pool,limit)'), 'f
 assert(worker.includes('approvedOnlyHtml(approved)'), 'approved-only source must be preserved');
 assert(worker.includes('saveLearningAnswer(q,correct)'), 'learning-history saving must remain present');
 console.log('PASS SHIRUNOERA unseen/missed question rotation, approved-only contract and fallback');
+
+const rated=[{id:'low',priority:1},{id:'unknown',priority:null},{id:'high',priority:3},{id:'mid',priority:2}];
+assert.equal(run(rated,1,null)[0].id,'high');
+assert.equal(Array.from(run(rated,4,null),q=>q.id).join(','),'high,mid,low,unknown');

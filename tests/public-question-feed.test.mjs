@@ -202,3 +202,18 @@ test('approved middle school grade ranges do not disable all subjects',async()=>
   const parsed=api.parsePublicCsv(csv);assert.equal(parsed[0].grade,'中1〜中3');assert.equal(parsed[0].unit_id,'SC-SOC-G1-ANC');assert.equal(parsed[1].unit_id,undefined);assert.equal(parsed[1].unit,'歴史');
   assert.equal((await probe(new Response(csv.replace('中1〜中3','INVALID')),'/api/question-catalog.json')).status,503);
 });
+
+test('catalog CSV exposes only approved rows and the same reviewed display classification',async()=>{
+  const make=(id,minor)=>[id,'1','社会','中1','歴史',minor,'4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+  const csv=HEADER+'\n'+['SC-SOC-HIS-000325','SC-SOC-HIS-000326','SHR-HS-HIS-20261126-001','SHR-HS-HIS-20261126-002','SHR-HS-HIS-20261126-004'].map(id=>make(id,'古代')).join('\n')+'\n';
+  const res=await probe(new Response(csv),'/api/question-catalog.csv');
+  assert.equal(res.status,200);assert.match(res.headers.get('content-type'),/text\/csv/);
+  const lines=(await res.text()).trim().split('\n');
+  assert.equal(lines.length,6);
+  assert.equal(lines[0],'id,subject,major,minor,display_chapter,display_section,priority');
+  assert.equal(lines.slice(1).filter(line=>line.includes('"旧石器時代"')).length,4);
+  assert.match(lines[5],/"縄文時代","3"$/);
+  assert.match(lines[4],/"旧石器時代","2"$/);
+  const bad=await probe(new Response('private_header,question\n'),'/api/question-catalog.csv');
+  assert.equal(bad.status,503);
+});
