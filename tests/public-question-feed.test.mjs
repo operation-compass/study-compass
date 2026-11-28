@@ -257,3 +257,11 @@ test('pilot image is a fixed same-origin SVG and added Jomon priority is availab
  assert.equal(lines.length,10);
  for(let i=0;i<ids.length;i++){assert.ok(lines[i].includes(ids[i]));assert.ok(lines[i].endsWith('"原始・古代","弥生時代","'+priorities[i]+'"'));}
  });
+
+ test('reviewed final Yayoi stock candidate has priority two',async()=>{
+ const row=['SC-SOC-YAYOI-DRAFT-20261011-014','1','社会','中1','歴史','弥生時代','4択','問題','正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(',');
+ const res=await probe(new Response(HEADER+'\n'+row+'\n'),'/api/question-catalog.csv');
+ assert.equal(res.status,200);
+ const lines=(await res.text()).trim().split('\n');
+ assert.equal(lines.length,2);assert.ok(lines[1].includes('SC-SOC-YAYOI-DRAFT-20261011-014'));assert.ok(lines[1].endsWith('"原始・古代","弥生時代","2"'));
+ });
