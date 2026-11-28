@@ -237,3 +237,13 @@ test('pilot image is a fixed same-origin SVG and added Jomon priority is availab
  assert.equal(lines.length,6);
  for(let i=0;i<ids.length;i++){assert.ok(lines[i].includes(ids[i]));assert.ok(lines[i].endsWith('"原始・古代","弥生時代","'+(i<3?3:2)+'"'));}
  });
+
+ test('six stock Yayoi candidates retain original IDs and reviewed priorities',async()=>{
+ const ids=["SC-SOC-YAYOI-DRAFT-20261011-004","SC-SOC-YAYOI-DRAFT-20261011-011","SC-SOC-YAYOI-DRAFT-20261011-013","SC-SOC-YAYOI-BASE-20261011-002","SC-SOC-YAYOI-BASE-20261011-003","SC-SOC-YAYOI-BASE-20261011-007"];
+ const rows=ids.map((id,i)=>[id,'1','社会','中1','歴史','弥生時代','4択','問題'+i,'正解','誤答1','誤答2','誤答3','A','解説','https://example.org'].join(','));
+ const res=await probe(new Response(HEADER+'\n'+rows.join('\n')+'\n'),'/api/question-catalog.csv');
+ assert.equal(res.status,200);
+ const lines=(await res.text()).trim().split('\n').slice(1);
+ assert.equal(lines.length,6);
+ for(let i=0;i<ids.length;i++){assert.ok(lines[i].includes(ids[i]));assert.ok(lines[i].endsWith('"原始・古代","弥生時代","'+(i<5?3:2)+'"'));}
+ });
